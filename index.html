@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking Minigames</title>
+    <style>
+        :root {
+            --bg-color: #09090b;
+            --panel-bg: #18181b;
+            --theme-pink: #f13a89;
+            --text-main: #f13a89;         
+            --text-muted: #71717a;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #eab308;
+            --key-bg: #27272a;
+            --key-active: #f13a89;
+            --key-text-active: #111111;
+            --track-bg: #000000;
+            --border-color: #3f3f46;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .settings-container {
+            background-color: var(--panel-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(241, 58, 137, 0.15);
+            width: 360px;
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-header {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--theme-pink);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .setting-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .setting-group label {
+            font-size: 0.95rem;
+            color: #d4d4d8;
+        }
+
+        .setting-control {
+            display: flex;
+            gap: 5px;
+            width: 140px;
+        }
+
+        input[type="number"], select {
+            background: #000;
+            border: 1px solid var(--border-color);
+            color: var(--theme-pink);
+            padding: 8px;
+            border-radius: 4px;
+            font-family: inherit;
+            width: 100%;
+            outline: none;
+            font-weight: bold;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--theme-pink);
+        }
+
+        .btn-apply {
+            width: 100%;
+            padding: 14px;
+            background: var(--theme-pink);
+            color: var(--key-text-active);
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-apply:hover { filter: brightness(1.1); box-shadow: 0 0 15px rgba(241, 58, 137, 0.4); }
+        .btn-apply:active { transform: translateY(2px); }
+
+        .game-container {
+            background-color: var(--panel-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(241, 58, 137, 0.15);
+            width: 420px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(9, 9, 11, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 12px;
+        }
+
+        .overlay-text {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .overlay-text span {
+            color: var(--theme-pink);
+            font-size: 4rem;
+            display: block;
+            margin-top: 10px;
+            text-shadow: 0 0 20px rgba(241, 58, 137, 0.5);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #d4d4d8;
+        }
+
+        .timer-container {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--warning);
+            font-weight: bold;
+        }
+
+        #game-keypad-container {
+            display: none;
+        }
+
+        .code-display {
+            font-size: 1.6rem;
+            letter-spacing: 6px;
+            margin-bottom: 25px;
+            background: #000;
+            padding: 12px;
+            border-radius: 6px;
+            color: #fff;
+            border: 1px solid var(--border-color);
+        }
+
+        .code-display span.completed { color: var(--success); text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .key-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .key {
+            background-color: var(--key-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 15px 0;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 0 4px 0 #000, 0 5px 10px rgba(0,0,0,0.5);
+        }
+
+        .key:active, .key.active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #000, 0 0 20px rgba(241, 58, 137, 0.6);
+            background-color: var(--key-active);
+            color: var(--key-text-active);
+            border-color: var(--key-active);
+        }
+
+        .mini-progress-container {
+            width: 100%;
+            height: 12px;
+            background-color: var(--track-bg);
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .mini-target-zone {
+            position: absolute;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.35);
+            border-left: 2px solid #fff;
+            border-right: 2px solid #fff;
+            top: 0;
+            display: none; 
+        }
+
+        .mini-progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--theme-pink);
+            position: absolute;
+            top: 0; left: 0;
+            box-shadow: 0 0 8px var(--theme-pink);
+        }
+
+        #game-cables-container {
+            display: none;
+        }
+
+        .cables-board {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            height: 320px;
+            margin: 20px 0;
+            background: #000;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 30px;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .cable-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            z-index: 2;
+        }
+
+        .cable-node {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+            touch-action: none;
+        }
+
+        .cable-node-inner {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: currentColor;
+            box-shadow: 0 0 12px currentColor;
+            transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+        }
+
+        .cable-node:hover .cable-node-inner {
+            transform: scale(1.2);
+        }
+
+        .cable-node.active-start .cable-node-inner {
+            transform: scale(1.3);
+            background-color: #ffffff !important;
+            box-shadow: 0 0 20px #ffffff, 0 0 10px currentColor;
+        }
+
+        .cables-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #game-puzzle-container {
+            display: none;
+        }
+
+        .puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 8px;
+            background: #000;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 20px auto;
+            width: 280px;
+            height: 280px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+            touch-action: none;
+        }
+
+        .puzzle-tile {
+            background-color: var(--key-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s, border-color 0.2s, background-color 0.2s;
+            touch-action: none;
+        }
+
+        .puzzle-tile:hover:not(.empty) {
+            border-color: var(--theme-pink);
+            box-shadow: 0 0 10px rgba(241, 58, 137, 0.4);
+        }
+
+        .puzzle-tile.empty {
+            background-color: transparent;
+            border: 1px dashed rgba(63, 63, 70, 0.5);
+            cursor: default;
+        }
+
+        .puzzle-tile.correct {
+            border-color: var(--success);
+            color: var(--success);
+            text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+        }
+
+        .message {
+            height: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-muted { color: var(--text-muted) !important; }
+    </style>
+</head>
+<body>
+
+    <div id="screen-settings" class="settings-container">
+        <div class="settings-header">Onbeat Hacks</div>
+        
+        <div class="setting-group" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
+            <label style="margin-bottom: 8px; font-weight: bold; color: var(--theme-pink); letter-spacing: 1px;">Game Select</label>
+            <select id="game-select" onchange="switchGameSetup(this.value)">
+                <option value="keypad" selected>Keypad</option>
+                <option value="cables">Kabelki</option>
+                <option value="puzzle">15-Puzzle</option>
+            </select>
+        </div>
+
+        <div id="config-keypad">
+            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
+                <select id="preset-select" onchange="loadPreset(this.value)">
+                    <option value="atm">ATM</option>
+                    <option value="elektrozamek">Elektrozamek</option>
+                    <option value="sejf" selected>Sejf</option>
+                    <option value="custom">Custom...</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>Rozmiar strefy (%)</label>
+                <div class="setting-control">
+                    <input type="number" id="in-zone-min" min="1" max="50" oninput="markCustom()">
+                    <input type="number" id="in-zone-max" min="1" max="100" oninput="markCustom()">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Czas napelniania (ms)</label>
+                <div class="setting-control">
+                    <input type="number" id="in-speed-min" min="100" step="100" oninput="markCustom()">
+                    <input type="number" id="in-speed-max" min="100" step="100" oninput="markCustom()">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Próby</label>
+                <div class="setting-control">
+                    <input type="number" id="in-attempts" min="1" oninput="markCustom()">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Rundy</label>
+                <div class="setting-control">
+                    <input type="number" id="in-rounds" min="1" oninput="markCustom()">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Długość kodu</label>
+                <div class="setting-control">
+                    <input type="number" id="in-code-length" min="1" max="9" oninput="markCustom()">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Czas (s) [0 = Off]</label>
+                <div class="setting-control">
+                    <input type="number" id="in-time" min="0" oninput="markCustom()">
+                </div>
+            </div>
+        </div>
+
+        <div id="config-cables" style="display: none;">
+            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
+                <select id="preset-cable-select" onchange="loadCablePreset(this.value)">
+                    <option value="normal" selected>Normal</option>
+                    <option value="easy">Easy</option>
+                    <option value="hard">Hard</option>
+                    <option value="custom">Custom...</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>Liczba kabelków</label>
+                <div class="setting-control">
+                    <input type="number" id="in-cable-count" min="3" max="8" oninput="markCableCustom()">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label>Czas (s) [0 = Off]</label>
+                <div class="setting-control">
+                    <input type="number" id="in-cable-time" min="0" oninput="markCableCustom()">
+                </div>
+            </div>
+        </div>
+
+        <div id="config-puzzle" style="display: none;">
+            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
+                <select id="preset-puzzle-select" onchange="loadPuzzlePreset(this.value)">
+                    <option value="normal" selected>Normal</option>
+                    <option value="easy">Easy</option>
+                    <option value="hard">Hard</option>
+                    <option value="custom">Custom...</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>Czas (s) [0 = Off]</label>
+                <div class="setting-control">
+                    <input type="number" id="in-puzzle-time" min="0" oninput="markPuzzleCustom()">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-apply" onclick="proceedToGame()">Proceed</button>
+    </div>
+
+    <div id="screen-game" class="game-container" style="display: none;">
+        
+        <div id="overlay" class="overlay">
+            <div id="overlay-text" class="overlay-text">
+                Przygotuj się
+                <span id="overlay-count">3</span>
+            </div>
+        </div>
+
+        <div class="header">
+            <div id="round-text">Runda: 1/4</div>
+            <div id="attempts-text">Próby: 3</div>
+        </div>
+
+        <div class="timer-container" id="timer-text">Czas: 20.0s</div>
+        
+        <div id="game-keypad-container">
+            <div class="code-display" id="code-display">_ _ _ _</div>
+            <div class="keypad" id="keypad"></div>
+        </div>
+
+        <div id="game-cables-container">
+            <div class="cables-board" id="cables-board">
+                <svg class="cables-svg" id="cables-svg"></svg>
+                <div class="cable-column" id="cables-left"></div>
+                <div class="cable-column" id="cables-right"></div>
+            </div>
+        </div>
+
+        <div id="game-puzzle-container">
+            <div class="puzzle-board" id="puzzle-board"></div>
+        </div>
+
+        <div class="message" id="message"></div>
+    </div>
+
+<script>
+    const presets = {
+        atm: { zoneSize: [10, 15], maxAttempts: 5, rounds: 2, fillSpeed: [1200, 1800], codeLength: 4, timeleft: 0 },
+        elektrozamek: { zoneSize: [10, 15], maxAttempts: 3, rounds: 4, fillSpeed: [1200, 1800], codeLength: 4, timeleft: 0 },
+        sejf: { zoneSize: [10, 20], maxAttempts: 3, rounds: 4, fillSpeed: [500, 800], codeLength: 4, timeleft: 20 }
+    };
+
+    const cablePresets = {
+        normal: { cableCount: 5, timeleft: 5 },
+        easy: { cableCount: 5, timeleft: 15 },
+        hard: { cableCount: 8, timeleft: 8 }
+    };
+
+    const puzzlePresets = {
+        normal: { timeleft: 120 },
+        easy: { timeleft: 180 },
+        hard: { timeleft: 60 }
+    };
+
+    let config = { ...presets.sejf };
+
+    let state = {
+        currentGame: 'keypad',
+        currentRound: 1,
+        attempts: config.maxAttempts,
+        targetCode: [],
+        currentIndex: 0,        
+        status: 'IDLE', 
+        timeLeft: 0,
+        timerInterval: null,
+        isHolding: false,
+        activeKeyNum: null,
+        startTime: 0,
+        fillDuration: 0,
+        progressValue: 0,
+        zoneStart: 0,
+        zoneEnd: 0,
+        animFrame: null
+    };
+
+    let cablesState = {
+        leftNodes: [],
+        rightNodes: [],
+        connections: {},
+        selectedLeft: null,
+        mouseX: undefined,
+        mouseY: undefined
+    };
+
+    let puzzleState = {
+        board: [],
+        moves: 0,
+        solvedBoard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
+    };
+
+    const elements = {
+        screenSettings: document.getElementById('screen-settings'),
+        screenGame: document.getElementById('screen-game'),
+        overlay: document.getElementById('overlay'),
+        overlayCount: document.getElementById('overlay-count'),
+        roundText: document.getElementById('round-text'),
+        attemptsText: document.getElementById('attempts-text'),
+        timerText: document.getElementById('timer-text'),
+        codeDisplay: document.getElementById('code-display'),
+        keypad: document.getElementById('keypad'),
+        message: document.getElementById('message'),
+        presetSelect: document.getElementById('preset-select'),
+        gameSelect: document.getElementById('game-select'),
+        keys: {}
+    };
+
+    function switchGameSetup(gameType) {
+        document.getElementById('config-keypad').style.display = gameType === 'keypad' ? 'block' : 'none';
+        document.getElementById('config-cables').style.display = gameType === 'cables' ? 'block' : 'none';
+        document.getElementById('config-puzzle').style.display = gameType === 'puzzle' ? 'block' : 'none';
+    }
+
+    function loadPreset(presetName) {
+        if (presetName === 'custom') return;
+        const p = presets[presetName];
+        document.getElementById('in-zone-min').value = p.zoneSize[0];
+        document.getElementById('in-zone-max').value = p.zoneSize[1];
+        document.getElementById('in-speed-min').value = p.fillSpeed[0];
+        document.getElementById('in-speed-max').value = p.fillSpeed[1];
+        document.getElementById('in-attempts').value = p.maxAttempts;
+        document.getElementById('in-rounds').value = p.rounds;
+        document.getElementById('in-code-length').value = p.codeLength;
+        document.getElementById('in-time').value = p.timeleft || 0;
+    }
+
+    function markCustom() {
+        elements.presetSelect.value = 'custom';
+    }
+
+    function loadCablePreset(presetName) {
+        if (presetName === 'custom') return;
+        const p = cablePresets[presetName];
+        document.getElementById('in-cable-count').value = p.cableCount;
+        document.getElementById('in-cable-time').value = p.timeleft;
+    }
+
+    function markCableCustom() {
+        document.getElementById('preset-cable-select').value = 'custom';
+    }
+
+    function loadPuzzlePreset(presetName) {
+        if (presetName === 'custom') return;
+        const p = puzzlePresets[presetName];
+        document.getElementById('in-puzzle-time').value = p.timeleft;
+    }
+
+    function markPuzzleCustom() {
+        document.getElementById('preset-puzzle-select').value = 'custom';
+    }
+
+    function proceedToGame() {
+        const gameType = elements.gameSelect.value;
+        state.currentGame = gameType;
+
+        elements.screenSettings.style.display = 'none';
+        elements.screenGame.style.display = 'block';
+
+        document.getElementById('game-keypad-container').style.display = gameType === 'keypad' ? 'block' : 'none';
+        document.getElementById('game-cables-container').style.display = gameType === 'cables' ? 'block' : 'none';
+        document.getElementById('game-puzzle-container').style.display = gameType === 'puzzle' ? 'block' : 'none';
+
+        if (gameType === 'keypad') {
+            config = {
+                zoneSize: [
+                    parseInt(document.getElementById('in-zone-min').value) || 10,
+                    parseInt(document.getElementById('in-zone-max').value) || 20
+                ],
+                fillSpeed: [
+                    parseInt(document.getElementById('in-speed-min').value) || 500,
+                    parseInt(document.getElementById('in-speed-max').value) || 1000
+                ],
+                maxAttempts: parseInt(document.getElementById('in-attempts').value) || 3,
+                rounds: parseInt(document.getElementById('in-rounds').value) || 3,
+                codeLength: parseInt(document.getElementById('in-code-length').value) || 4,
+                timeleft: parseInt(document.getElementById('in-time').value) || 0
+            };
+            if (config.codeLength > 9) config.codeLength = 9;
+            initKeypadGame();
+        } else if (gameType === 'cables') {
+            config = {
+                cableCount: parseInt(document.getElementById('in-cable-count').value) || 5,
+                timeleft: parseInt(document.getElementById('in-cable-time').value) || 10
+            };
+            initCablesGame();
+        } else if (gameType === 'puzzle') {
+            config = {
+                timeleft: parseInt(document.getElementById('in-puzzle-time').value) || 60
+            };
+            initPuzzleGame();
+        }
+    }
+
+    function returnToSettings() {
+        cancelAnimationFrame(state.animFrame);
+        clearInterval(state.timerInterval);
+        elements.screenSettings.style.display = 'block';
+        elements.screenGame.style.display = 'none';
+        state.status = 'IDLE';
+    }
+
+    function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function startPreparation() {
+        state.status = 'PREPARING';
+        elements.overlay.style.display = 'flex';
+        
+        let count = 3;
+        elements.overlayCount.innerText = count;
+        
+        let prepInterval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                elements.overlayCount.innerText = count;
+            } else {
+                clearInterval(prepInterval);
+                elements.overlay.style.display = 'none';
+                startActualRound();
+            }
+        }, 1000);
+    }
+
+    function startActualRound() {
+        state.status = 'PLAYING';
+        if (state.currentGame === 'keypad') {
+            startRound();
+        } else if (state.currentGame === 'cables') {
+            updateUI();
+            startTimer();
+        } else if (state.currentGame === 'puzzle') {
+            updateUI();
+            startTimer();
+        }
+    }
+
+    function startTimer() {
+        clearInterval(state.timerInterval);
+        
+        if (!config.timeleft || config.timeleft <= 0) {
+            elements.timerText.innerText = `Time: ∞`;
+            elements.timerText.className = 'timer-container text-muted';
+            return;
+        }
+
+        state.timeLeft = config.timeleft;
+        elements.timerText.className = 'timer-container';
+        elements.timerText.style.color = 'var(--warning)';
+        elements.timerText.innerText = `Time: ${state.timeLeft.toFixed(1)}s`;
+        
+        state.timerInterval = setInterval(() => {
+            if (state.status !== 'PLAYING') return;
+            
+            state.timeLeft -= 0.1;
+            
+            if (state.timeLeft <= 0) {
+                state.timeLeft = 0;
+                clearInterval(state.timerInterval);
+                failGame("Czas minął!"); 
+            }
+            
+            elements.timerText.innerText = `Time: ${state.timeLeft.toFixed(1)}s`;
+            if (state.timeLeft <= 5) elements.timerText.style.color = 'var(--danger)';
+        }, 100);
+    }
+
+    function failGame(msg) {
+        state.status = 'PAUSED';
+        clearInterval(state.timerInterval);
+        showMessage(msg, "text-danger");
+
+        if (state.currentGame === 'keypad') {
+            failAttempt(msg);
+        } else {
+            state.status = 'GAMEOVER';
+            setTimeout(returnToSettings, 3000);
+        }
+    }
+
+    function showMessage(text, className) {
+        elements.message.innerText = text;
+        elements.message.className = `message ${className}`;
+    }
+
+    function updateUI() {
+        if (state.currentGame === 'keypad') {
+            elements.roundText.innerText = `Round: ${state.currentRound}/${config.rounds}`;
+            elements.attemptsText.innerText = `Attempts: ${state.attempts}`;
+            
+            let codeHTML = '';
+            for(let i=0; i < config.codeLength; i++) {
+                if (i < state.currentIndex) {
+                    codeHTML += `<span class="completed">${state.targetCode[i]}</span> `;
+                } else if (i === state.currentIndex) {
+                    codeHTML += `<span>${state.targetCode[i]}</span> `;
+                } else {
+                    codeHTML += `<span>_</span> `;
+                }
+            }
+            elements.codeDisplay.innerHTML = codeHTML.trim();
+        } else if (state.currentGame === 'cables') {
+            const connectedCount = Object.keys(cablesState.connections).length;
+            elements.roundText.innerText = `Cables Setup`;
+            elements.attemptsText.innerText = `Linked: ${connectedCount}/${config.cableCount}`;
+        } else if (state.currentGame === 'puzzle') {
+            elements.roundText.innerText = `15-Puzzle Decrypter`;
+            elements.attemptsText.innerText = `Moves: ${puzzleState.moves}`;
+        }
+        
+        if (config.timeleft && state.timeLeft > 5) {
+            elements.timerText.style.color = 'var(--warning)';
+        }
+    }
+
+    function generateKeypad() {
+        elements.keypad.innerHTML = '';
+        for (let i = 1; i <= 9; i++) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'key-wrapper';
+            wrapper.innerHTML = `
+                <button class="key" data-key="${i}">${i}</button>
+                <div class="mini-progress-container" id="prog-container-${i}">
+                    <div class="mini-target-zone" id="zone-${i}"></div>
+                    <div class="mini-progress-fill" id="fill-${i}"></div>
+                </div>
+            `;
+            elements.keypad.appendChild(wrapper);
+
+            const btn = wrapper.querySelector('.key');
+            btn.addEventListener('mousedown', () => handleHoldStart(i, btn));
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); handleHoldStart(i, btn); });
+
+            elements.keys[i] = {
+                btn: btn,
+                zone: wrapper.querySelector('.mini-target-zone'),
+                fill: wrapper.querySelector('.mini-progress-fill')
+            };
+        }
+    }
+
+    function initKeypadGame() {
+        cancelAnimationFrame(state.animFrame);
+        clearInterval(state.timerInterval);
+        
+        state.currentRound = 1;
+        state.attempts = config.maxAttempts;
+        showMessage('', '');
+        
+        for(let i = 1; i <= 9; i++) resetProgressBar(i);
+        
+        startPreparation(); 
+    }
+
+    function startRound() {
+        state.currentIndex = 0;
+        state.targetCode = [];
+        state.timeLeft = config.timeleft;
+        
+        let availableNumbers = [1,2,3,4,5,6,7,8,9];
+        for(let i=0; i < config.codeLength; i++) {
+            let randIndex = randomInt(0, availableNumbers.length - 1);
+            state.targetCode.push(availableNumbers.splice(randIndex, 1)[0]);
+        }
+        
+        updateUI();
+        prepareCurrentKey(); 
+        startTimer();
+    }
+
+    function resetProgressBar(keyNum) {
+        const k = elements.keys[keyNum];
+        k.zone.style.display = 'none';
+        k.fill.style.width = '0%';
+        k.fill.style.backgroundColor = 'var(--theme-pink)';
+        k.fill.style.boxShadow = '0 0 8px var(--theme-pink)';
+    }
+
+    function prepareCurrentKey() {
+        if (state.currentIndex >= config.codeLength) return;
+
+        for (let i = 1; i <= 9; i++) resetProgressBar(i);
+
+        const expectedKey = state.targetCode[state.currentIndex];
+        
+        const zoneWidth = randomInt(config.zoneSize[0], config.zoneSize[1]);
+        state.zoneStart = randomInt(10, 100 - zoneWidth - 5); 
+        state.zoneEnd = state.zoneStart + zoneWidth;
+        state.fillDuration = randomInt(config.fillSpeed[0], config.fillSpeed[1]);
+
+        const activeElements = elements.keys[expectedKey];
+        activeElements.zone.style.display = 'block';
+        activeElements.zone.style.left = `${state.zoneStart}%`;
+        activeElements.zone.style.width = `${zoneWidth}%`;
+    }
+
+    function handleHoldStart(keyNum, keyElement) {
+        if (state.status !== 'PLAYING') return;
+        
+        const expectedKey = state.targetCode[state.currentIndex];
+        state.activeKeyNum = parseInt(keyNum);
+
+        if (state.activeKeyNum !== expectedKey) {
+            failAttempt("Zły przycisk!"); 
+            return;
+        }
+
+        state.isHolding = true;
+        keyElement.classList.add('active');
+        
+        const activeElements = elements.keys[state.activeKeyNum];
+        activeElements.fill.style.backgroundColor = 'var(--theme-pink)';
+        activeElements.fill.style.boxShadow = '0 0 8px var(--theme-pink)';
+        activeElements.fill.style.width = '0%';
+
+        state.startTime = performance.now();
+        state.animFrame = requestAnimationFrame(animateProgress);
+    }
+
+    function animateProgress(timestamp) {
+        if (!state.isHolding || !state.activeKeyNum) return;
+
+        const elapsed = timestamp - state.startTime;
+        state.progressValue = Math.min((elapsed / state.fillDuration) * 100, 100);
+        
+        elements.keys[state.activeKeyNum].fill.style.width = `${state.progressValue}%`;
+
+        if (state.progressValue >= 100) {
+            handleHoldRelease(); 
+            return;
+        }
+
+        state.animFrame = requestAnimationFrame(animateProgress);
+    }
+
+    function handleHoldRelease() {
+        if (!state.isHolding || state.status !== 'PLAYING') return;
+        
+        state.isHolding = false;
+        cancelAnimationFrame(state.animFrame);
+        
+        const activeKey = state.activeKeyNum;
+        state.activeKeyNum = null;
+
+        for(let i = 1; i <= 9; i++) elements.keys[i].btn.classList.remove('active');
+
+        if (state.progressValue >= state.zoneStart && state.progressValue <= state.zoneEnd) {
+            successStep(activeKey);
+        } else {
+            failAttempt("Pudło!"); 
+        }
+    }
+
+    function successStep(keyNum) {
+        state.currentIndex++;
+        elements.keys[keyNum].fill.style.backgroundColor = 'var(--success)';
+        elements.keys[keyNum].fill.style.boxShadow = '0 0 8px var(--success)';
+        state.status = 'PAUSED'; 
+        
+        if (state.currentIndex >= config.codeLength) {
+            clearInterval(state.timerInterval);
+            showMessage("Runda Zakończona!", "text-success");
+            
+            setTimeout(() => {
+                state.currentRound++;
+                if (state.currentRound > config.rounds) {
+                    showMessage("HACKOWANIE UDANE", "text-success");
+                    state.status = 'WON';
+                    setTimeout(returnToSettings, 3000);
+                } else {
+                    showMessage("", "");
+                    startPreparation(); 
+                }
+            }, 1000);
+        } else {
+            updateUI(); 
+            setTimeout(() => {
+                prepareCurrentKey(); 
+                state.status = 'PLAYING';
+            }, 250);
+        }
+    }
+
+    function failAttempt(msg) {
+        clearInterval(state.timerInterval);
+        state.status = 'PAUSED';
+        state.attempts--;
+        state.isHolding = false;
+        cancelAnimationFrame(state.animFrame);
+        
+        for(let i = 1; i <= 9; i++) elements.keys[i].btn.classList.remove('active');
+        
+        if (state.activeKeyNum) {
+            elements.keys[state.activeKeyNum].fill.style.backgroundColor = 'var(--danger)';
+            elements.keys[state.activeKeyNum].fill.style.boxShadow = '0 0 8px var(--danger)';
+            if (state.progressValue === 0) {
+                elements.keys[state.activeKeyNum].fill.style.width = '100%'; 
+            }
+        }
+
+        showMessage(msg, "text-danger");
+        updateUI();
+
+        setTimeout(() => {
+            if (state.attempts <= 0) {
+                showMessage("SYSTEM ZABLOKOWANY", "text-danger");
+                state.status = 'GAMEOVER';
+                setTimeout(returnToSettings, 3000);
+            } else {
+                state.status = 'PLAYING';
+                showMessage("", "");
+                
+                state.activeKeyNum = null;
+                state.timeLeft = config.timeleft; 
+                
+                prepareCurrentKey(); 
+                startTimer();
+            }
+        }, 1000);
+    }
+
+    function initCablesGame() {
+        cancelAnimationFrame(state.animFrame);
+        clearInterval(state.timerInterval);
+        
+        showMessage('', '');
+        
+        cablesState = {
+            leftNodes: [],
+            rightNodes: [],
+            connections: {},
+            selectedLeft: null,
+            mouseX: undefined,
+            mouseY: undefined
+        };
+        
+        const colors = ['#f13a89', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#f97316', '#06b6d4', '#ef4444'];
+        const num = Math.min(config.cableCount, colors.length);
+        
+        for (let i = 0; i < num; i++) {
+            cablesState.leftNodes.push({ id: i, color: colors[i] });
+        }
+        cablesState.leftNodes.sort(() => Math.random() - 0.5);
+        
+        for (let i = 0; i < num; i++) {
+            cablesState.rightNodes.push({ id: i, color: colors[i] });
+        }
+        cablesState.rightNodes.sort(() => Math.random() - 0.5);
+        
+        const leftCol = document.getElementById('cables-left');
+        const rightCol = document.getElementById('cables-right');
+        leftCol.innerHTML = '';
+        rightCol.innerHTML = '';
+        
+        cablesState.leftNodes.forEach(node => {
+            const btn = document.createElement('button');
+            btn.className = 'cable-node';
+            btn.id = `cable-left-${node.id}`;
+            btn.dataset.id = node.id;
+            btn.dataset.color = node.color;
+            btn.style.color = node.color;
+            btn.innerHTML = `<span class="cable-node-inner"></span>`;
+            
+            btn.addEventListener('pointerdown', (e) => {
+                if (state.status !== 'PLAYING') return;
+                cablesState.selectedLeft = node.id;
+                
+                const rect = document.getElementById('cables-board').getBoundingClientRect();
+                cablesState.mouseX = e.clientX - rect.left;
+                cablesState.mouseY = e.clientY - rect.top;
+                
+                delete cablesState.connections[node.id];
+                
+                updateUI();
+                drawCables();
+                highlightNodes();
+            });
+            leftCol.appendChild(btn);
+        });
+        
+        cablesState.rightNodes.forEach(node => {
+            const btn = document.createElement('button');
+            btn.className = 'cable-node';
+            btn.id = `cable-right-${node.id}`;
+            btn.dataset.id = node.id;
+            btn.dataset.color = node.color;
+            btn.style.color = node.color;
+            btn.innerHTML = `<span class="cable-node-inner"></span>`;
+            
+            btn.addEventListener('pointerup', () => {
+                if (state.status !== 'PLAYING' || cablesState.selectedLeft === null) return;
+                
+                if (cablesState.selectedLeft === node.id) {
+                    cablesState.connections[cablesState.selectedLeft] = node.id;
+                    cablesState.selectedLeft = null;
+                    drawCables();
+                    updateUI();
+                    checkCablesWin();
+                } else {
+                    cablesState.selectedLeft = null;
+                    drawCables();
+                    highlightNodes();
+                    showMessage("Zły kabel!", "text-danger");
+                    setTimeout(() => {
+                        if (state.status === 'PLAYING') showMessage("", "");
+                    }, 1000);
+                }
+            });
+            rightCol.appendChild(btn);
+        });
+        
+        drawCables();
+        startPreparation();
+    }
+
+    function drawCables() {
+        const svg = document.getElementById('cables-svg');
+        const board = document.getElementById('cables-board');
+        const rect = board.getBoundingClientRect();
+        
+        svg.innerHTML = ''; 
+        
+        for (let leftIdx in cablesState.connections) {
+            const rightIdx = cablesState.connections[leftIdx];
+            
+            const leftNode = document.getElementById(`cable-left-${leftIdx}`);
+            const rightNode = document.getElementById(`cable-right-${rightIdx}`);
+            if (!leftNode || !rightNode) continue;
+            
+            const leftRect = leftNode.getBoundingClientRect();
+            const rightRect = rightNode.getBoundingClientRect();
+            
+            const x1 = leftRect.left - rect.left + leftRect.width / 2;
+            const y1 = leftRect.top - rect.top + leftRect.height / 2;
+            const x2 = rightRect.left - rect.left + rightRect.width / 2;
+            const y2 = rightRect.top - rect.top + rightRect.height / 2;
+            
+            const color = leftNode.dataset.color;
+            
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute('d', `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`);
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', '4');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('style', `filter: drop-shadow(0px 0px 5px ${color})`);
+            svg.appendChild(path);
+        }
+        
+        if (cablesState.selectedLeft !== null && cablesState.mouseX !== undefined && cablesState.mouseY !== undefined) {
+            const leftNode = document.getElementById(`cable-left-${cablesState.selectedLeft}`);
+            if (leftNode) {
+                const leftRect = leftNode.getBoundingClientRect();
+                const x1 = leftRect.left - rect.left + leftRect.width / 2;
+                const y1 = leftRect.top - rect.top + leftRect.height / 2;
+                const x2 = cablesState.mouseX;
+                const y2 = cablesState.mouseY;
+                const color = leftNode.dataset.color;
+                
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute('d', `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`);
+                path.setAttribute('stroke', color);
+                path.setAttribute('stroke-width', '4');
+                path.setAttribute('stroke-dasharray', '5,5');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('style', `filter: drop-shadow(0px 0px 5px ${color})`);
+                svg.appendChild(path);
+            }
+        }
+    }
+
+    function highlightNodes() {
+        const leftNodes = document.querySelectorAll('#cables-left .cable-node');
+        leftNodes.forEach(node => {
+            const nodeId = parseInt(node.dataset.id);
+            if (cablesState.selectedLeft === nodeId) {
+                node.classList.add('active-start');
+            } else {
+                node.classList.remove('active-start');
+            }
+        });
+    }
+
+    function checkCablesWin() {
+        const connectedCount = Object.keys(cablesState.connections).length;
+        if (connectedCount === cablesState.leftNodes.length) {
+            clearInterval(state.timerInterval);
+            showMessage("POLĄCZENIE UDANE!", "text-success");
+            state.status = 'WON';
+            setTimeout(returnToSettings, 3000);
+        }
+    }
+
+    const board = document.getElementById('cables-board');
+    board.addEventListener('pointermove', (e) => {
+        if (state.status !== 'PLAYING' || cablesState.selectedLeft === null) return;
+        const rect = board.getBoundingClientRect();
+        cablesState.mouseX = e.clientX - rect.left;
+        cablesState.mouseY = e.clientY - rect.top;
+        drawCables();
+    });
+
+    function initPuzzleGame() {
+        cancelAnimationFrame(state.animFrame);
+        clearInterval(state.timerInterval);
+        
+        showMessage('', '');
+        
+        puzzleState = {
+            board: [],
+            moves: 0,
+            solvedBoard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
+        };
+        
+        scramblePuzzle();
+        renderPuzzleBoard();
+        
+        startPreparation();
+    }
+
+    function scramblePuzzle() {
+        let board = [...puzzleState.solvedBoard];
+        let blankIdx = 15; 
+        
+        for (let i = 0; i < 180; i++) {
+            let validMoves = [];
+            let row = Math.floor(blankIdx / 4);
+            let col = blankIdx % 4;
+            
+            if (row > 0) validMoves.push(blankIdx - 4); 
+            if (row < 3) validMoves.push(blankIdx + 4); 
+            if (col > 0) validMoves.push(blankIdx - 1); 
+            if (col < 3) validMoves.push(blankIdx + 1); 
+            
+            let move = validMoves[Math.floor(Math.random() * validMoves.length)];
+            
+            board[blankIdx] = board[move];
+            board[move] = 0;
+            blankIdx = move;
+        }
+        
+        puzzleState.board = board;
+    }
+
+    function renderPuzzleBoard() {
+        const boardContainer = document.getElementById('puzzle-board');
+        boardContainer.innerHTML = '';
+        
+        for (let i = 0; i < 16; i++) {
+            const val = puzzleState.board[i];
+            const tile = document.createElement('div');
+            
+            if (val === 0) {
+                tile.className = 'puzzle-tile empty';
+            } else {
+                tile.className = 'puzzle-tile';
+                tile.innerText = val;
+                
+                if (val === i + 1) {
+                    tile.classList.add('correct');
+                }
+                
+                tile.addEventListener('pointerdown', () => {
+                    if (state.status !== 'PLAYING') return;
+                    handlePuzzleTileClick(i);
+                });
+            }
+            boardContainer.appendChild(tile);
+        }
+    }
+
+    function handlePuzzleTileClick(i) {
+        const blankIdx = puzzleState.board.indexOf(0);
+        
+        const r1 = Math.floor(i / 4);
+        const c1 = i % 4;
+        const r2 = Math.floor(blankIdx / 4);
+        const c2 = blankIdx % 4;
+        
+        const isAdjacent = (Math.abs(r1 - r2) === 1 && c1 === c2) || (r1 === r2 && Math.abs(c1 - c2) === 1);
+        
+        if (isAdjacent) {
+            puzzleState.board[blankIdx] = puzzleState.board[i];
+            puzzleState.board[i] = 0;
+            puzzleState.moves++;
+            
+            renderPuzzleBoard();
+            updateUI();
+            checkPuzzleWin();
+        }
+    }
+
+    function checkPuzzleWin() {
+        let isSolved = true;
+        for (let i = 0; i < 16; i++) {
+            if (puzzleState.board[i] !== puzzleState.solvedBoard[i]) {
+                isSolved = false;
+                break;
+            }
+        }
+        
+        if (isSolved) {
+            clearInterval(state.timerInterval);
+            showMessage("DEKODOWANIE UDANE!", "text-success");
+            state.status = 'WON';
+            setTimeout(returnToSettings, 3000);
+        }
+    }
+
+    window.addEventListener('mouseup', handleHoldRelease);
+    window.addEventListener('touchend', handleHoldRelease);
+    
+    window.addEventListener('pointerup', () => {
+        if (state.currentGame === 'cables' && state.status === 'PLAYING') {
+            setTimeout(() => {
+                if (cablesState.selectedLeft !== null) {
+                    cablesState.selectedLeft = null;
+                    drawCables();
+                    highlightNodes();
+                }
+            }, 100);
+        }
+    });
+
+    window.addEventListener('contextmenu', e => e.preventDefault());
+
+    generateKeypad();
+    loadPreset('sejf'); 
+    loadCablePreset('normal');
+    loadPuzzlePreset('normal');
+    switchGameSetup('keypad');
+</script>
+</body>
+</html>
