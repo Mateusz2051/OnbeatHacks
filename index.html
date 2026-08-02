@@ -440,7 +440,7 @@
             <div class="setting-group">
                 <label>Rozmiar planszy</label>
                 <div class="setting-control">
-                    <input type="number" id="in-lo-size" min="3" max="8" oninput="markLightsoutCustom()">
+                    <input type="number" id="in-lo-size" min="3" max="12" oninput="markLightsoutCustom()">
                 </div>
             </div>
             <div class="setting-group">
@@ -717,7 +717,7 @@
                 size: parseInt(document.getElementById('in-lo-size').value) || 4,
                 timeleft: parseInt(document.getElementById('in-lo-time').value) || 30
             };
-            if(config.size < 3) config.size = 3; if(config.size > 8) config.size = 8;
+            if(config.size < 3) config.size = 3; if(config.size > 12) config.size = 12;
             initLightsOutGame();
         }
         else if (gameType === 'slider') {
