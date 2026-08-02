@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,6 +45,8 @@
             box-shadow: 0 10px 40px rgba(241, 58, 137, 0.15);
             width: 360px;
             border: 1px solid var(--border-color);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .settings-header {
@@ -165,9 +167,7 @@
             font-weight: bold;
         }
 
-        #game-keypad-container {
-            display: none;
-        }
+        #game-keypad-container { display: none; }
 
         .code-display {
             font-size: 1.6rem;
@@ -245,10 +245,7 @@
             box-shadow: 0 0 8px var(--theme-pink);
         }
 
-        #game-cables-container {
-            display: none;
-        }
-
+        #game-cables-container { display: none; }
         .cables-board {
             position: relative;
             display: flex;
@@ -264,108 +261,55 @@
             overflow: hidden;
             touch-action: none;
         }
-
-        .cable-column {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            z-index: 2;
-        }
-
+        .cable-column { display: flex; flex-direction: column; justify-content: space-around; z-index: 2; }
         .cable-node {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            background-color: transparent;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s;
-            touch-action: none;
+            width: 44px; height: 44px; border-radius: 50%; border: none; background-color: transparent;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; touch-action: none;
         }
-
         .cable-node-inner {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: currentColor;
-            box-shadow: 0 0 12px currentColor;
-            transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+            width: 20px; height: 20px; border-radius: 50%; background-color: currentColor;
+            box-shadow: 0 0 12px currentColor; transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
         }
+        .cable-node:hover .cable-node-inner { transform: scale(1.2); }
+        .cable-node.active-start .cable-node-inner { transform: scale(1.3); background-color: #ffffff !important; box-shadow: 0 0 20px #ffffff, 0 0 10px currentColor; }
+        .cables-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
-        .cable-node:hover .cable-node-inner {
-            transform: scale(1.2);
-        }
-
-        .cable-node.active-start .cable-node-inner {
-            transform: scale(1.3);
-            background-color: #ffffff !important;
-            box-shadow: 0 0 20px #ffffff, 0 0 10px currentColor;
-        }
-
-        .cables-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        #game-puzzle-container {
-            display: none;
-        }
-
+        #game-puzzle-container { display: none; }
         .puzzle-board {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 8px;
+            display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 8px;
+            background: #000; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;
+            margin: 20px auto; width: 280px; height: 280px; box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6); touch-action: none;
+        }
+        .puzzle-tile {
+            background-color: var(--key-bg); border: 1px solid var(--border-color); border-radius: 6px;
+            color: #fff; font-size: 1.4rem; font-weight: bold; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.1s, border-color 0.2s, background-color 0.2s; touch-action: none;
+        }
+        .puzzle-tile:hover:not(.empty) { border-color: var(--theme-pink); box-shadow: 0 0 10px rgba(241, 58, 137, 0.4); }
+        .puzzle-tile.empty { background-color: transparent; border: 1px dashed rgba(63, 63, 70, 0.5); cursor: default; }
+        .puzzle-tile.correct { border-color: var(--success); color: var(--success); text-shadow: 0 0 5px rgba(34, 197, 94, 0.5); }
+
+        #game-lightsout-container { display: none; }
+        .lights-out-board {
+            display: grid; gap: 8px; margin: 20px auto; justify-content: center; padding: 15px;
+            background: #000; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+        .lo-cell {
+            background-color: var(--key-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            cursor: pointer; transition: all 0.2s, transform 0.1s; box-shadow: 0 4px 0 #000, 0 5px 10px rgba(0,0,0,0.5);
+        }
+        .lo-cell:active { transform: translateY(2px); box-shadow: 0 2px 0 #000, 0 2px 5px rgba(0,0,0,0.5); }
+        .lo-cell.on { background-color: var(--theme-pink); box-shadow: 0 4px 0 #000, 0 0 20px rgba(241, 58, 137, 0.6); border-color: var(--theme-pink); }
+        .lo-cell.on:active { box-shadow: 0 2px 0 #000, 0 0 15px rgba(241, 58, 137, 0.8); }
+
+        #game-slider-container { display: none; margin: 0 auto; }
+        #slider-canvas {
             background: #000;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 10px;
-            margin: 20px auto;
-            width: 280px;
-            height: 280px;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
-            touch-action: none;
-        }
-
-        .puzzle-tile {
-            background-color: var(--key-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: #fff;
-            font-size: 1.4rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s, border-color 0.2s, background-color 0.2s;
-            touch-action: none;
-        }
-
-        .puzzle-tile:hover:not(.empty) {
-            border-color: var(--theme-pink);
-            box-shadow: 0 0 10px rgba(241, 58, 137, 0.4);
-        }
-
-        .puzzle-tile.empty {
-            background-color: transparent;
-            border: 1px dashed rgba(63, 63, 70, 0.5);
-            cursor: default;
-        }
-
-        .puzzle-tile.correct {
-            border-color: var(--success);
-            color: var(--success);
-            text-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            display: block;
+            margin: 0 auto;
         }
 
         .message {
@@ -387,11 +331,13 @@
         <div class="settings-header">Onbeat Hacks</div>
         
         <div class="setting-group" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
-            <label style="margin-bottom: 8px; font-weight: bold; color: var(--theme-pink); letter-spacing: 1px;">Game Select</label>
+            <label style="margin-bottom: 8px; font-weight: bold; color: var(--theme-pink); letter-spacing: 1px;">Wybierz Grę</label>
             <select id="game-select" onchange="switchGameSetup(this.value)">
-                <option value="keypad" selected>Keypad</option>
+                <option value="keypad" selected>Keypad (Sekwencja)</option>
                 <option value="cables">Kabelki</option>
                 <option value="puzzle">15-Puzzle</option>
+                <option value="lightsout">Lights Out</option>
+                <option value="slider">Slider (Przeszkody)</option>
             </select>
         </div>
 
@@ -401,10 +347,9 @@
                     <option value="atm">ATM</option>
                     <option value="elektrozamek">Elektrozamek</option>
                     <option value="sejf" selected>Sejf</option>
-                    <option value="custom">Custom...</option>
+                    <option value="custom">Własne...</option>
                 </select>
             </div>
-
             <div class="setting-group">
                 <label>Rozmiar strefy (%)</label>
                 <div class="setting-control">
@@ -412,36 +357,31 @@
                     <input type="number" id="in-zone-max" min="1" max="100" oninput="markCustom()">
                 </div>
             </div>
-
             <div class="setting-group">
-                <label>Czas napelniania (ms)</label>
+                <label>Prędkość (ms)</label>
                 <div class="setting-control">
                     <input type="number" id="in-speed-min" min="100" step="100" oninput="markCustom()">
                     <input type="number" id="in-speed-max" min="100" step="100" oninput="markCustom()">
                 </div>
             </div>
-
             <div class="setting-group">
                 <label>Próby</label>
                 <div class="setting-control">
                     <input type="number" id="in-attempts" min="1" oninput="markCustom()">
                 </div>
             </div>
-
             <div class="setting-group">
                 <label>Rundy</label>
                 <div class="setting-control">
                     <input type="number" id="in-rounds" min="1" oninput="markCustom()">
                 </div>
             </div>
-
             <div class="setting-group">
                 <label>Długość kodu</label>
                 <div class="setting-control">
                     <input type="number" id="in-code-length" min="1" max="9" oninput="markCustom()">
                 </div>
             </div>
-
             <div class="setting-group">
                 <label>Czas (s) [0 = Off]</label>
                 <div class="setting-control">
@@ -456,17 +396,15 @@
                     <option value="normal" selected>Normal</option>
                     <option value="easy">Easy</option>
                     <option value="hard">Hard</option>
-                    <option value="custom">Custom...</option>
+                    <option value="custom">Własne...</option>
                 </select>
             </div>
-
             <div class="setting-group">
                 <label>Liczba kabelków</label>
                 <div class="setting-control">
                     <input type="number" id="in-cable-count" min="3" max="8" oninput="markCableCustom()">
                 </div>
             </div>
-
             <div class="setting-group">
                 <label>Czas (s) [0 = Off]</label>
                 <div class="setting-control">
@@ -481,10 +419,9 @@
                     <option value="normal" selected>Normal</option>
                     <option value="easy">Easy</option>
                     <option value="hard">Hard</option>
-                    <option value="custom">Custom...</option>
+                    <option value="custom">Własne...</option>
                 </select>
             </div>
-
             <div class="setting-group">
                 <label>Czas (s) [0 = Off]</label>
                 <div class="setting-control">
@@ -493,7 +430,63 @@
             </div>
         </div>
 
-        <button class="btn-apply" onclick="proceedToGame()">Proceed</button>
+        <div id="config-lightsout" style="display: none;">
+            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
+                <select id="preset-lightsout-select" onchange="loadLightsoutPreset(this.value)">
+                    <option value="normal" selected>Normal</option>
+                    <option value="custom">Własne...</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label>Rozmiar planszy</label>
+                <div class="setting-control">
+                    <input type="number" id="in-lo-size" min="3" max="8" oninput="markLightsoutCustom()">
+                </div>
+            </div>
+            <div class="setting-group">
+                <label>Czas (s) [0 = Off]</label>
+                <div class="setting-control">
+                    <input type="number" id="in-lo-time" min="0" oninput="markLightsoutCustom()">
+                </div>
+            </div>
+        </div>
+
+        <div id="config-slider" style="display: none;">
+            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
+                <select id="preset-slider-select" onchange="loadSliderPreset(this.value)">
+                    <option value="normal" selected>Normal</option>
+                    <option value="easy">Easy</option>
+                    <option value="hard">Hard</option>
+                    <option value="custom">Własne...</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label>Szer. luki (px)</label>
+                <div class="setting-control">
+                    <input type="number" id="in-slider-gap" min="20" max="150" oninput="markSliderCustom()">
+                </div>
+            </div>
+            <div class="setting-group">
+                <label>Prędkość spadania</label>
+                <div class="setting-control">
+                    <input type="number" id="in-slider-speed" min="1" max="10" oninput="markSliderCustom()">
+                </div>
+            </div>
+            <div class="setting-group">
+                <label>Ilość przeszkód</label>
+                <div class="setting-control">
+                    <input type="number" id="in-slider-target" min="1" oninput="markSliderCustom()">
+                </div>
+            </div>
+            <div class="setting-group">
+                <label>Próby (Życia)</label>
+                <div class="setting-control">
+                    <input type="number" id="in-slider-attempts" min="1" oninput="markSliderCustom()">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-apply" onclick="proceedToGame()">Rozpocznij</button>
     </div>
 
     <div id="screen-game" class="game-container" style="display: none;">
@@ -529,6 +522,17 @@
             <div class="puzzle-board" id="puzzle-board"></div>
         </div>
 
+        <div id="game-lightsout-container">
+            <div class="lights-out-board" id="lightsout-board"></div>
+        </div>
+
+        <div id="game-slider-container">
+            <canvas id="slider-canvas" width="400" height="400"></canvas>
+            <div style="font-size: 0.9rem; margin-top: 10px; color: var(--text-muted);">
+                Używaj <b>A</b> i <b>D</b> (lub strzałek) do sterowania!
+            </div>
+        </div>
+
         <div class="message" id="message"></div>
     </div>
 
@@ -540,15 +544,25 @@
     };
 
     const cablePresets = {
-        normal: { cableCount: 5, timeleft: 5 },
-        easy: { cableCount: 5, timeleft: 15 },
-        hard: { cableCount: 8, timeleft: 8 }
+        normal: { cableCount: 5, timeleft: 15 },
+        easy: { cableCount: 4, timeleft: 25 },
+        hard: { cableCount: 8, timeleft: 10 }
     };
 
     const puzzlePresets = {
         normal: { timeleft: 120 },
         easy: { timeleft: 180 },
         hard: { timeleft: 60 }
+    };
+
+    const lightsoutPresets = {
+        normal: { size: 9, timeleft: 180 }
+    };
+
+    const sliderPresets = {
+        normal: { gapWidth: 80, fallSpeed: 3, targetScore: 10, attempts: 3 },
+        easy: { gapWidth: 120, fallSpeed: 2, targetScore: 5, attempts: 5 },
+        hard: { gapWidth: 60, fallSpeed: 5, targetScore: 15, attempts: 2 }
     };
 
     let config = { ...presets.sejf };
@@ -573,19 +587,23 @@
     };
 
     let cablesState = {
-        leftNodes: [],
-        rightNodes: [],
-        connections: {},
-        selectedLeft: null,
-        mouseX: undefined,
-        mouseY: undefined
+        leftNodes: [], rightNodes: [], connections: {},
+        selectedLeft: null, mouseX: undefined, mouseY: undefined
     };
 
     let puzzleState = {
-        board: [],
-        moves: 0,
-        solvedBoard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
+        board: [], moves: 0, solvedBoard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
     };
+
+    let lightsoutState = {
+        board: [], size: 4
+    };
+
+    let sliderState = {
+        player: { x: 190, y: 350, w: 20, h: 25, speed: 5 },
+        bars: [], passed: 0, barSpacing: 180
+    };
+    const inputKeys = { a: false, d: false, ArrowLeft: false, ArrowRight: false };
 
     const elements = {
         screenSettings: document.getElementById('screen-settings'),
@@ -607,6 +625,8 @@
         document.getElementById('config-keypad').style.display = gameType === 'keypad' ? 'block' : 'none';
         document.getElementById('config-cables').style.display = gameType === 'cables' ? 'block' : 'none';
         document.getElementById('config-puzzle').style.display = gameType === 'puzzle' ? 'block' : 'none';
+        document.getElementById('config-lightsout').style.display = gameType === 'lightsout' ? 'block' : 'none';
+        document.getElementById('config-slider').style.display = gameType === 'slider' ? 'block' : 'none';
     }
 
     function loadPreset(presetName) {
@@ -621,10 +641,7 @@
         document.getElementById('in-code-length').value = p.codeLength;
         document.getElementById('in-time').value = p.timeleft || 0;
     }
-
-    function markCustom() {
-        elements.presetSelect.value = 'custom';
-    }
+    function markCustom() { elements.presetSelect.value = 'custom'; }
 
     function loadCablePreset(presetName) {
         if (presetName === 'custom') return;
@@ -632,20 +649,32 @@
         document.getElementById('in-cable-count').value = p.cableCount;
         document.getElementById('in-cable-time').value = p.timeleft;
     }
-
-    function markCableCustom() {
-        document.getElementById('preset-cable-select').value = 'custom';
-    }
+    function markCableCustom() { document.getElementById('preset-cable-select').value = 'custom'; }
 
     function loadPuzzlePreset(presetName) {
         if (presetName === 'custom') return;
         const p = puzzlePresets[presetName];
         document.getElementById('in-puzzle-time').value = p.timeleft;
     }
+    function markPuzzleCustom() { document.getElementById('preset-puzzle-select').value = 'custom'; }
 
-    function markPuzzleCustom() {
-        document.getElementById('preset-puzzle-select').value = 'custom';
+    function loadLightsoutPreset(presetName) {
+        if (presetName === 'custom') return;
+        const p = lightsoutPresets[presetName];
+        document.getElementById('in-lo-size').value = p.size;
+        document.getElementById('in-lo-time').value = p.timeleft;
     }
+    function markLightsoutCustom() { document.getElementById('preset-lightsout-select').value = 'custom'; }
+
+    function loadSliderPreset(presetName) {
+        if (presetName === 'custom') return;
+        const p = sliderPresets[presetName];
+        document.getElementById('in-slider-gap').value = p.gapWidth;
+        document.getElementById('in-slider-speed').value = p.fallSpeed;
+        document.getElementById('in-slider-target').value = p.targetScore;
+        document.getElementById('in-slider-attempts').value = p.attempts;
+    }
+    function markSliderCustom() { document.getElementById('preset-slider-select').value = 'custom'; }
 
     function proceedToGame() {
         const gameType = elements.gameSelect.value;
@@ -657,17 +686,13 @@
         document.getElementById('game-keypad-container').style.display = gameType === 'keypad' ? 'block' : 'none';
         document.getElementById('game-cables-container').style.display = gameType === 'cables' ? 'block' : 'none';
         document.getElementById('game-puzzle-container').style.display = gameType === 'puzzle' ? 'block' : 'none';
+        document.getElementById('game-lightsout-container').style.display = gameType === 'lightsout' ? 'block' : 'none';
+        document.getElementById('game-slider-container').style.display = gameType === 'slider' ? 'block' : 'none';
 
         if (gameType === 'keypad') {
             config = {
-                zoneSize: [
-                    parseInt(document.getElementById('in-zone-min').value) || 10,
-                    parseInt(document.getElementById('in-zone-max').value) || 20
-                ],
-                fillSpeed: [
-                    parseInt(document.getElementById('in-speed-min').value) || 500,
-                    parseInt(document.getElementById('in-speed-max').value) || 1000
-                ],
+                zoneSize: [ parseInt(document.getElementById('in-zone-min').value) || 10, parseInt(document.getElementById('in-zone-max').value) || 20 ],
+                fillSpeed: [ parseInt(document.getElementById('in-speed-min').value) || 500, parseInt(document.getElementById('in-speed-max').value) || 1000 ],
                 maxAttempts: parseInt(document.getElementById('in-attempts').value) || 3,
                 rounds: parseInt(document.getElementById('in-rounds').value) || 3,
                 codeLength: parseInt(document.getElementById('in-code-length').value) || 4,
@@ -675,17 +700,36 @@
             };
             if (config.codeLength > 9) config.codeLength = 9;
             initKeypadGame();
-        } else if (gameType === 'cables') {
+        } 
+        else if (gameType === 'cables') {
             config = {
                 cableCount: parseInt(document.getElementById('in-cable-count').value) || 5,
-                timeleft: parseInt(document.getElementById('in-cable-time').value) || 10
+                timeleft: parseInt(document.getElementById('in-cable-time').value) || 15
             };
             initCablesGame();
-        } else if (gameType === 'puzzle') {
-            config = {
-                timeleft: parseInt(document.getElementById('in-puzzle-time').value) || 60
-            };
+        } 
+        else if (gameType === 'puzzle') {
+            config = { timeleft: parseInt(document.getElementById('in-puzzle-time').value) || 60 };
             initPuzzleGame();
+        }
+        else if (gameType === 'lightsout') {
+            config = {
+                size: parseInt(document.getElementById('in-lo-size').value) || 4,
+                timeleft: parseInt(document.getElementById('in-lo-time').value) || 30
+            };
+            if(config.size < 3) config.size = 3; if(config.size > 8) config.size = 8;
+            initLightsOutGame();
+        }
+        else if (gameType === 'slider') {
+            config = {
+                gapWidth: parseInt(document.getElementById('in-slider-gap').value) || 80,
+                fallSpeed: parseInt(document.getElementById('in-slider-speed').value) || 3,
+                targetScore: parseInt(document.getElementById('in-slider-target').value) || 10,
+                maxAttempts: parseInt(document.getElementById('in-slider-attempts').value) || 3,
+                timeleft: 0
+            };
+            state.attempts = config.maxAttempts;
+            initSliderGame();
         }
     }
 
@@ -722,15 +766,9 @@
 
     function startActualRound() {
         state.status = 'PLAYING';
-        if (state.currentGame === 'keypad') {
-            startRound();
-        } else if (state.currentGame === 'cables') {
-            updateUI();
-            startTimer();
-        } else if (state.currentGame === 'puzzle') {
-            updateUI();
-            startTimer();
-        }
+        if (state.currentGame === 'keypad') startRound();
+        else if (state.currentGame === 'slider') startSliderRound();
+        else { updateUI(); startTimer(); }
     }
 
     function startTimer() {
@@ -751,7 +789,6 @@
             if (state.status !== 'PLAYING') return;
             
             state.timeLeft -= 0.1;
-            
             if (state.timeLeft <= 0) {
                 state.timeLeft = 0;
                 clearInterval(state.timerInterval);
@@ -768,7 +805,7 @@
         clearInterval(state.timerInterval);
         showMessage(msg, "text-danger");
 
-        if (state.currentGame === 'keypad') {
+        if (state.currentGame === 'keypad' || state.currentGame === 'slider') {
             failAttempt(msg);
         } else {
             state.status = 'GAMEOVER';
@@ -783,27 +820,41 @@
 
     function updateUI() {
         if (state.currentGame === 'keypad') {
-            elements.roundText.innerText = `Round: ${state.currentRound}/${config.rounds}`;
-            elements.attemptsText.innerText = `Attempts: ${state.attempts}`;
+            elements.roundText.innerText = `Runda: ${state.currentRound}/${config.rounds}`;
+            elements.attemptsText.innerText = `Próby: ${state.attempts}`;
             
             let codeHTML = '';
             for(let i=0; i < config.codeLength; i++) {
-                if (i < state.currentIndex) {
-                    codeHTML += `<span class="completed">${state.targetCode[i]}</span> `;
-                } else if (i === state.currentIndex) {
-                    codeHTML += `<span>${state.targetCode[i]}</span> `;
-                } else {
-                    codeHTML += `<span>_</span> `;
-                }
+                if (i < state.currentIndex) codeHTML += `<span class="completed">${state.targetCode[i]}</span> `;
+                else if (i === state.currentIndex) codeHTML += `<span>${state.targetCode[i]}</span> `;
+                else codeHTML += `<span>_</span> `;
             }
             elements.codeDisplay.innerHTML = codeHTML.trim();
-        } else if (state.currentGame === 'cables') {
+        } 
+        else if (state.currentGame === 'cables') {
             const connectedCount = Object.keys(cablesState.connections).length;
             elements.roundText.innerText = `Cables Setup`;
-            elements.attemptsText.innerText = `Linked: ${connectedCount}/${config.cableCount}`;
-        } else if (state.currentGame === 'puzzle') {
-            elements.roundText.innerText = `15-Puzzle Decrypter`;
-            elements.attemptsText.innerText = `Moves: ${puzzleState.moves}`;
+            elements.attemptsText.innerText = `Połączone: ${connectedCount}/${config.cableCount}`;
+        } 
+        else if (state.currentGame === 'puzzle') {
+            elements.roundText.innerText = `15-Puzzle`;
+            elements.attemptsText.innerText = `Ruchy: ${puzzleState.moves}`;
+        }
+        else if (state.currentGame === 'lightsout') {
+            let lightsOn = 0;
+            if(lightsoutState.board.length > 0) {
+                for(let r=0; r<config.size; r++){
+                    for(let c=0; c<config.size; c++){
+                        if(lightsoutState.board[r][c]) lightsOn++;
+                    }
+                }
+            }
+            elements.roundText.innerText = `Lights Out`;
+            elements.attemptsText.innerText = `Do wył.: ${lightsOn}`;
+        }
+        else if (state.currentGame === 'slider') {
+            elements.roundText.innerText = `Przeszkody: ${sliderState.passed}/${config.targetScore}`;
+            elements.attemptsText.innerText = `Życia: ${state.attempts}`;
         }
         
         if (config.timeleft && state.timeLeft > 5) {
@@ -840,13 +891,10 @@
     function initKeypadGame() {
         cancelAnimationFrame(state.animFrame);
         clearInterval(state.timerInterval);
-        
         state.currentRound = 1;
         state.attempts = config.maxAttempts;
         showMessage('', '');
-        
         for(let i = 1; i <= 9; i++) resetProgressBar(i);
-        
         startPreparation(); 
     }
 
@@ -868,19 +916,15 @@
 
     function resetProgressBar(keyNum) {
         const k = elements.keys[keyNum];
-        k.zone.style.display = 'none';
-        k.fill.style.width = '0%';
-        k.fill.style.backgroundColor = 'var(--theme-pink)';
-        k.fill.style.boxShadow = '0 0 8px var(--theme-pink)';
+        k.zone.style.display = 'none'; k.fill.style.width = '0%';
+        k.fill.style.backgroundColor = 'var(--theme-pink)'; k.fill.style.boxShadow = '0 0 8px var(--theme-pink)';
     }
 
     function prepareCurrentKey() {
         if (state.currentIndex >= config.codeLength) return;
-
         for (let i = 1; i <= 9; i++) resetProgressBar(i);
 
         const expectedKey = state.targetCode[state.currentIndex];
-        
         const zoneWidth = randomInt(config.zoneSize[0], config.zoneSize[1]);
         state.zoneStart = randomInt(10, 100 - zoneWidth - 5); 
         state.zoneEnd = state.zoneStart + zoneWidth;
@@ -893,15 +937,12 @@
     }
 
     function handleHoldStart(keyNum, keyElement) {
-        if (state.status !== 'PLAYING') return;
+        if (state.status !== 'PLAYING' || state.currentGame !== 'keypad') return;
         
         const expectedKey = state.targetCode[state.currentIndex];
         state.activeKeyNum = parseInt(keyNum);
 
-        if (state.activeKeyNum !== expectedKey) {
-            failAttempt("Zły przycisk!"); 
-            return;
-        }
+        if (state.activeKeyNum !== expectedKey) { failAttempt("Zły przycisk!"); return; }
 
         state.isHolding = true;
         keyElement.classList.add('active');
@@ -917,36 +958,24 @@
 
     function animateProgress(timestamp) {
         if (!state.isHolding || !state.activeKeyNum) return;
-
         const elapsed = timestamp - state.startTime;
         state.progressValue = Math.min((elapsed / state.fillDuration) * 100, 100);
-        
         elements.keys[state.activeKeyNum].fill.style.width = `${state.progressValue}%`;
-
-        if (state.progressValue >= 100) {
-            handleHoldRelease(); 
-            return;
-        }
-
+        if (state.progressValue >= 100) { handleHoldRelease(); return; }
         state.animFrame = requestAnimationFrame(animateProgress);
     }
 
     function handleHoldRelease() {
-        if (!state.isHolding || state.status !== 'PLAYING') return;
-        
+        if (!state.isHolding || state.status !== 'PLAYING' || state.currentGame !== 'keypad') return;
         state.isHolding = false;
         cancelAnimationFrame(state.animFrame);
         
         const activeKey = state.activeKeyNum;
         state.activeKeyNum = null;
-
         for(let i = 1; i <= 9; i++) elements.keys[i].btn.classList.remove('active');
 
-        if (state.progressValue >= state.zoneStart && state.progressValue <= state.zoneEnd) {
-            successStep(activeKey);
-        } else {
-            failAttempt("Pudło!"); 
-        }
+        if (state.progressValue >= state.zoneStart && state.progressValue <= state.zoneEnd) successStep(activeKey);
+        else failAttempt("Pudło!"); 
     }
 
     function successStep(keyNum) {
@@ -972,10 +1001,7 @@
             }, 1000);
         } else {
             updateUI(); 
-            setTimeout(() => {
-                prepareCurrentKey(); 
-                state.status = 'PLAYING';
-            }, 250);
+            setTimeout(() => { prepareCurrentKey(); state.status = 'PLAYING'; }, 250);
         }
     }
 
@@ -986,13 +1012,12 @@
         state.isHolding = false;
         cancelAnimationFrame(state.animFrame);
         
-        for(let i = 1; i <= 9; i++) elements.keys[i].btn.classList.remove('active');
-        
-        if (state.activeKeyNum) {
-            elements.keys[state.activeKeyNum].fill.style.backgroundColor = 'var(--danger)';
-            elements.keys[state.activeKeyNum].fill.style.boxShadow = '0 0 8px var(--danger)';
-            if (state.progressValue === 0) {
-                elements.keys[state.activeKeyNum].fill.style.width = '100%'; 
+        if (state.currentGame === 'keypad') {
+            for(let i = 1; i <= 9; i++) elements.keys[i].btn.classList.remove('active');
+            if (state.activeKeyNum) {
+                elements.keys[state.activeKeyNum].fill.style.backgroundColor = 'var(--danger)';
+                elements.keys[state.activeKeyNum].fill.style.boxShadow = '0 0 8px var(--danger)';
+                if (state.progressValue === 0) elements.keys[state.activeKeyNum].fill.style.width = '100%'; 
             }
         }
 
@@ -1008,323 +1033,364 @@
                 state.status = 'PLAYING';
                 showMessage("", "");
                 
-                state.activeKeyNum = null;
-                state.timeLeft = config.timeleft; 
-                
-                prepareCurrentKey(); 
-                startTimer();
+                if (state.currentGame === 'keypad') {
+                    state.activeKeyNum = null;
+                    state.timeLeft = config.timeleft; 
+                    prepareCurrentKey(); 
+                    startTimer();
+                } else if (state.currentGame === 'slider') {
+                    startSliderRound();
+                }
             }
         }, 1000);
     }
 
-    function initCablesGame() {
+    function initSliderGame() {
         cancelAnimationFrame(state.animFrame);
         clearInterval(state.timerInterval);
-        
         showMessage('', '');
         
-        cablesState = {
-            leftNodes: [],
-            rightNodes: [],
-            connections: {},
-            selectedLeft: null,
-            mouseX: undefined,
-            mouseY: undefined
-        };
+        inputKeys.a = false; inputKeys.d = false; 
+        inputKeys.ArrowLeft = false; inputKeys.ArrowRight = false;
         
+        startPreparation();
+    }
+
+    function startSliderRound() {
+        sliderState.player.x = 190;
+        sliderState.bars = [];
+        sliderState.passed = 0;
+        
+        spawnSliderBar(-20);
+
+        updateUI();
+        startTimer();
+        sliderLoop();
+    }
+
+    function spawnSliderBar(startY) {
+        let gapX = randomInt(10, 400 - config.gapWidth - 10);
+        sliderState.bars.push({
+            y: startY,
+            h: 15,
+            gapX: gapX,
+            gapW: config.gapWidth,
+            passed: false
+        });
+    }
+
+    function sliderLoop() {
+        if (state.status !== 'PLAYING' || state.currentGame !== 'slider') return;
+
+        if (inputKeys.a || inputKeys.ArrowLeft) sliderState.player.x -= sliderState.player.speed;
+        if (inputKeys.d || inputKeys.ArrowRight) sliderState.player.x += sliderState.player.speed;
+
+        if (sliderState.player.x < 0) sliderState.player.x = 0;
+        if (sliderState.player.x + sliderState.player.w > 400) sliderState.player.x = 400 - sliderState.player.w;
+
+        let hit = false;
+        for (let i = 0; i < sliderState.bars.length; i++) {
+            let b = sliderState.bars[i];
+            b.y += config.fallSpeed;
+
+            if (sliderState.player.y < b.y + b.h && sliderState.player.y + sliderState.player.h > b.y) {
+                if (sliderState.player.x < b.gapX || sliderState.player.x + sliderState.player.w > b.gapX + b.gapW) {
+                    hit = true;
+                }
+            }
+
+            if (!b.passed && b.y > sliderState.player.y + sliderState.player.h) {
+                b.passed = true;
+                sliderState.passed++;
+                updateUI();
+                if (sliderState.passed >= config.targetScore) {
+                    state.status = 'WON';
+                    drawSlider();
+                    showMessage("HACKOWANIE UDANE", "text-success");
+                    setTimeout(returnToSettings, 3000);
+                    return;
+                }
+            }
+        }
+
+        if (hit) {
+            drawSlider();
+            failAttempt("Zderzenie!");
+            return; 
+        }
+
+        sliderState.bars = sliderState.bars.filter(b => b.y < 450);
+
+        let lastBar = sliderState.bars[sliderState.bars.length - 1];
+        if (!lastBar || lastBar.y >= sliderState.barSpacing) {
+            spawnSliderBar(lastBar ? lastBar.y - sliderState.barSpacing : -20);
+        }
+
+        drawSlider();
+        state.animFrame = requestAnimationFrame(sliderLoop);
+    }
+
+    function drawSlider() {
+        const canvas = document.getElementById('slider-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = 'var(--theme-pink)';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'var(--theme-pink)';
+
+        sliderState.bars.forEach(b => {
+            ctx.fillRect(0, b.y, b.gapX, b.h);
+            ctx.fillRect(b.gapX + b.gapW, b.y, canvas.width - (b.gapX + b.gapW), b.h);
+        });
+
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ffffff';
+        
+        let p = sliderState.player;
+        ctx.beginPath();
+        ctx.moveTo(p.x + p.w / 2, p.y);
+        ctx.lineTo(p.x + p.w, p.y + p.h / 2);
+        ctx.lineTo(p.x + p.w * 0.75, p.y + p.h / 2);
+        ctx.lineTo(p.x + p.w * 0.75, p.y + p.h);
+        ctx.lineTo(p.x + p.w * 0.25, p.y + p.h);
+        ctx.lineTo(p.x + p.w * 0.25, p.y + p.h / 2);
+        ctx.lineTo(p.x, p.y + p.h / 2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+    }
+
+    window.addEventListener('keydown', e => {
+        if (inputKeys.hasOwnProperty(e.key)) inputKeys[e.key] = true;
+        if (e.key === 'a' || e.key === 'A') inputKeys.a = true;
+        if (e.key === 'd' || e.key === 'D') inputKeys.d = true;
+    });
+    window.addEventListener('keyup', e => {
+        if (inputKeys.hasOwnProperty(e.key)) inputKeys[e.key] = false;
+        if (e.key === 'a' || e.key === 'A') inputKeys.a = false;
+        if (e.key === 'd' || e.key === 'D') inputKeys.d = false;
+    });
+
+    function initCablesGame() {
+        clearInterval(state.timerInterval);
+        showMessage('', '');
+        cablesState = { leftNodes: [], rightNodes: [], connections: {}, selectedLeft: null, mouseX: undefined, mouseY: undefined };
         const colors = ['#f13a89', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#f97316', '#06b6d4', '#ef4444'];
         const num = Math.min(config.cableCount, colors.length);
-        
-        for (let i = 0; i < num; i++) {
-            cablesState.leftNodes.push({ id: i, color: colors[i] });
-        }
+        for (let i = 0; i < num; i++) { cablesState.leftNodes.push({ id: i, color: colors[i] }); }
         cablesState.leftNodes.sort(() => Math.random() - 0.5);
-        
-        for (let i = 0; i < num; i++) {
-            cablesState.rightNodes.push({ id: i, color: colors[i] });
-        }
+        for (let i = 0; i < num; i++) { cablesState.rightNodes.push({ id: i, color: colors[i] }); }
         cablesState.rightNodes.sort(() => Math.random() - 0.5);
-        
-        const leftCol = document.getElementById('cables-left');
-        const rightCol = document.getElementById('cables-right');
-        leftCol.innerHTML = '';
-        rightCol.innerHTML = '';
+        const leftCol = document.getElementById('cables-left'); const rightCol = document.getElementById('cables-right');
+        leftCol.innerHTML = ''; rightCol.innerHTML = '';
         
         cablesState.leftNodes.forEach(node => {
-            const btn = document.createElement('button');
-            btn.className = 'cable-node';
-            btn.id = `cable-left-${node.id}`;
-            btn.dataset.id = node.id;
-            btn.dataset.color = node.color;
-            btn.style.color = node.color;
+            const btn = document.createElement('button'); btn.className = 'cable-node'; btn.id = `cable-left-${node.id}`;
+            btn.dataset.id = node.id; btn.dataset.color = node.color; btn.style.color = node.color;
             btn.innerHTML = `<span class="cable-node-inner"></span>`;
-            
             btn.addEventListener('pointerdown', (e) => {
                 if (state.status !== 'PLAYING') return;
                 cablesState.selectedLeft = node.id;
-                
                 const rect = document.getElementById('cables-board').getBoundingClientRect();
-                cablesState.mouseX = e.clientX - rect.left;
-                cablesState.mouseY = e.clientY - rect.top;
-                
-                delete cablesState.connections[node.id];
-                
-                updateUI();
-                drawCables();
-                highlightNodes();
+                cablesState.mouseX = e.clientX - rect.left; cablesState.mouseY = e.clientY - rect.top;
+                delete cablesState.connections[node.id]; updateUI(); drawCables(); highlightNodes();
             });
             leftCol.appendChild(btn);
         });
         
         cablesState.rightNodes.forEach(node => {
-            const btn = document.createElement('button');
-            btn.className = 'cable-node';
-            btn.id = `cable-right-${node.id}`;
-            btn.dataset.id = node.id;
-            btn.dataset.color = node.color;
-            btn.style.color = node.color;
+            const btn = document.createElement('button'); btn.className = 'cable-node'; btn.id = `cable-right-${node.id}`;
+            btn.dataset.id = node.id; btn.dataset.color = node.color; btn.style.color = node.color;
             btn.innerHTML = `<span class="cable-node-inner"></span>`;
-            
             btn.addEventListener('pointerup', () => {
                 if (state.status !== 'PLAYING' || cablesState.selectedLeft === null) return;
-                
                 if (cablesState.selectedLeft === node.id) {
                     cablesState.connections[cablesState.selectedLeft] = node.id;
-                    cablesState.selectedLeft = null;
-                    drawCables();
-                    updateUI();
-                    checkCablesWin();
+                    cablesState.selectedLeft = null; drawCables(); updateUI(); checkCablesWin();
                 } else {
-                    cablesState.selectedLeft = null;
-                    drawCables();
-                    highlightNodes();
+                    cablesState.selectedLeft = null; drawCables(); highlightNodes();
                     showMessage("Zły kabel!", "text-danger");
-                    setTimeout(() => {
-                        if (state.status === 'PLAYING') showMessage("", "");
-                    }, 1000);
+                    setTimeout(() => { if (state.status === 'PLAYING') showMessage("", ""); }, 1000);
                 }
             });
             rightCol.appendChild(btn);
         });
         
-        drawCables();
-        startPreparation();
+        drawCables(); startPreparation();
     }
-
     function drawCables() {
-        const svg = document.getElementById('cables-svg');
-        const board = document.getElementById('cables-board');
-        const rect = board.getBoundingClientRect();
-        
-        svg.innerHTML = ''; 
-        
+        const svg = document.getElementById('cables-svg'); const board = document.getElementById('cables-board');
+        const rect = board.getBoundingClientRect(); svg.innerHTML = ''; 
         for (let leftIdx in cablesState.connections) {
             const rightIdx = cablesState.connections[leftIdx];
-            
-            const leftNode = document.getElementById(`cable-left-${leftIdx}`);
-            const rightNode = document.getElementById(`cable-right-${rightIdx}`);
+            const leftNode = document.getElementById(`cable-left-${leftIdx}`); const rightNode = document.getElementById(`cable-right-${rightIdx}`);
             if (!leftNode || !rightNode) continue;
-            
-            const leftRect = leftNode.getBoundingClientRect();
-            const rightRect = rightNode.getBoundingClientRect();
-            
-            const x1 = leftRect.left - rect.left + leftRect.width / 2;
-            const y1 = leftRect.top - rect.top + leftRect.height / 2;
-            const x2 = rightRect.left - rect.left + rightRect.width / 2;
-            const y2 = rightRect.top - rect.top + rightRect.height / 2;
-            
+            const leftRect = leftNode.getBoundingClientRect(); const rightRect = rightNode.getBoundingClientRect();
+            const x1 = leftRect.left - rect.left + leftRect.width / 2; const y1 = leftRect.top - rect.top + leftRect.height / 2;
+            const x2 = rightRect.left - rect.left + rightRect.width / 2; const y2 = rightRect.top - rect.top + rightRect.height / 2;
             const color = leftNode.dataset.color;
-            
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute('d', `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`);
-            path.setAttribute('stroke', color);
-            path.setAttribute('stroke-width', '4');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('style', `filter: drop-shadow(0px 0px 5px ${color})`);
+            path.setAttribute('stroke', color); path.setAttribute('stroke-width', '4'); path.setAttribute('fill', 'none'); path.setAttribute('style', `filter: drop-shadow(0px 0px 5px ${color})`);
             svg.appendChild(path);
         }
-        
         if (cablesState.selectedLeft !== null && cablesState.mouseX !== undefined && cablesState.mouseY !== undefined) {
             const leftNode = document.getElementById(`cable-left-${cablesState.selectedLeft}`);
             if (leftNode) {
                 const leftRect = leftNode.getBoundingClientRect();
-                const x1 = leftRect.left - rect.left + leftRect.width / 2;
-                const y1 = leftRect.top - rect.top + leftRect.height / 2;
-                const x2 = cablesState.mouseX;
-                const y2 = cablesState.mouseY;
-                const color = leftNode.dataset.color;
-                
+                const x1 = leftRect.left - rect.left + leftRect.width / 2; const y1 = leftRect.top - rect.top + leftRect.height / 2;
+                const x2 = cablesState.mouseX; const y2 = cablesState.mouseY; const color = leftNode.dataset.color;
                 const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 path.setAttribute('d', `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`);
-                path.setAttribute('stroke', color);
-                path.setAttribute('stroke-width', '4');
-                path.setAttribute('stroke-dasharray', '5,5');
-                path.setAttribute('fill', 'none');
-                path.setAttribute('style', `filter: drop-shadow(0px 0px 5px ${color})`);
+                path.setAttribute('stroke', color); path.setAttribute('stroke-width', '4'); path.setAttribute('stroke-dasharray', '5,5'); path.setAttribute('fill', 'none'); path.setAttribute('style', `filter: drop-shadow(0px 0px 5px ${color})`);
                 svg.appendChild(path);
             }
         }
     }
-
     function highlightNodes() {
         const leftNodes = document.querySelectorAll('#cables-left .cable-node');
         leftNodes.forEach(node => {
             const nodeId = parseInt(node.dataset.id);
-            if (cablesState.selectedLeft === nodeId) {
-                node.classList.add('active-start');
-            } else {
-                node.classList.remove('active-start');
-            }
+            if (cablesState.selectedLeft === nodeId) node.classList.add('active-start');
+            else node.classList.remove('active-start');
         });
     }
-
     function checkCablesWin() {
-        const connectedCount = Object.keys(cablesState.connections).length;
-        if (connectedCount === cablesState.leftNodes.length) {
-            clearInterval(state.timerInterval);
-            showMessage("POLĄCZENIE UDANE!", "text-success");
-            state.status = 'WON';
-            setTimeout(returnToSettings, 3000);
+        if (Object.keys(cablesState.connections).length === cablesState.leftNodes.length) {
+            clearInterval(state.timerInterval); showMessage("POŁĄCZENIE UDANE!", "text-success");
+            state.status = 'WON'; setTimeout(returnToSettings, 3000);
         }
     }
-
-    const board = document.getElementById('cables-board');
-    board.addEventListener('pointermove', (e) => {
+    const cablesBoard = document.getElementById('cables-board');
+    cablesBoard.addEventListener('pointermove', (e) => {
         if (state.status !== 'PLAYING' || cablesState.selectedLeft === null) return;
-        const rect = board.getBoundingClientRect();
-        cablesState.mouseX = e.clientX - rect.left;
-        cablesState.mouseY = e.clientY - rect.top;
-        drawCables();
+        const rect = cablesBoard.getBoundingClientRect();
+        cablesState.mouseX = e.clientX - rect.left; cablesState.mouseY = e.clientY - rect.top; drawCables();
     });
 
     function initPuzzleGame() {
-        cancelAnimationFrame(state.animFrame);
-        clearInterval(state.timerInterval);
-        
-        showMessage('', '');
-        
-        puzzleState = {
-            board: [],
-            moves: 0,
-            solvedBoard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
-        };
-        
-        scramblePuzzle();
-        renderPuzzleBoard();
-        
-        startPreparation();
+        clearInterval(state.timerInterval); showMessage('', '');
+        puzzleState = { board: [], moves: 0, solvedBoard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0] };
+        scramblePuzzle(); renderPuzzleBoard(); startPreparation();
     }
-
     function scramblePuzzle() {
-        let board = [...puzzleState.solvedBoard];
-        let blankIdx = 15; 
-        
+        let board = [...puzzleState.solvedBoard]; let blankIdx = 15; 
         for (let i = 0; i < 180; i++) {
-            let validMoves = [];
-            let row = Math.floor(blankIdx / 4);
-            let col = blankIdx % 4;
-            
-            if (row > 0) validMoves.push(blankIdx - 4); 
-            if (row < 3) validMoves.push(blankIdx + 4); 
-            if (col > 0) validMoves.push(blankIdx - 1); 
-            if (col < 3) validMoves.push(blankIdx + 1); 
-            
+            let validMoves = []; let row = Math.floor(blankIdx / 4); let col = blankIdx % 4;
+            if (row > 0) validMoves.push(blankIdx - 4); if (row < 3) validMoves.push(blankIdx + 4); 
+            if (col > 0) validMoves.push(blankIdx - 1); if (col < 3) validMoves.push(blankIdx + 1); 
             let move = validMoves[Math.floor(Math.random() * validMoves.length)];
-            
-            board[blankIdx] = board[move];
-            board[move] = 0;
-            blankIdx = move;
+            board[blankIdx] = board[move]; board[move] = 0; blankIdx = move;
         }
-        
         puzzleState.board = board;
     }
-
     function renderPuzzleBoard() {
-        const boardContainer = document.getElementById('puzzle-board');
-        boardContainer.innerHTML = '';
-        
+        const boardContainer = document.getElementById('puzzle-board'); boardContainer.innerHTML = '';
         for (let i = 0; i < 16; i++) {
-            const val = puzzleState.board[i];
-            const tile = document.createElement('div');
-            
-            if (val === 0) {
-                tile.className = 'puzzle-tile empty';
-            } else {
-                tile.className = 'puzzle-tile';
-                tile.innerText = val;
-                
-                if (val === i + 1) {
-                    tile.classList.add('correct');
-                }
-                
-                tile.addEventListener('pointerdown', () => {
-                    if (state.status !== 'PLAYING') return;
-                    handlePuzzleTileClick(i);
-                });
+            const val = puzzleState.board[i]; const tile = document.createElement('div');
+            if (val === 0) { tile.className = 'puzzle-tile empty'; } else {
+                tile.className = 'puzzle-tile'; tile.innerText = val;
+                if (val === i + 1) tile.classList.add('correct');
+                tile.addEventListener('pointerdown', () => { if (state.status !== 'PLAYING') return; handlePuzzleTileClick(i); });
             }
             boardContainer.appendChild(tile);
         }
     }
-
     function handlePuzzleTileClick(i) {
         const blankIdx = puzzleState.board.indexOf(0);
-        
-        const r1 = Math.floor(i / 4);
-        const c1 = i % 4;
-        const r2 = Math.floor(blankIdx / 4);
-        const c2 = blankIdx % 4;
-        
+        const r1 = Math.floor(i / 4); const c1 = i % 4; const r2 = Math.floor(blankIdx / 4); const c2 = blankIdx % 4;
         const isAdjacent = (Math.abs(r1 - r2) === 1 && c1 === c2) || (r1 === r2 && Math.abs(c1 - c2) === 1);
-        
         if (isAdjacent) {
-            puzzleState.board[blankIdx] = puzzleState.board[i];
-            puzzleState.board[i] = 0;
-            puzzleState.moves++;
-            
-            renderPuzzleBoard();
-            updateUI();
-            checkPuzzleWin();
+            puzzleState.board[blankIdx] = puzzleState.board[i]; puzzleState.board[i] = 0; puzzleState.moves++;
+            renderPuzzleBoard(); updateUI(); checkPuzzleWin();
+        }
+    }
+    function checkPuzzleWin() {
+        let isSolved = true;
+        for (let i = 0; i < 16; i++) { if (puzzleState.board[i] !== puzzleState.solvedBoard[i]) { isSolved = false; break; } }
+        if (isSolved) {
+            clearInterval(state.timerInterval); showMessage("DEKODOWANIE UDANE!", "text-success");
+            state.status = 'WON'; setTimeout(returnToSettings, 3000);
         }
     }
 
-    function checkPuzzleWin() {
-        let isSolved = true;
-        for (let i = 0; i < 16; i++) {
-            if (puzzleState.board[i] !== puzzleState.solvedBoard[i]) {
-                isSolved = false;
-                break;
+    function initLightsOutGame() {
+        clearInterval(state.timerInterval); showMessage('', '');
+        lightsoutState.size = config.size; loGenerateGrid(); scrambleLightsOut(); loRender(); startPreparation();
+    }
+    function loGenerateGrid() {
+        const boardEl = document.getElementById('lightsout-board');
+        boardEl.style.gridTemplateColumns = `repeat(${lightsoutState.size}, 1fr)`; boardEl.innerHTML = ''; lightsoutState.board = [];
+        let cellSize = Math.floor(400 / lightsoutState.size) - 10;
+        if (cellSize > 80) cellSize = 80; if (cellSize < 30) cellSize = 30; 
+        for (let r = 0; r < lightsoutState.size; r++) {
+            let row = [];
+            for (let c = 0; c < lightsoutState.size; c++) {
+                row.push(false); let cell = document.createElement('div'); cell.className = 'lo-cell';
+                cell.style.width = `${cellSize}px`; cell.style.height = `${cellSize}px`; cell.dataset.r = r; cell.dataset.c = c;
+                const trigger = (e) => { e.preventDefault(); loHandleClick(r, c); };
+                cell.addEventListener('mousedown', trigger); cell.addEventListener('touchstart', trigger);
+                boardEl.appendChild(cell);
+            }
+            lightsoutState.board.push(row);
+        }
+    }
+    function scrambleLightsOut() {
+        let moves = lightsoutState.size * lightsoutState.size * 2;
+        for(let i=0; i<moves; i++) {
+            let rr = randomInt(0, lightsoutState.size-1); let cc = randomInt(0, lightsoutState.size-1);
+            loToggle(rr, cc, false);
+        }
+        if (loCheckWinCondition()) loToggle(0, 0, false); 
+    }
+    function loToggle(r, c, checkWinFlag = true) {
+        const toggleSingle = (row, col) => {
+            if (row >= 0 && row < lightsoutState.size && col >= 0 && col < lightsoutState.size) { lightsoutState.board[row][col] = !lightsoutState.board[row][col]; }
+        };
+        toggleSingle(r, c); toggleSingle(r-1, c); toggleSingle(r+1, c); toggleSingle(r, c-1); toggleSingle(r, c+1);
+        if (checkWinFlag) {
+            loRender(); updateUI();
+            if (loCheckWinCondition()) {
+                clearInterval(state.timerInterval); showMessage("ZASILANIE WYŁĄCZONE!", "text-success");
+                state.status = 'WON'; setTimeout(returnToSettings, 3000);
             }
         }
-        
-        if (isSolved) {
-            clearInterval(state.timerInterval);
-            showMessage("DEKODOWANIE UDANE!", "text-success");
-            state.status = 'WON';
-            setTimeout(returnToSettings, 3000);
-        }
+    }
+    function loHandleClick(r, c) {
+        if (state.status !== 'PLAYING' || state.currentGame !== 'lightsout') return;
+        loToggle(r, c, true);
+    }
+    function loRender() {
+        const cells = document.querySelectorAll('#lightsout-board .lo-cell');
+        cells.forEach(cell => {
+            let r = parseInt(cell.dataset.r); let c = parseInt(cell.dataset.c);
+            if (lightsoutState.board[r][c]) cell.classList.add('on'); else cell.classList.remove('on');
+        });
+    }
+    function loCheckWinCondition() {
+        for(let r=0; r < lightsoutState.size; r++) { for(let c=0; c < lightsoutState.size; c++) { if (lightsoutState.board[r][c] === true) return false; } } return true;
     }
 
     window.addEventListener('mouseup', handleHoldRelease);
     window.addEventListener('touchend', handleHoldRelease);
-    
     window.addEventListener('pointerup', () => {
         if (state.currentGame === 'cables' && state.status === 'PLAYING') {
             setTimeout(() => {
-                if (cablesState.selectedLeft !== null) {
-                    cablesState.selectedLeft = null;
-                    drawCables();
-                    highlightNodes();
-                }
+                if (cablesState.selectedLeft !== null) { cablesState.selectedLeft = null; drawCables(); highlightNodes(); }
             }, 100);
         }
     });
-
     window.addEventListener('contextmenu', e => e.preventDefault());
 
     generateKeypad();
     loadPreset('sejf'); 
     loadCablePreset('normal');
     loadPuzzlePreset('normal');
+    loadLightsoutPreset('normal');
+    loadSliderPreset('normal');
     switchGameSetup('keypad');
 </script>
 </body>
