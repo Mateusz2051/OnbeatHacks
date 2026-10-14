@@ -1,1397 +1,2810 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hacking Minigames</title>
+    <title>Onbeat Hacks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
+        /* ── Tokens ─────────────────────────────────────────────── */
         :root {
-            --bg-color: #09090b;
-            --panel-bg: #18181b;
-            --theme-pink: #f13a89;
-            --text-main: #f13a89;         
-            --text-muted: #71717a;
+            --bg: #09090b;
+            --surface: #111113;
+            --surface2: #18181b;
+            --border: #2a2a2e;
+            --border2: #3f3f46;
+            --pink: #f13a89;
+            --pink-dim: rgba(241, 58, 137, .12);
+            --pink-glow: rgba(241, 58, 137, .35);
+            --text: #f4f4f5;
+            --muted: #71717a;
             --success: #22c55e;
             --danger: #ef4444;
-            --warning: #eab308;
-            --key-bg: #27272a;
-            --key-active: #f13a89;
-            --key-text-active: #111111;
-            --track-bg: #000000;
-            --border-color: #3f3f46;
+            --warn: #f59e0b;
+            --cyan: #22d3ee;
+            --radius: 10px;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Inter', sans-serif;
         }
 
-        * {
+        /* ── Reset ──────────────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
-            user-select: none;
-            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .settings-container {
-            background-color: var(--panel-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(241, 58, 137, 0.15);
-            width: 360px;
-            border: 1px solid var(--border-color);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .settings-header {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-            color: var(--theme-pink);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .setting-group {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 15px;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .setting-group label {
-            font-size: 0.95rem;
-            color: #d4d4d8;
-        }
-
-        .setting-control {
-            display: flex;
-            gap: 5px;
-            width: 140px;
-        }
-
-        input[type="number"], select {
-            background: #000;
-            border: 1px solid var(--border-color);
-            color: var(--theme-pink);
-            padding: 8px;
-            border-radius: 4px;
-            font-family: inherit;
-            width: 100%;
-            outline: none;
-            font-weight: bold;
-        }
-
-        input[type="number"]:focus, select:focus {
-            border-color: var(--theme-pink);
-        }
-
-        .btn-apply {
-            width: 100%;
-            padding: 14px;
-            background: var(--theme-pink);
-            color: var(--key-text-active);
+        button {
+            cursor: pointer;
             border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: none;
+            color: inherit;
+            font: inherit;
         }
 
-        .btn-apply:hover { filter: brightness(1.1); box-shadow: 0 0 15px rgba(241, 58, 137, 0.4); }
-        .btn-apply:active { transform: translateY(2px); }
-
-        .game-container {
-            background-color: var(--panel-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(241, 58, 137, 0.15);
-            width: 544px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-            position: relative;
+        input,
+        select {
+            font: inherit;
         }
 
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(9, 9, 11, 0.95);
+        select {
+            appearance: none;
+        }
+
+        input[type=number]::-webkit-inner-spin-button {
             display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            border-radius: 12px;
         }
 
-        .overlay-text {
-            font-size: 2.2rem;
-            font-weight: bold;
-            color: #fff;
-            text-align: center;
-            line-height: 1.5;
+        /* ── Scrollbar ──────────────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 5px;
         }
 
-        .overlay-text span {
-            color: var(--theme-pink);
-            font-size: 4rem;
-            display: block;
-            margin-top: 10px;
-            text-shadow: 0 0 20px rgba(241, 58, 137, 0.5);
+        ::-webkit-scrollbar-track {
+            background: var(--surface);
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #d4d4d8;
+        ::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 4px;
         }
 
-        .timer-container {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: var(--warning);
-            font-weight: bold;
-        }
-
-        #game-keypad-container { display: none; }
-
-        .code-display {
-            font-size: 1.6rem;
-            letter-spacing: 6px;
-            margin-bottom: 25px;
-            background: #000;
-            padding: 12px;
-            border-radius: 6px;
-            color: #fff;
-            border: 1px solid var(--border-color);
-        }
-
-        .code-display span.completed { color: var(--success); text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
-
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .key-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .key {
-            background-color: var(--key-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1.8rem;
-            font-weight: bold;
-            padding: 15px 0;
-            cursor: pointer;
-            transition: all 0.1s;
-            box-shadow: 0 4px 0 #000, 0 5px 10px rgba(0,0,0,0.5);
-        }
-
-        .key:active, .key.active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #000, 0 0 20px rgba(241, 58, 137, 0.6);
-            background-color: var(--key-active);
-            color: var(--key-text-active);
-            border-color: var(--key-active);
-        }
-
-        .mini-progress-container {
+        /* ── Shared containers ──────────────────────────────────── */
+        .page {
             width: 100%;
-            height: 12px;
-            background-color: var(--track-bg);
-            border-radius: 6px;
+            max-width: 960px;
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           HUB — game selector
+        ══════════════════════════════════════════════════════════ */
+        #hub-view {
+            gap: 24px;
+        }
+
+        .hub-header {
+            text-align: center;
+            padding: 20px 0 8px;
+        }
+
+        .hub-title {
+            font-family: var(--mono);
+            font-size: clamp(1.6rem, 5vw, 2.6rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: var(--pink);
+            text-shadow: 0 0 40px var(--pink-glow);
+        }
+
+        .hub-sub {
+            color: var(--muted);
+            font-size: .82rem;
+            margin-top: 6px;
+            letter-spacing: .5px;
+        }
+
+        /* ── Game grid ──────────────────────────────────────────── */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .game-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 18px 16px;
+            cursor: pointer;
+            transition: border-color .2s, transform .15s, box-shadow .2s;
             position: relative;
             overflow: hidden;
-            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            user-select: none;
         }
 
-        .mini-target-zone {
+        .game-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at top left, var(--card-glow, var(--pink-dim)) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity .25s;
+        }
+
+        .game-card:hover {
+            border-color: var(--card-accent, var(--pink));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px var(--card-glow, var(--pink-dim));
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-card:active {
+            transform: translateY(-1px);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--card-accent, var(--pink));
+            background: var(--card-glow, var(--pink-dim));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .card-name {
+            font-family: var(--mono);
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .card-desc {
+            font-size: .72rem;
+            color: var(--muted);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .card-tag {
+            display: inline-block;
+            font-size: .62rem;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--card-glow, var(--pink-dim));
+            color: var(--card-accent, var(--pink));
+            border: 1px solid var(--card-accent, var(--pink));
+            align-self: flex-start;
+        }
+
+        .card-arrow {
+            font-size: .9rem;
+            color: var(--card-accent, var(--pink));
+            align-self: flex-end;
+            margin-top: 4px;
+            transition: transform .2s;
+        }
+
+        .game-card:hover .card-arrow {
+            transform: translateX(4px);
+        }
+
+        /* card color variants */
+        .c-pink {
+            --card-accent: #f13a89;
+            --card-glow: rgba(241, 58, 137, .12);
+        }
+
+        .c-blue {
+            --card-accent: #3b82f6;
+            --card-glow: rgba(59, 130, 246, .12);
+        }
+
+        .c-teal {
+            --card-accent: #14b8a6;
+            --card-glow: rgba(20, 184, 166, .12);
+        }
+
+        .c-green {
+            --card-accent: #22c55e;
+            --card-glow: rgba(34, 197, 94, .12);
+        }
+
+        .c-orange {
+            --card-accent: #f97316;
+            --card-glow: rgba(249, 115, 22, .12);
+        }
+
+        .c-cyan {
+            --card-accent: #22d3ee;
+            --card-glow: rgba(34, 211, 238, .12);
+        }
+
+        .c-amber {
+            --card-accent: #f59e0b;
+            --card-glow: rgba(245, 158, 11, .12);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           TOOL VIEW — individual game
+        ══════════════════════════════════════════════════════════ */
+        #tool-view {
+            gap: 14px;
+        }
+
+        .tool-topbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--text);
+            font-size: .8rem;
+            font-weight: 600;
+            transition: background .15s, color .15s;
+        }
+
+        .back-btn:hover {
+            background: var(--border2);
+            color: #fff;
+        }
+
+        .back-btn:active {
+            transform: scale(.97);
+        }
+
+        .topbar-badge {
+            margin-left: auto;
+            font-family: var(--mono);
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--pink-dim);
+            color: var(--pink);
+            border: 1px solid rgba(241, 58, 137, .3);
+        }
+
+        .hack-section {
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .hack-section.active {
+            display: flex;
+        }
+
+        /* ── Hack layout ─────────────────────────────────────────── */
+        .hack-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 14px;
+            align-items: start;
+        }
+
+        @media (max-width: 700px) {
+            .hack-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hack-header {
+            text-align: center;
+            padding: 4px 0;
+        }
+
+        .hack-title {
+            font-family: var(--mono);
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+            font-weight: 900;
+            color: var(--pink);
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 30px var(--pink-glow);
+        }
+
+        .hack-subtitle {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* ── Panels ──────────────────────────────────────────────── */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .panel-title {
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .panel-title span {
+            width: 18px;
+            text-align: center;
+        }
+
+        /* ── Stats row ───────────────────────────────────────────── */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: .78rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-val {
+            font-family: var(--mono);
+            font-weight: 700;
+            color: var(--pink);
+            font-size: .88rem;
+        }
+
+        /* ── Timer bar ───────────────────────────────────────────── */
+        .timer-bar-wrap {
+            width: 100%;
+            height: 8px;
+            background: #000;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .timer-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--pink);
+            transition: width .1s linear, background .3s;
+            box-shadow: 0 0 8px var(--pink-glow);
+        }
+
+        /* ── Preset buttons ──────────────────────────────────────── */
+        .preset-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 6px 4px;
+            border-radius: 7px;
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+            transition: all .15s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--pink);
+            color: var(--pink);
+        }
+
+        .preset-btn.preset-active {
+            background: var(--pink-dim);
+            border-color: var(--pink);
+            color: var(--pink);
+        }
+
+        /* ── Config inputs ───────────────────────────────────────── */
+        .config-group {
+            margin-bottom: 10px;
+        }
+
+        .config-label {
+            font-size: .7rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 7px 10px;
+            background: #000;
+            border: 1px solid var(--border2);
+            border-radius: 7px;
+            color: var(--text);
+            font-size: .82rem;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+        .config-input:focus {
+            border-color: var(--pink);
+        }
+
+        .config-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .btn-start-main {
+            padding: 12px 16px;
+            font-size: .86rem;
+            letter-spacing: .5px;
+            animation: startPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes startPulse {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-1px);
+            }
+        }
+
+        .ready-status-banner {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: .72rem;
+            font-family: var(--mono);
+            background: rgba(34, 211, 238, .08);
+            border: 1px solid rgba(34, 211, 238, .3);
+            color: var(--cyan);
+            margin: 4px auto;
+        }
+
+        .ready-hint {
+            display: block;
+            font-size: .66rem;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* ── Action buttons ──────────────────────────────────────── */
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 9px;
+            font-size: .8rem;
+            font-weight: 700;
+            transition: all .15s;
+        }
+
+        .action-btn:active {
+            transform: scale(.97);
+        }
+
+        .btn-primary {
+            background: var(--pink);
+            color: #111;
+            box-shadow: 0 4px 18px var(--pink-glow);
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--border2);
+            background: var(--border2);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-row .action-btn {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        /* ── Message ─────────────────────────────────────────────── */
+        .hack-message {
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+            min-height: 20px;
+            margin-top: 4px;
+        }
+
+        .msg-success {
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(34, 197, 94, .4);
+        }
+
+        .msg-fail {
+            color: var(--danger);
+            text-shadow: 0 0 10px rgba(239, 68, 68, .4);
+        }
+
+        .msg-info {
+            color: var(--cyan);
+        }
+
+        /* ── Countdown overlay ───────────────────────────────────── */
+        .countdown-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 9, 11, .8);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .countdown-num {
+            font-family: var(--mono);
+            font-size: 6rem;
+            font-weight: 900;
+            color: var(--pink);
+            text-shadow: 0 0 60px var(--pink-glow), 0 0 120px var(--pink-glow);
+            animation: countPop .7s ease-out;
+        }
+
+        @keyframes countPop {
+            from {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+
+        /* ══════════════════════════════════════════════════════════
+           ATM HOLD styles
+        ══════════════════════════════════════════════════════════ */
+        :root {
+            --atm-fill: #f13a89;
+            --color-fuchsia: #a855f7;
+        }
+
+        .atm-seq-display {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            background: #000;
+            border: 1px solid var(--border2);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .atm-seq-digit {
+            font-family: var(--mono);
+            font-size: 2rem;
+            font-weight: 900;
+            width: 48px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 2px solid var(--border2);
+            color: var(--muted);
+            background: var(--surface2);
+            transition: all .2s;
+        }
+
+        .atm-seq-digit.atm-seq-active {
+            color: var(--pink);
+            border-color: var(--pink);
+            background: var(--pink-dim);
+            box-shadow: 0 0 16px var(--pink-glow);
+        }
+
+        .atm-seq-digit.atm-seq-done {
+            color: var(--success);
+            border-color: var(--success);
+            background: rgba(34, 197, 94, .1);
+        }
+
+        .atm-seq-digit.atm-seq-future {
+            color: var(--muted);
+        }
+
+        .atm-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .atm-key-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .atm-key {
+            padding: 14px 0;
+            border-radius: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: #fff;
+            font-family: var(--mono);
+            font-size: 1.4rem;
+            font-weight: 700;
+            transition: all .1s;
+            box-shadow: 0 4px 0 #000;
+            user-select: none;
+        }
+
+        .atm-key:active,
+        .atm-key.atm-key-active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #000, 0 0 20px var(--pink-glow);
+            background: var(--pink-dim);
+            border-color: var(--pink);
+            color: var(--pink);
+        }
+
+        .atm-mini-bar-wrap {
+            position: relative;
+            height: 10px;
+            background: #000;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .atm-zone {
             position: absolute;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.35);
-            border-left: 2px solid #fff;
-            border-right: 2px solid #fff;
             top: 0;
-            display: none; 
+            background: rgba(34, 197, 94, .35);
+            border-left: 2px solid var(--success);
+            border-right: 2px solid var(--success);
+            display: none;
         }
 
-        .mini-progress-fill {
+        .atm-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
             height: 100%;
             width: 0%;
-            background-color: var(--theme-pink);
-            position: absolute;
-            top: 0; left: 0;
-            box-shadow: 0 0 8px var(--theme-pink);
+            background: var(--pink);
+            box-shadow: 0 0 8px var(--pink-glow);
+            border-radius: 5px;
         }
 
-        #game-cables-container { display: none; }
+        .atm-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: .72rem;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .atm-info-row .stat-val {
+            font-size: .82rem;
+        }
+
+        .atm-message {
+            min-height: 18px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .atm-msg-success {
+            color: var(--success);
+        }
+
+        .atm-msg-fail {
+            color: var(--danger);
+        }
+
+        .atm-msg-info {
+            color: var(--cyan);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           CABLES styles
+        ══════════════════════════════════════════════════════════ */
         .cables-board {
             position: relative;
             display: flex;
             justify-content: space-between;
             align-items: stretch;
-            height: 580px;
-            width: 480px;
-            margin: 20px auto;
+            height: 320px;
             background: #000;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px 30px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 24px;
             overflow: hidden;
             touch-action: none;
         }
-        .cable-column { display: flex; flex-direction: column; justify-content: space-around; z-index: 2; }
+
+        .cable-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            z-index: 2;
+        }
+
         .cable-node {
-            width: 44px; height: 44px; border-radius: 50%; border: none; background-color: transparent;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; touch-action: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .1s;
+            touch-action: none;
         }
+
         .cable-node-inner {
-            width: 20px; height: 20px; border-radius: 50%; background-color: currentColor;
-            box-shadow: 0 0 12px currentColor; transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 12px currentColor;
+            transition: transform .15s, box-shadow .15s;
         }
-        .cable-node:hover .cable-node-inner { transform: scale(1.2); }
-        .cable-node.active-start .cable-node-inner { transform: scale(1.3); background-color: #ffffff !important; box-shadow: 0 0 20px #ffffff, 0 0 10px currentColor; }
-        .cables-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
-        #game-puzzle-container { display: none; }
-        .puzzle-board {
-            display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 8px;
-            background: #000; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;
-            margin: 20px auto; width: 280px; height: 280px; box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6); touch-action: none;
+        .cable-node:hover .cable-node-inner {
+            transform: scale(1.25);
         }
-        .puzzle-tile {
-            background-color: var(--key-bg); border: 1px solid var(--border-color); border-radius: 6px;
-            color: #fff; font-size: 1.4rem; font-weight: bold; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.1s, border-color 0.2s, background-color 0.2s; touch-action: none;
-        }
-        .puzzle-tile:hover:not(.empty) { border-color: var(--theme-pink); box-shadow: 0 0 10px rgba(241, 58, 137, 0.4); }
-        .puzzle-tile.empty { background-color: transparent; border: 1px dashed rgba(63, 63, 70, 0.5); cursor: default; }
-        .puzzle-tile.correct { border-color: var(--success); color: var(--success); text-shadow: 0 0 5px rgba(34, 197, 94, 0.5); }
 
-        #game-lightsout-container { display: none; }
-        .lights-out-board {
-            display: grid; gap: 8px; margin: 20px auto; justify-content: center; padding: 15px;
-            background: #000; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+        .cable-node.active-start .cable-node-inner {
+            transform: scale(1.4);
+            background: #fff !important;
+            box-shadow: 0 0 20px #fff, 0 0 10px currentColor;
         }
-        .lo-cell {
-            background-color: var(--key-bg); border: 1px solid var(--border-color); border-radius: 8px;
-            cursor: pointer; transition: all 0.2s, transform 0.1s; box-shadow: 0 4px 0 #000, 0 5px 10px rgba(0,0,0,0.5);
-        }
-        .lo-cell:active { transform: translateY(2px); box-shadow: 0 2px 0 #000, 0 2px 5px rgba(0,0,0,0.5); }
-        .lo-cell.on { background-color: var(--theme-pink); box-shadow: 0 4px 0 #000, 0 0 20px rgba(241, 58, 137, 0.6); border-color: var(--theme-pink); }
-        .lo-cell.on:active { box-shadow: 0 2px 0 #000, 0 0 15px rgba(241, 58, 137, 0.8); }
 
-        #game-slider-container { display: none; margin: 0 auto; }
-        #slider-canvas {
+        .cables-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .cables-message {
+            min-height: 18px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .cables-msg-success {
+            color: var(--success);
+        }
+
+        .cables-msg-fail {
+            color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           PUZZLE styles
+        ══════════════════════════════════════════════════════════ */
+        .puzzle-board-wrap {
             background: #000;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-            display: block;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            aspect-ratio: 1;
+            width: 100%;
+            max-width: 380px;
             margin: 0 auto;
         }
 
-        .message {
-            height: 20px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-top: 10px;
+        #puzzle-board {
+            display: grid;
+            gap: 6px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .puzzle-tile {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 7px;
+            color: #fff;
+            font-family: var(--mono);
+            font-size: clamp(.9rem, 2.5vw, 1.3rem);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+            touch-action: none;
+        }
+
+        .puzzle-tile:hover:not(.empty) {
+            border-color: var(--pink);
+            box-shadow: 0 0 10px var(--pink-glow);
+        }
+
+        .puzzle-tile.empty {
+            background: transparent;
+            border: 1px dashed rgba(63, 63, 70, .4);
+            cursor: default;
+        }
+
+        .puzzle-tile.correct {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .puzzle-message {
+            min-height: 18px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .puzzle-msg-success {
+            color: var(--success);
+        }
+
+        .puzzle-msg-fail {
+            color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           LIGHTS OUT styles
+        ══════════════════════════════════════════════════════════ */
+        .lo-board-wrap {
+            background: #09090b;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 420px;
+            box-sizing: border-box;
+        }
+
+        #lo-board {
+            display: grid;
+            gap: 8px;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        .lo-cell {
+            aspect-ratio: 1;
+            width: 100%;
+            height: 100%;
+            min-width: 0;
+            min-height: 0;
+            background: #18181b;
+            border: 2px solid #27272a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all .15s ease;
+            box-shadow: 0 3px 0 #09090b, inset 0 1px 0 rgba(255, 255, 255, .05);
+            outline: none;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lo-cell:hover {
+            border-color: #3f3f46;
+            background: #27272a;
+        }
+
+        .lo-cell:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #09090b;
+        }
+
+        .lo-cell.on,
+        .lo-cell.lo-on {
+            background: #22c55e !important;
+            border-color: #4ade80 !important;
+            box-shadow: 0 0 18px rgba(34, 197, 94, .6), 0 3px 0 #15803d, inset 0 1px 2px rgba(255, 255, 255, .6) !important;
+        }
+
+        .lo-message {
+            min-height: 24px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lo-msg-success {
+            color: var(--success);
+        }
+
+        .lo-msg-fail {
+            color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           SLIDER styles
+        ══════════════════════════════════════════════════════════ */
+        #slider-canvas {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: block;
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+            aspect-ratio: 1;
+            cursor: none;
+        }
+
+        .slider-message {
+            min-height: 18px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .slider-msg-success {
+            color: var(--success);
+        }
+
+        .slider-msg-fail {
+            color: var(--danger);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           DOT SEQUENCE styles
+        ══════════════════════════════════════════════════════════ */
+        #dot-play-area {
+            position: relative;
+            width: 100%;
+            height: 360px;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .dot-circle {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--surface2);
+            border: 2px solid var(--pink);
+            color: var(--pink);
+            font-family: var(--mono);
+            font-size: 1rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 14px var(--pink-glow);
+            transition: transform .1s;
+            z-index: 2;
+        }
+
+        .dot-circle.dot-next {
+            background: var(--pink-dim);
+            box-shadow: 0 0 24px var(--pink-glow), 0 0 6px var(--pink);
+            animation: dotPulse 1s ease-in-out infinite;
+        }
+
+        .dot-circle:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+        }
+
+        .dot-circle.dot-clicked {
+            animation: dotPop .3s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 24px var(--pink-glow);
+            }
+
+            50% {
+                box-shadow: 0 0 36px var(--pink-glow), 0 0 10px var(--pink);
+            }
+        }
+
+        @keyframes dotPop {
+            to {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+        }
+
+        #dot-start-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(9, 9, 11, .92);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            text-align: center;
+            gap: 12px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        #dot-start-overlay h3 {
+            font-family: var(--mono);
+            font-size: 1.2rem;
+            color: var(--pink);
+        }
+
+        #dot-start-overlay p {
+            font-size: .78rem;
+            color: var(--muted);
+            max-width: 280px;
+            line-height: 1.5;
+        }
+
+        .dot-message {
+            min-height: 18px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .dot-msg-success {
+            color: var(--success);
+        }
+
+        .dot-msg-fail {
+            color: var(--danger);
+        }
+
+        .dot-msg-info {
+            color: var(--cyan);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           BRICK BREAKER styles
+        ══════════════════════════════════════════════════════════ */
+        .bb-canvas-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        #bb-canvas {
+            display: block;
+            width: 100%;
+            aspect-ratio: 480 / 380;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            background: #000;
+        }
+
+        #bb-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(9, 9, 11, .85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            text-align: center;
+            padding: 20px;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #bb-overlay-text {
+            font-family: var(--mono);
+            font-size: 1rem;
+            font-weight: 700;
+            white-space: pre-line;
+            line-height: 1.6;
+        }
+
+        #bb-overlay small {
+            display: block;
+            font-size: .72rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           FLAPPY BIRD styles
+        ══════════════════════════════════════════════════════════ */
+        .fb-canvas-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        #fb-canvas {
+            display: block;
+            width: 100%;
+            aspect-ratio: 480 / 380;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            background: #09090b;
+        }
+
+        #fb-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(9, 9, 11, .82);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            text-align: center;
+            padding: 20px;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #fb-overlay-text {
+            font-family: var(--mono);
+            font-size: 1rem;
+            font-weight: 700;
+            white-space: pre-line;
+            line-height: 1.7;
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           STRZAŁKI (ARROWS) styles
+        ══════════════════════════════════════════════════════════ */
+        .arrows-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .arrows-top-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: .75rem;
+            font-family: var(--mono);
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+        }
+
+        .arrows-badge-warn {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: .68rem;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        .text-success { color: var(--success); }
-        .text-danger { color: var(--danger); }
-        .text-muted { color: var(--text-muted) !important; }
+        .arrows-sequence-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            min-height: 120px;
+            padding: 16px;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: border-color .2s;
+        }
+
+        .arrows-sequence-box.shake-error {
+            animation: shakeErr .35s ease-in-out;
+            border-color: #ef4444;
+        }
+
+        @keyframes shakeErr {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-8px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(8px);
+            }
+        }
+
+        .arrows-seq-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 1.8rem;
+            font-weight: 900;
+            user-select: none;
+            transition: all .15s ease-out;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+        }
+
+        .arrows-seq-item.done {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: var(--success);
+            color: var(--success);
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.25);
+        }
+
+        .arrows-seq-item.active {
+            background: var(--pink-dim);
+            border: 2px solid var(--pink);
+            color: var(--pink);
+            box-shadow: 0 0 20px var(--pink-glow);
+            transform: scale(1.08);
+            animation: arrowPulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 16px var(--pink-glow);
+            }
+
+            50% {
+                box-shadow: 0 0 28px var(--pink-glow), 0 0 8px var(--pink);
+            }
+        }
+
+        .arrows-seq-item.future {
+            opacity: 0.6;
+        }
+
+        .arrows-controls-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .arrows-controls-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .arrows-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--text);
+            cursor: pointer;
+            transition: all .15s;
+            user-select: none;
+        }
+
+        .arrows-btn:hover {
+            border-color: var(--pink);
+            background: rgba(241, 58, 137, 0.06);
+        }
+
+        .arrows-btn.hint-active {
+            border-color: var(--pink);
+            box-shadow: 0 0 16px var(--pink-glow);
+            color: var(--pink);
+        }
+
+        .arrows-btn.pressed {
+            transform: scale(0.96);
+            background: var(--pink-dim);
+            border-color: var(--pink);
+        }
+
+        .arrows-btn-icon {
+            font-size: 1.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .arrows-btn-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .arrows-btn-title {
+            font-family: var(--mono);
+            font-size: .85rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+        }
+
+        .arrows-btn-sub {
+            font-size: .65rem;
+            color: var(--muted);
+            margin-top: 2px;
+            font-family: var(--mono);
+        }
+
+        .arrows-btn.hint-active .arrows-btn-sub {
+            color: var(--pink);
+            opacity: 0.8;
+        }
+
+        .arrows-progress-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .arrows-progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--mono);
+            font-size: .75rem;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .arrows-message {
+            min-height: 20px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        .arrows-msg-success {
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(34, 197, 94, .4);
+        }
+
+        .arrows-msg-fail {
+            color: var(--danger);
+            text-shadow: 0 0 10px rgba(239, 68, 68, .4);
+        }
+
+        .arrows-msg-info {
+            color: var(--cyan);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           PROTOKÓŁ WŁAMANIA (BREACH PROTOCOL) styles
+        ══════════════════════════════════════════════════════════ */
+        .breach-layout {
+            display: grid;
+            grid-template-columns: 1fr 220px;
+            gap: 14px;
+            align-items: start;
+        }
+
+        @media (max-width: 760px) {
+            .breach-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .breach-grid-wrap {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #breach-grid {
+            display: grid;
+            gap: 6px;
+            width: 100%;
+            max-width: 440px;
+            aspect-ratio: 1;
+        }
+
+        .breach-cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: #10b981;
+            font-family: var(--mono);
+            font-size: clamp(.8rem, 2vw, 1.05rem);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+            transition: all .15s;
+            user-select: none;
+        }
+
+        .breach-cell.selectable {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+            cursor: pointer;
+        }
+
+        .breach-cell.selectable:hover {
+            background: rgba(16, 185, 129, 0.25);
+            transform: scale(1.06);
+            box-shadow: 0 0 18px rgba(16, 185, 129, 0.5);
+            color: #fff;
+        }
+
+        .breach-cell.selectable:active {
+            transform: scale(0.96);
+        }
+
+        .breach-cell.dimmed {
+            opacity: 0.28;
+            color: var(--muted);
+            border-color: var(--border);
+        }
+
+        .breach-cell.used {
+            opacity: 0.18;
+            color: var(--muted);
+            border: 1px dashed var(--border2);
+            background: transparent;
+        }
+
+        .breach-seq-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .breach-seq-title {
+            font-family: var(--mono);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        #breach-seq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .breach-seq-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            font-family: var(--mono);
+            font-size: .88rem;
+            font-weight: 700;
+            color: var(--muted);
+            transition: all .2s;
+        }
+
+        .breach-seq-item .breach-seq-idx {
+            font-size: .75rem;
+            color: var(--muted);
+        }
+
+        .breach-seq-item.active {
+            border: 1.5px solid var(--pink);
+            background: var(--pink-dim);
+            color: var(--pink);
+            box-shadow: 0 0 14px var(--pink-glow);
+        }
+
+        .breach-seq-item.active .breach-seq-idx {
+            color: var(--pink);
+        }
+
+        .breach-seq-item.done {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .breach-seq-item.done .breach-seq-idx {
+            color: var(--success);
+        }
+
+        .breach-bottom-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            align-items: stretch;
+            margin-top: 10px;
+        }
+
+        .breach-stat-box {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .breach-stat-lbl {
+            font-size: .65rem;
+            color: var(--muted);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .breach-stat-val {
+            font-family: var(--mono);
+            font-size: .88rem;
+            font-weight: 900;
+            color: var(--text);
+        }
+
+        .breach-esc-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 10px;
+            padding: 0 18px;
+            font-family: var(--mono);
+            font-size: .82rem;
+            font-weight: 900;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .breach-esc-btn:hover {
+            color: #fff;
+            border-color: var(--pink);
+            background: var(--pink-dim);
+        }
+
+        .breach-message {
+            min-height: 20px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .82rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .breach-msg-success {
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(34, 197, 94, .4);
+        }
+
+        .breach-msg-fail {
+            color: var(--danger);
+            text-shadow: 0 0 10px rgba(239, 68, 68, .4);
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           ICY TOWER styles
+        ══════════════════════════════════════════════════════════ */
+        .icy-message {
+            min-height: 24px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icy-msg-success {
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(34, 197, 94, .4);
+        }
+
+        .icy-msg-fail {
+            color: var(--danger);
+            text-shadow: 0 0 10px rgba(239, 68, 68, .4);
+        }
+
+        /* ── Utilities ───────────────────────────────────────────── */
+        .hidden {
+            display: none !important;
+        }
+
+        .mono {
+            font-family: var(--mono);
+        }
+
+        .text-pink {
+            color: var(--pink);
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        .text-muted {
+            color: var(--muted);
+        }
+
+        .text-cyan {
+            color: var(--cyan);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 8px 0;
+        }
     </style>
 </head>
+
 <body>
 
-    <div id="screen-settings" class="settings-container">
-        <div class="settings-header">Onbeat Hacks</div>
-        
-        <div class="setting-group" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
-            <label style="margin-bottom: 8px; font-weight: bold; color: var(--theme-pink); letter-spacing: 1px;">Wybierz Grę</label>
-            <select id="game-select" onchange="switchGameSetup(this.value)">
-                <option value="keypad" selected>Keypad (Sekwencja)</option>
-                <option value="cables">Kabelki</option>
-                <option value="puzzle">15-Puzzle</option>
-                <option value="lightsout">Lights Out</option>
-                <option value="slider">Slider (Przeszkody)</option>
-            </select>
-        </div>
-
-        <div id="config-keypad">
-            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
-                <select id="preset-select" onchange="loadPreset(this.value)">
-                    <option value="atm">ATM</option>
-                    <option value="elektrozamek">Elektrozamek</option>
-                    <option value="sejf" selected>Sejf</option>
-                    <option value="custom">Własne...</option>
-                </select>
-            </div>
-            <div class="setting-group">
-                <label>Rozmiar strefy (%)</label>
-                <div class="setting-control">
-                    <input type="number" id="in-zone-min" min="1" max="50" oninput="markCustom()">
-                    <input type="number" id="in-zone-max" min="1" max="100" oninput="markCustom()">
-                </div>
-            </div>
-            <div class="setting-group">
-                <label>Prędkość (ms)</label>
-                <div class="setting-control">
-                    <input type="number" id="in-speed-min" min="100" step="100" oninput="markCustom()">
-                    <input type="number" id="in-speed-max" min="100" step="100" oninput="markCustom()">
-                </div>
-            </div>
-            <div class="setting-group">
-                <label>Próby</label>
-                <div class="setting-control">
-                    <input type="number" id="in-attempts" min="1" oninput="markCustom()">
-                </div>
-            </div>
-            <div class="setting-group">
-                <label>Rundy</label>
-                <div class="setting-control">
-                    <input type="number" id="in-rounds" min="1" oninput="markCustom()">
-                </div>
-            </div>
-            <div class="setting-group">
-                <label>Długość kodu</label>
-                <div class="setting-control">
-                    <input type="number" id="in-code-length" min="1" max="9" oninput="markCustom()">
-                </div>
-            </div>
-            <div class="setting-group">
-                <label>Czas (s) [0 = Off]</label>
-                <div class="setting-control">
-                    <input type="number" id="in-time" min="0" oninput="markCustom()">
-                </div>
+    <!-- ═══════════════════════ HUB VIEW ═══════════════════════════════ -->
+    <div id="hub-view" class="page" style="justify-content:center; gap:24px;">
+        <div class="hub-header">
+            <div class="hub-title">// ONBEAT_HACKS</div>
+            <div class="hub-sub">Wybierz hacka· <span class="mono" style="color:var(--pink)">10 hacków dostępnych</span>
             </div>
         </div>
 
-        <div id="config-cables" style="display: none;">
-            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
-                <select id="preset-cable-select" onchange="loadCablePreset(this.value)">
-                    <option value="normal" selected>Normal</option>
-                    <option value="easy">Easy</option>
-                    <option value="hard">Hard</option>
-                    <option value="custom">Własne...</option>
-                </select>
+        <div class="game-grid">
+            <!-- ATM Hold -->
+            <div class="game-card c-pink" onclick="openHack('atmhold')">
+                <div class="card-icon">💳</div>
+                <div class="card-name">ATM Hold</div>
+                <div class="card-desc">Przytrzymaj cyfrę i zwolnij ją precyzyjnie w zielonej strefie.</div>
+                <div class="card-tag">Keypad</div>
+                <div class="card-arrow">→</div>
             </div>
-            <div class="setting-group">
-                <label>Liczba kabelków</label>
-                <div class="setting-control">
-                    <input type="number" id="in-cable-count" min="3" max="8" oninput="markCableCustom()">
-                </div>
+            <!-- Cables -->
+            <div class="game-card c-blue" onclick="openHack('cables')">
+                <div class="card-icon">🔌</div>
+                <div class="card-name">Kabelki</div>
+                <div class="card-desc">Połącz kolory po lewej z pasującymi po prawej stronie.</div>
+                <div class="card-tag">Wiring</div>
+                <div class="card-arrow">→</div>
             </div>
-            <div class="setting-group">
-                <label>Czas (s) [0 = Off]</label>
-                <div class="setting-control">
-                    <input type="number" id="in-cable-time" min="0" oninput="markCableCustom()">
-                </div>
+            <!-- Puzzle -->
+            <div class="game-card c-teal" onclick="openHack('puzzle')">
+                <div class="card-icon">🧩</div>
+                <div class="card-name">15-Puzzle</div>
+                <div class="card-desc">Przesuwaj kafelki za pomocą WASD, strzałek lub myszy.</div>
+                <div class="card-tag">Sliding</div>
+                <div class="card-arrow">→</div>
             </div>
-        </div>
-
-        <div id="config-puzzle" style="display: none;">
-            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
-                <select id="preset-puzzle-select" onchange="loadPuzzlePreset(this.value)">
-                    <option value="normal" selected>Normal</option>
-                    <option value="easy">Easy</option>
-                    <option value="hard">Hard</option>
-                    <option value="custom">Własne...</option>
-                </select>
+            <!-- Lights Out -->
+            <div class="game-card c-green" onclick="openHack('lightsout')">
+                <div class="card-icon">💡</div>
+                <div class="card-name">Lights Out</div>
+                <div class="card-desc">Wyłącz wszystkie lampy — każde kliknięcie przełącza sąsiadów.</div>
+                <div class="card-tag">Logic</div>
+                <div class="card-arrow">→</div>
             </div>
-            <div class="setting-group">
-                <label>Czas (s) [0 = Off]</label>
-                <div class="setting-control">
-                    <input type="number" id="in-puzzle-time" min="0" oninput="markPuzzleCustom()">
-                </div>
+            <!-- Slider -->
+            <div class="game-card c-orange" onclick="openHack('slider')">
+                <div class="card-icon">🚀</div>
+                <div class="card-name">Slider</div>
+                <div class="card-desc">Unikaj spadających przeszkód. Używaj A/D, strzałek lub myszy.</div>
+                <div class="card-tag">Dodge</div>
+                <div class="card-arrow">→</div>
             </div>
-        </div>
-
-        <div id="config-lightsout" style="display: none;">
-            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
-                <select id="preset-lightsout-select" onchange="loadLightsoutPreset(this.value)">
-                    <option value="normal" selected>Normal</option>
-                    <option value="custom">Własne...</option>
-                </select>
+            <!-- Dot Sequence -->
+            <div class="game-card c-cyan" onclick="openHack('dotsequence')">
+                <div class="card-icon">🎯</div>
+                <div class="card-name">Kropki</div>
+                <div class="card-desc">Klikaj numerowane kropki w kolejności 1→6 pod presją czasu.</div>
+                <div class="card-tag">Speed</div>
+                <div class="card-arrow">→</div>
             </div>
-            <div class="setting-group">
-                <label>Rozmiar planszy</label>
-                <div class="setting-control">
-                    <input type="number" id="in-lo-size" min="3" max="12" oninput="markLightsoutCustom()">
-                </div>
+            <!-- Brick Breaker -->
+            <div class="game-card c-amber" onclick="openHack('brickbreaker')">
+                <div class="card-icon">🧱</div>
+                <div class="card-name">Brick Breaker</div>
+                <div class="card-desc">Zbij wszystkie bloki. 3 losowe wymagają aż 3 trafień!</div>
+                <div class="card-tag">Arcade</div>
+                <div class="card-arrow">→</div>
             </div>
-            <div class="setting-group">
-                <label>Czas (s) [0 = Off]</label>
-                <div class="setting-control">
-                    <input type="number" id="in-lo-time" min="0" oninput="markLightsoutCustom()">
-                </div>
+            <!-- Flappy Bird -->
+            <div class="game-card c-pink" onclick="openHack('flappybird')">
+                <div class="card-icon">🐦</div>
+                <div class="card-name">Flappy Bird</div>
+                <div class="card-desc">Przeleć ptakiem przez szczeliny w rurach bez zderzenia.</div>
+                <div class="card-tag">Arcade</div>
+                <div class="card-arrow">→</div>
             </div>
-        </div>
-
-        <div id="config-slider" style="display: none;">
-            <div class="setting-group" style="flex-direction: column; align-items: stretch;">
-                <select id="preset-slider-select" onchange="loadSliderPreset(this.value)">
-                    <option value="normal" selected>Normal</option>
-                    <option value="easy">Easy</option>
-                    <option value="hard">Hard</option>
-                    <option value="custom">Własne...</option>
-                </select>
+            <!-- Strzałki -->
+            <div class="game-card c-pink" onclick="openHack('arrows')">
+                <div class="card-icon">🎮</div>
+                <div class="card-name">Strzałki</div>
+                <div class="card-desc">Wciskaj WASD lub strzałki zgodnie z sekwencją na czas.</div>
+                <div class="card-tag">Nowe!</div>
+                <div class="card-arrow">→</div>
             </div>
-            <div class="setting-group">
-                <label>Szer. luki (px)</label>
-                <div class="setting-control">
-                    <input type="number" id="in-slider-gap" min="20" max="150" oninput="markSliderCustom()">
-                </div>
+            <!-- Protokół włamania -->
+            <div class="game-card c-green" onclick="openHack('breach')">
+                <div class="card-icon">💾</div>
+                <div class="card-name">Protokół włamania</div>
+                <div class="card-desc">Wybieraj bajty naprzemiennie poziomo i pionowo.</div>
+                <div class="card-tag">Cyberpunk</div>
+                <div class="card-arrow">→</div>
             </div>
-            <div class="setting-group">
-                <label>Prędkość spadania</label>
-                <div class="setting-control">
-                    <input type="number" id="in-slider-speed" min="1" max="10" oninput="markSliderCustom()">
-                </div>
-            </div>
-            <div class="setting-group">
-                <label>Ilość przeszkód</label>
-                <div class="setting-control">
-                    <input type="number" id="in-slider-target" min="1" oninput="markSliderCustom()">
-                </div>
-            </div>
-            <div class="setting-group">
-                <label>Próby (Życia)</label>
-                <div class="setting-control">
-                    <input type="number" id="in-slider-attempts" min="1" oninput="markSliderCustom()">
-                </div>
+            <!-- Icy Tower -->
+            <div class="game-card c-cyan" onclick="openHack('icytower')">
+                <div class="card-icon">🗼</div>
+                <div class="card-name">Icy Tower</div>
+                <div class="card-desc">Wspinaj się po neonowych platformach wieży. Pęd daje potężny skok!</div>
+                <div class="card-tag">Nowe!</div>
+                <div class="card-arrow">→</div>
             </div>
         </div>
-
-        <button class="btn-apply" onclick="proceedToGame()">Rozpocznij</button>
     </div>
 
-    <div id="screen-game" class="game-container" style="display: none;">
-        
-        <div id="overlay" class="overlay">
-            <div id="overlay-text" class="overlay-text">
-                Przygotuj się
-                <span id="overlay-count">3</span>
+    <!-- ════════════════════ TOOL VIEW ═════════════════════════════════ -->
+    <div id="tool-view" class="page hidden">
+
+        <!-- Top navigation bar -->
+        <div class="tool-topbar">
+            <button class="back-btn" onclick="showHub()">← Powrót</button>
+            <span id="current-hack-badge" class="topbar-badge">Hack</span>
+        </div>
+
+        <!-- ═══ ATM HOLD ══════════════════════════════════════════════ -->
+        <div id="hack-atmhold" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title">// ATM_HOLD</div>
+                <div class="hack-subtitle">Przytrzymaj cyfrę · zwolnij w <span style="color:var(--success)">zielonej
+                        strefie</span></div>
+            </div>
+            <div class="hack-layout">
+                <!-- Main game panel -->
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="atm-info-row">
+                        <span>Krok: <span id="atm-step" class="stat-val">1/4</span></span>
+                        <span>Próby: <span id="atm-attempts" class="stat-val">3</span></span>
+                    </div>
+                    <!-- Global timer -->
+                    <div>
+                        <div class="stat-row" style="margin-bottom:4px;">
+                            <span>⏱ Czas na cyfrę:</span>
+                            <span id="atm-timer-text" class="stat-val">—</span>
+                        </div>
+                        <div class="timer-bar-wrap">
+                            <div id="atm-timer-bar" class="timer-bar-fill" style="width:100%"></div>
+                        </div>
+                    </div>
+                    <!-- Sequence display -->
+                    <div id="atm-seq-display" class="atm-seq-display"></div>
+                    <!-- Keypad -->
+                    <div id="atm-keypad-container" class="atm-keypad"></div>
+                    <div id="atm-message" class="atm-message"></div>
+                </div>
+                <!-- Options panel -->
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="atm-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                            <button class="preset-btn" data-preset="hard">Hard</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Długość sekwencji</span></div>
+                            <input type="number" id="atm-in-seqlen" class="config-input" min="1" max="9" value="4">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Strefa (min% / max%)</span></div>
+                            <div class="config-2col">
+                                <input type="number" id="atm-in-zonemin" class="config-input" min="5" max="40"
+                                    value="12">
+                                <input type="number" id="atm-in-zonemax" class="config-input" min="5" max="50"
+                                    value="18">
+                            </div>
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Prędkość fill (ms min/max)</span></div>
+                            <div class="config-2col">
+                                <input type="number" id="atm-in-speedmin" class="config-input" min="200" step="100"
+                                    value="1200">
+                                <input type="number" id="atm-in-speedmax" class="config-input" min="200" step="100"
+                                    value="1800">
+                            </div>
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Próby</span></div>
+                            <input type="number" id="atm-in-attempts" class="config-input" min="1" max="10" value="3">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Czas na cyfrę (s)</span></div>
+                            <input type="number" id="atm-in-time" class="config-input" min="5" max="60" value="20">
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button id="atm-btn-start" class="action-btn btn-primary btn-start-main">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="atm-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
+                        <button id="atm-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="atm-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
             </div>
         </div>
 
-        <div class="header">
-            <div id="round-text">Runda: 1/4</div>
-            <div id="attempts-text">Próby: 3</div>
-        </div>
-
-        <div class="timer-container" id="timer-text">Czas: 20.0s</div>
-        
-        <div id="game-keypad-container">
-            <div class="code-display" id="code-display">_ _ _ _</div>
-            <div class="keypad" id="keypad"></div>
-        </div>
-
-        <div id="game-cables-container">
-            <div class="cables-board" id="cables-board">
-                <svg class="cables-svg" id="cables-svg"></svg>
-                <div class="cable-column" id="cables-left"></div>
-                <div class="cable-column" id="cables-right"></div>
+        <!-- ═══ CABLES ════════════════════════════════════════════════ -->
+        <div id="hack-cables" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#3b82f6;text-shadow:0 0 30px rgba(59,130,246,.4)">// KABELKI</div>
+                <div class="hack-subtitle">Połącz kable tych samych kolorów</div>
+            </div>
+            <div class="hack-layout">
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="stat-row">
+                        <span>⏱ Czas:</span><span id="cables-timer-text" class="stat-val" style="color:#3b82f6">—</span>
+                    </div>
+                    <div class="timer-bar-wrap">
+                        <div id="cables-timer-bar" class="timer-bar-fill"
+                            style="width:100%;background:#3b82f6;box-shadow:0 0 8px rgba(59,130,246,.4)"></div>
+                    </div>
+                    <div class="cables-board" id="cables-board">
+                        <svg class="cables-svg" id="cables-svg"></svg>
+                        <div class="cable-column" id="cables-left"></div>
+                        <div class="cable-column" id="cables-right"></div>
+                    </div>
+                    <div class="stat-row">
+                        <span>Połączone:</span><span id="cables-connected" class="stat-val" style="color:#3b82f6">0 /
+                            5</span>
+                    </div>
+                    <div id="cables-message" class="cables-message"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="cable-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy" style="--p:#3b82f6">Easy</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                            <button class="preset-btn" data-preset="hard">Hard</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Liczba kabelków (3–8)</span></div>
+                            <input type="number" id="cable-in-count" class="config-input" min="3" max="8" value="5">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Czas (s)</span></div>
+                            <input type="number" id="cable-in-time" class="config-input" min="5" max="120" value="15">
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button id="cables-btn-start" class="action-btn btn-primary btn-start-main"
+                            style="background:#3b82f6;color:#fff;box-shadow:0 4px 18px rgba(59,130,246,.4)">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="cables-btn-restart" class="action-btn btn-primary hidden"
+                            style="background:#3b82f6;box-shadow:0 4px 18px rgba(59,130,246,.35)">↺ Restart</button>
+                        <button id="cables-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="cables-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
             </div>
         </div>
 
-        <div id="game-puzzle-container">
-            <div class="puzzle-board" id="puzzle-board"></div>
-        </div>
-
-        <div id="game-lightsout-container">
-            <div class="lights-out-board" id="lightsout-board"></div>
-        </div>
-
-        <div id="game-slider-container">
-            <canvas id="slider-canvas" width="400" height="400"></canvas>
-            <div style="font-size: 0.9rem; margin-top: 10px; color: var(--text-muted);">
-                Używaj <b>A</b> i <b>D</b> (lub strzałek) do sterowania!
+        <!-- ═══ PUZZLE ════════════════════════════════════════════════ -->
+        <div id="hack-puzzle" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#14b8a6;text-shadow:0 0 30px rgba(20,184,166,.4)">// 15_PUZZLE
+                </div>
+                <div class="hack-subtitle">Ułóż kafelki w kolejności rosnącej</div>
+            </div>
+            <div class="hack-layout">
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="stat-row">
+                        <span>⏱ Czas:</span><span id="puzzle-timer-text" class="stat-val" style="color:#14b8a6">—</span>
+                        <span>Ruchy: <span id="puzzle-moves" class="stat-val" style="color:#14b8a6">0</span></span>
+                    </div>
+                    <div class="timer-bar-wrap">
+                        <div id="puzzle-timer-bar" class="timer-bar-fill"
+                            style="width:100%;background:#14b8a6;box-shadow:0 0 8px rgba(20,184,166,.35)"></div>
+                    </div>
+                    <div class="puzzle-board-wrap">
+                        <div id="puzzle-board"></div>
+                    </div>
+                    <div id="puzzle-message" class="puzzle-message"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="puzzle-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy (3×3)</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal (4×4)</button>
+                            <button class="preset-btn" data-preset="hard">Hard (5×5)</button>
+                        </div>
+                        <div class="stat-row" style="margin-top:10px;"><span>Rozmiar:</span><span id="puzzle-size-label"
+                                class="stat-val" style="color:#14b8a6">4×4</span></div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Czas (s, 0=bez limitu)</span></div>
+                            <input type="number" id="puzzle-in-time" class="config-input" min="0" value="120">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Sterowanie klawiaturą</span></div>
+                            <select id="puzzle-in-mode" class="config-input" style="cursor:pointer">
+                                <option value="tile">Ruch kafelka (W = przesuń w górę)</option>
+                                <option value="gap">Ruch pustego pola (W = puste w górę)</option>
+                            </select>
+                        </div>
+                        <div style="font-size:.72rem;color:var(--muted);line-height:1.6;margin-top:6px;">
+                            Klawisze: <span style="color:var(--text);font-family:var(--mono);font-weight:700">W / A / S
+                                / D</span> lub <span style="color:var(--text);font-family:var(--mono);font-weight:700">↑
+                                / ↓ / ← / →</span> oraz kliknięcie myszką.
+                        </div>
+                    </div>
+                    <div class="btn-row" style="flex-direction:column;">
+                        <button id="puzzle-btn-start" class="action-btn btn-primary btn-start-main"
+                            style="background:#14b8a6;color:#111;box-shadow:0 4px 18px rgba(20,184,166,.4)">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="puzzle-btn-shuffle" class="action-btn btn-secondary">🔀 Nowa plansza</button>
+                        <button id="puzzle-btn-restart" class="action-btn btn-primary hidden"
+                            style="background:#14b8a6;color:#111;box-shadow:0 4px 18px rgba(20,184,166,.35)">↺
+                            Restart</button>
+                        <button id="puzzle-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="puzzle-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
             </div>
         </div>
 
-        <div class="message" id="message"></div>
+        <!-- ═══ LIGHTS OUT ════════════════════════════════════════════ -->
+        <div id="hack-lightsout" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#22c55e;text-shadow:0 0 30px rgba(34,197,94,.4)">// LIGHTS_OUT
+                </div>
+                <div class="hack-subtitle">Wyłącz wszystkie lampy na planszy</div>
+            </div>
+            <div class="hack-layout">
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="stat-row">
+                        <span>⏱ Czas:</span><span id="lo-timer-text" class="stat-val" style="color:#22c55e">—</span>
+                        <span>Włączone: <span id="lo-lights-on" class="stat-val" style="color:#22c55e">0</span></span>
+                    </div>
+                    <div class="timer-bar-wrap">
+                        <div id="lo-timer-bar" class="timer-bar-fill"
+                            style="width:100%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.35)"></div>
+                    </div>
+                    <div class="lo-board-wrap">
+                        <div id="lo-board"></div>
+                    </div>
+                    <div id="lo-message" class="lo-message"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="lo-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy (5×5)</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal (7×7)</button>
+                            <button class="preset-btn" data-preset="hard">Hard (9×9)</button>
+                        </div>
+                        <div class="stat-row" style="margin-top:10px;"><span>Rozmiar:</span><span id="lo-size-label"
+                                class="stat-val" style="color:#22c55e">7×7</span></div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Rozmiar planszy (3–12)</span></div>
+                            <input type="number" id="lo-in-size" class="config-input" min="3" max="12" value="7">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Czas (s, 0=bez limitu)</span></div>
+                            <input type="number" id="lo-in-time" class="config-input" min="0" value="180">
+                        </div>
+                    </div>
+                    <div class="btn-row" style="flex-direction:column;">
+                        <button id="lo-btn-start" class="action-btn btn-primary btn-start-main"
+                            style="background:#22c55e;color:#111;box-shadow:0 4px 18px rgba(34,197,94,.4)">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="lo-btn-randomize" class="action-btn btn-secondary">🎲 Nowa plansza</button>
+                        <button id="lo-btn-restart" class="action-btn btn-primary hidden"
+                            style="background:#22c55e;color:#111;box-shadow:0 4px 18px rgba(34,197,94,.35)">↺
+                            Restart</button>
+                        <button id="lo-btn-clear" class="action-btn btn-secondary">🧹 Wyczyść</button>
+                        <button id="lo-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="lo-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ SLIDER ════════════════════════════════════════════════ -->
+        <div id="hack-slider" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#f97316;text-shadow:0 0 30px rgba(249,115,22,.4)">// SLIDER</div>
+                <div class="hack-subtitle">Unikaj przeszkód · A/D lub strzałki lub myszka</div>
+            </div>
+            <div class="hack-layout">
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="stat-row">
+                        <span>Przeszkody: <span id="slider-passed" class="stat-val" style="color:#f97316">0</span> /
+                            <span id="slider-target" class="stat-val" style="color:#f97316">10</span></span>
+                        <span>Życia: <span id="slider-attempts" class="stat-val" style="color:#f97316">3</span></span>
+                    </div>
+                    <canvas id="slider-canvas" width="400" height="400"></canvas>
+                    <div id="slider-message" class="slider-message"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="slider-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                            <button class="preset-btn" data-preset="hard">Hard</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Szerokość luki (px)</span></div>
+                            <input type="number" id="slider-in-gap" class="config-input" min="30" max="180" value="80">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Prędkość spadania (1–10)</span></div>
+                            <input type="number" id="slider-in-speed" class="config-input" min="1" max="10" value="3">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Cel (ile przeszkód)</span></div>
+                            <input type="number" id="slider-in-target" class="config-input" min="1" value="10">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Życia</span></div>
+                            <input type="number" id="slider-in-attempts" class="config-input" min="1" max="10"
+                                value="3">
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button id="slider-btn-start" class="action-btn btn-primary btn-start-main"
+                            style="background:#f97316;color:#111;box-shadow:0 4px 18px rgba(249,115,22,.4)">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="slider-btn-restart" class="action-btn btn-primary hidden"
+                            style="background:#f97316;box-shadow:0 4px 18px rgba(249,115,22,.35)">↺ Restart</button>
+                        <button id="slider-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="slider-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ DOT SEQUENCE ══════════════════════════════════════════ -->
+        <div id="hack-dotsequence" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#22d3ee;text-shadow:0 0 30px rgba(34,211,238,.4)">// KROPKI</div>
+                <div class="hack-subtitle">Klikaj w kolejności <span style="color:#22d3ee">1 → 6</span> · zaliczyj 2
+                    etapy</div>
+            </div>
+            <div class="hack-layout">
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="stat-row">
+                        <span>Etap: <span id="dot-stage-badge" class="stat-val" style="color:#22d3ee">1/2</span></span>
+                        <span>Następna: <span id="dot-next-badge" class="stat-val" style="color:#22d3ee">1</span></span>
+                        <span id="dot-timer-text" class="stat-val" style="color:#22d3ee">—</span>
+                    </div>
+                    <div class="timer-bar-wrap">
+                        <div id="dot-timer-bar" class="timer-bar-fill"
+                            style="width:100%;background:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.35)"></div>
+                    </div>
+                    <div id="dot-play-area">
+                        <svg id="dot-svg-lines"
+                            style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;"></svg>
+                        <div id="dot-start-overlay" style="display:none">
+                            <h3>🎯 Sekwencja Kropek</h3>
+                            <p>Klikaj kropki w kolejności 1→6. Zaliczyj 2 etapy z rzędu pod presją czasu!</p>
+                            <button id="dot-btn-start-overlay" class="action-btn btn-primary"
+                                style="padding:10px 28px;">Rozpocznij</button>
+                        </div>
+                    </div>
+                    <div id="dot-message" class="dot-message"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="dot-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                            <button class="preset-btn" data-preset="hard">Hard</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label">
+                                <span>Limit czasu</span>
+                                <span id="dot-time-label" class="stat-val" style="color:#22d3ee;font-size:.7rem">8
+                                    sek.</span>
+                            </div>
+                            <input type="number" id="dot-in-time" class="config-input" min="3" max="30" value="8">
+                        </div>
+                    </div>
+                    <div class="panel" style="flex:1;">
+                        <div class="panel-title"><span>📋</span> Zasady</div>
+                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.8;list-style:none;padding:0;">
+                            <li>▸ 2 etapy z 6 kropkami każdy</li>
+                            <li>▸ Klikaj od <strong style="color:var(--text)">1</strong> do <strong
+                                    style="color:var(--text)">6</strong></li>
+                            <li>▸ Błąd lub czas → restart od etapu 1</li>
+                            <li>▸ Linie łączą kliknięte kropki</li>
+                        </ul>
+                    </div>
+                    <div class="btn-row">
+                        <button id="dot-btn-start" class="action-btn btn-primary btn-start-main"
+                            style="background:#22d3ee;color:#000;box-shadow:0 4px 18px rgba(34,211,238,.4)">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="dot-btn-restart" class="action-btn btn-primary hidden"
+                            style="background:#22d3ee;color:#000;box-shadow:0 4px 18px rgba(34,211,238,.35)">↺
+                            Restart</button>
+                        <button id="dot-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="dot-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ BRICK BREAKER ═════════════════════════════════════════ -->
+        <div id="hack-brickbreaker" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#f59e0b;text-shadow:0 0 30px rgba(245,158,11,.4)">// BRICK_BREAKER
+                </div>
+                <div class="hack-subtitle">Zbij wszystkie bloki · <span style="color:#22c55e">×3</span> = potrzeba 3
+                    trafień</div>
+            </div>
+            <div class="hack-layout">
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="stat-row">
+                        <span>❤ Życia: <span id="bb-lives" class="stat-val" style="color:#ef4444">❤❤❤</span></span>
+                        <span>Wynik: <span id="bb-score" class="stat-val" style="color:#f59e0b">0</span></span>
+                        <span>Bloki: <span id="bb-bricks-left" class="stat-val" style="color:#f59e0b">—</span></span>
+                    </div>
+                    <div class="bb-canvas-wrap">
+                        <canvas id="bb-canvas" width="480" height="380"></canvas>
+                        <div id="bb-overlay">
+                            <div id="bb-overlay-text" style="color:#f59e0b">Gotowy do gry!</div>
+                            <small style="color:var(--muted)">Skonfiguruj parametry i kliknij Rozpocznij</small>
+                        </div>
+                    </div>
+                    <div style="font-size:.7rem;color:var(--muted);text-align:center;">
+                        Myszka / dotyk = paletka &nbsp;·&nbsp; A/D lub ← → = klawiatura
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="bb-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                            <button class="preset-btn" data-preset="hard">Hard</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Wiersze</span></div>
+                            <input type="number" id="bb-in-rows" class="config-input" min="2" max="12" value="6">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Kolumny</span></div>
+                            <input type="number" id="bb-in-cols" class="config-input" min="4" max="14" value="9">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Prędkość piłki</span></div>
+                            <input type="number" id="bb-in-speed" class="config-input" min="2" max="12" step="0.5"
+                                value="5.5">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Szerokość paletki (px)</span></div>
+                            <input type="number" id="bb-in-paddle" class="config-input" min="40" max="160" value="80">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Bloki ×3 (potrójne)</span></div>
+                            <input type="number" id="bb-in-triple" class="config-input" min="0" max="10" value="3">
+                        </div>
+                    </div>
+                    <div class="panel" style="flex:1;">
+                        <div class="panel-title"><span>📋</span> Legenda</div>
+                        <div style="font-size:.72rem;color:var(--muted);line-height:2;">
+                            <div>🟥 <strong style="color:var(--text)">Zwykły blok</strong> — 1 trafienie</div>
+                            <div>🟩 <span style="color:#22c55e">×3</span> — 3 HP (zielony→żółty→czerwony)</div>
+                            <div>Liczba na bloku = pozostałe HP</div>
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button id="bb-btn-start" class="action-btn btn-primary btn-start-main"
+                            style="background:#f59e0b;color:#000;box-shadow:0 4px 18px rgba(245,158,11,.4)">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="bb-btn-restart" class="action-btn btn-primary hidden"
+                            style="background:#f59e0b;color:#000;box-shadow:0 4px 18px rgba(245,158,11,.35)">↺
+                            Restart</button>
+                        <button id="bb-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="bb-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ FLAPPY BIRD ═══════════════════════════════════════════ -->
+        <div id="hack-flappybird" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#f13a89;text-shadow:0 0 30px rgba(241,58,137,.4)">// FLAPPY_BIRD
+                </div>
+                <div class="hack-subtitle">Przeleciej przez <span style="color:var(--pink)">15 rur</span> · Kliknij /
+                    Spacja / Dotknij = skok</div>
+            </div>
+            <div class="hack-layout">
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="stat-row">
+                        <span>🐦 Rury: <span id="fb-score" class="stat-val">0</span> / <span id="fb-target"
+                                class="stat-val">15</span></span>
+                    </div>
+                    <!-- Progress bar for pipes -->
+                    <div class="timer-bar-wrap">
+                        <div id="fb-progress-bar" class="timer-bar-fill"
+                            style="width:0%;background:var(--pink);transition:width .3s ease"></div>
+                    </div>
+                    <div class="fb-canvas-wrap">
+                        <canvas id="fb-canvas" width="480" height="380"></canvas>
+                        <div id="fb-overlay">
+                            <div id="fb-overlay-text" style="color:#f13a89">🐦 Gotowy do lotu!</div>
+                            <small style="color:var(--muted)">Skonfiguruj parametry i kliknij Rozpocznij</small>
+                        </div>
+                    </div>
+                    <div style="font-size:.7rem;color:var(--muted);text-align:center;">
+                        Kliknij / Dotknij / Spacja / ↑ / W = skok
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="fb-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                            <button class="preset-btn" data-preset="hard">Hard</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Cel: ile rur przelecieć</span></div>
+                            <input type="number" id="fb-in-pipes" class="config-input" min="1" max="50" value="15">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Szczelina między rurami (px)</span></div>
+                            <input type="number" id="fb-in-gap" class="config-input" min="70" max="220" value="135">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Prędkość rur (px/klatkę)</span></div>
+                            <input type="number" id="fb-in-speed" class="config-input" min="1.5" max="8" step="0.5"
+                                value="2.5">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Grawitacja</span></div>
+                            <input type="number" id="fb-in-gravity" class="config-input" min="0.10" max="0.5"
+                                step="0.02" value="0.22">
+                        </div>
+                    </div>
+                    <div class="panel" style="flex:1;">
+                        <div class="panel-title"><span>📋</span> Jak grać</div>
+                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                            <li>▸ Kliknij / Spacja / ↑ / W = skok</li>
+                            <li>▸ Dotknij ekranu = skok (mobile)</li>
+                            <li>▸ Przeleciej przez <strong style="color:var(--text)">wszystkie rury</strong></li>
+                            <li>▸ Uderzenie w rurę lub podłoże = koniec</li>
+                            <li>▸ Paski <span style="color:var(--pink)">różowe</span> = rury</li>
+                        </ul>
+                    </div>
+                    <div class="btn-row">
+                        <button id="fb-btn-start" class="action-btn btn-primary btn-start-main"
+                            style="background:var(--pink);color:#111;box-shadow:0 4px 18px var(--pink-glow)">▶
+                            ROZPOCZNIJ GRĘ</button>
+                        <button id="fb-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
+                        <button id="fb-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="fb-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ STRZAŁKI ═════════════════════════════════════════════ -->
+        <div id="hack-arrows" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:var(--pink);text-shadow:0 0 30px var(--pink-glow)">// STRZAŁKI
+                </div>
+                <div class="hack-subtitle">Wciskaj strzałki w kolejności · <span style="color:var(--danger)">błąd
+                        resetuje postęp</span></div>
+            </div>
+            <div class="hack-layout">
+                <!-- Main game area -->
+                <div class="arrows-panel">
+                    <!-- Top status bar -->
+                    <div class="arrows-top-status">
+                        <span id="arrows-stage-badge">ETAP 1/1</span>
+                        <span>DOPASUJ KIERUNEK</span>
+                        <span class="arrows-badge-warn">BŁĄD RESETUJE</span>
+                    </div>
+
+                    <!-- Sequence row -->
+                    <div id="arrows-sequence-box" class="arrows-sequence-box">
+                        <!-- Populated dynamically by JS -->
+                    </div>
+
+                    <!-- 4 Direction Action Buttons -->
+                    <div class="arrows-controls-grid">
+                        <button class="arrows-btn" id="arrows-btn-up">
+                            <span class="arrows-btn-icon">↑</span>
+                            <div class="arrows-btn-text">
+                                <span class="arrows-btn-title">GÓRA</span>
+                                <span class="arrows-btn-sub">W / GÓRA</span>
+                            </div>
+                        </button>
+                        <button class="arrows-btn" id="arrows-btn-down">
+                            <span class="arrows-btn-icon">↓</span>
+                            <div class="arrows-btn-text">
+                                <span class="arrows-btn-title">DÓŁ</span>
+                                <span class="arrows-btn-sub">S / DÓŁ</span>
+                            </div>
+                        </button>
+                        <button class="arrows-btn" id="arrows-btn-left">
+                            <span class="arrows-btn-icon">←</span>
+                            <div class="arrows-btn-text">
+                                <span class="arrows-btn-title">LEWO</span>
+                                <span class="arrows-btn-sub">A / LEWO</span>
+                            </div>
+                        </button>
+                        <button class="arrows-btn" id="arrows-btn-right">
+                            <span class="arrows-btn-icon">→</span>
+                            <div class="arrows-btn-text">
+                                <span class="arrows-btn-title">PRAWO</span>
+                                <span class="arrows-btn-sub">D / PRAWO</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Progress and Timer -->
+                    <div class="arrows-progress-wrap">
+                        <div class="arrows-progress-info">
+                            <span>POSTĘP</span>
+                            <span id="arrows-progress-text">0/8</span>
+                        </div>
+                        <div class="timer-bar-wrap" style="height:10px;margin-bottom:0;">
+                            <div id="arrows-progress-fill" class="timer-bar-fill"
+                                style="width:0%;background:var(--pink);box-shadow:0 0 12px var(--pink-glow);transition:width .15s ease">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Global Countdown timer bar -->
+                    <div>
+                        <div class="stat-row" style="margin-bottom:4px;">
+                            <span>⏱ Czas:</span>
+                            <span id="arrows-timer-text" class="stat-val">—</span>
+                        </div>
+                        <div class="timer-bar-wrap">
+                            <div id="arrows-timer-bar" class="timer-bar-fill" style="width:100%;background:var(--pink)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="arrows-message" class="arrows-message"></div>
+                </div>
+
+                <!-- Config panel -->
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="arrows-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy (6)</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal (8)</button>
+                            <button class="preset-btn" data-preset="hard">Hard (12)</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Liczba strzałek (4–16)</span></div>
+                            <input type="number" id="arrows-in-count" class="config-input" min="4" max="16" value="8">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Liczba etapów (1–5)</span></div>
+                            <input type="number" id="arrows-in-stages" class="config-input" min="1" max="5" value="1">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Czas na sekwencję (s)</span></div>
+                            <input type="number" id="arrows-in-time" class="config-input" min="5" max="60" value="15">
+                        </div>
+                    </div>
+                    <div class="panel" style="flex:1;">
+                        <div class="panel-title"><span>📋</span> Zasady</div>
+                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                            <li>▸ Używaj <strong style="color:var(--text)">W / S / A / D</strong> lub <strong
+                                    style="color:var(--text)">Strzałek</strong></li>
+                            <li>▸ Możesz także klikać w przyciski</li>
+                            <li>▸ Podświetlona <span style="color:var(--pink)">różowa strzałka</span> to Twój cel</li>
+                            <li>▸ <strong style="color:var(--danger)">Błędny kierunek</strong> resetuje sekwencję do 0!
+                            </li>
+                            <li>▸ Ukończ cały etap przed upływem czasu</li>
+                        </ul>
+                    </div>
+                    <div class="btn-row">
+                        <button id="arrows-btn-start" class="action-btn btn-primary btn-start-main">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="arrows-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
+                        <button id="arrows-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="arrows-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ PROTOKÓŁ WŁAMANIA ═══════════════════════════════════════ -->
+        <div id="hack-breach" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#10b981;text-shadow:0 0 30px rgba(16,185,129,.4)">//
+                    PROTOKÓŁ_WŁAMANIA</div>
+                <div class="hack-subtitle">Wybieraj bajty naprzemiennie w wierszach i kolumnach</div>
+            </div>
+            <div class="hack-layout">
+                <!-- Main matrix game area -->
+                <div class="panel" style="display:flex;flex-direction:column;gap:12px;">
+                    <div class="stat-row">
+                        <span>ETAP 1/1</span>
+                        <span id="breach-size-badge" class="stat-val" style="color:#10b981">7X7</span>
+                    </div>
+
+                    <!-- Timer bar -->
+                    <div>
+                        <div class="stat-row" style="margin-bottom:4px;">
+                            <span>⏱ Czas:</span>
+                            <span id="breach-timer-text" class="stat-val" style="color:#10b981">—</span>
+                        </div>
+                        <div class="timer-bar-wrap">
+                            <div id="breach-timer-bar" class="timer-bar-fill"
+                                style="width:100%;background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.4)"></div>
+                        </div>
+                    </div>
+
+                    <div class="breach-layout">
+                        <!-- Left: Grid matrix -->
+                        <div class="breach-grid-wrap">
+                            <div id="breach-grid"></div>
+                        </div>
+
+                        <!-- Right: Target Sequence list -->
+                        <div class="breach-seq-wrap">
+                            <div class="breach-seq-title">SEKWENCJA</div>
+                            <div id="breach-seq-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom status & ESC bar -->
+                    <div class="breach-bottom-bar">
+                        <div class="breach-stat-box">
+                            <span class="breach-stat-lbl">OŚ</span>
+                            <span id="breach-axis-val" class="breach-stat-val" style="color:#10b981">DOWOLNE</span>
+                        </div>
+                        <div class="breach-stat-box">
+                            <span class="breach-stat-lbl">BŁĘDY</span>
+                            <span id="breach-errors-val" class="breach-stat-val" style="color:#ef4444">0</span>
+                        </div>
+                        <button class="breach-esc-btn" id="breach-btn-esc">ESC</button>
+                    </div>
+
+                    <div id="breach-message" class="breach-message"></div>
+                </div>
+
+                <!-- Config panel -->
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="breach-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy (5×5)</button>
+                            <button class="preset-btn" data-preset="normal">Normal (6×6)</button>
+                            <button class="preset-btn preset-active" data-preset="hard">Hard (7×7)</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Rozmiar matrycy (4–8)</span></div>
+                            <input type="number" id="breach-in-size" class="config-input" min="4" max="8" value="7">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Długość sekwencji (3–8)</span></div>
+                            <input type="number" id="breach-in-seq" class="config-input" min="3" max="8" value="6">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Dozwolone błędy (0–5)</span></div>
+                            <input type="number" id="breach-in-errors" class="config-input" min="0" max="5" value="1">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Czas (s)</span></div>
+                            <input type="number" id="breach-in-time" class="config-input" min="10" max="120" value="30">
+                        </div>
+                    </div>
+                    <div class="panel" style="flex:1;">
+                        <div class="panel-title"><span>📋</span> Zasady</div>
+                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                            <li>▸ Pierwszy wybór jest <strong style="color:var(--text)">dowolny</strong></li>
+                            <li>▸ Kolejny wybór w <strong style="color:var(--text)">kolumnie</strong> wybranego kafelka
+                            </li>
+                            <li>▸ Następny w <strong style="color:var(--text)">wierszu</strong>, i tak na zmianę!</li>
+                            <li>▸ Dobieraj bajty zgodnie z <span style="color:var(--pink)">SEKWENCJĄ</span></li>
+                            <li>▸ Każdy kafelek można użyć tylko raz</li>
+                        </ul>
+                    </div>
+                    <div class="btn-row">
+                        <button id="breach-btn-start" class="action-btn btn-primary btn-start-main"
+                            style="background:#10b981;color:#111;box-shadow:0 4px 18px rgba(16,185,129,.4)">▶ ROZPOCZNIJ
+                            GRĘ</button>
+                        <button id="breach-btn-restart" class="action-btn btn-primary hidden"
+                            style="background:#10b981;box-shadow:0 4px 18px rgba(16,185,129,.35)">↺ Restart</button>
+                        <button id="breach-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="breach-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ ICY TOWER ════════════════════════════════════════════ -->
+        <div id="hack-icytower" class="hack-section">
+            <div class="hack-header">
+                <div class="hack-title" style="color:#38bdf8;text-shadow:0 0 30px rgba(56,189,248,.4)">// ICY_TOWER</div>
+                <div class="hack-subtitle">Wspinaj się coraz wyżej · A/D / Strzałki: ruch · W/Spacja/Góra: skok · Ściany odbijają!</div>
+            </div>
+            <div class="hack-layout">
+                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="stat-row">
+                        <span>Piętro: <span id="icy-floor" class="stat-val" style="color:#38bdf8">0</span> / <span id="icy-target-floor" class="stat-val" style="color:#38bdf8">50</span></span>
+                        <span>Rekord: <span id="icy-best-floor" class="stat-val" style="color:#a855f7">0</span></span>
+                        <span>Combo: <span id="icy-combo" class="stat-val" style="color:#f59e0b">—</span></span>
+                        <span>⏱ Czas: <span id="icy-timer-text" class="stat-val" style="color:#38bdf8">—</span></span>
+                    </div>
+                    <div class="timer-bar-wrap">
+                        <div id="icy-timer-bar" class="timer-bar-fill" style="width:100%;background:#38bdf8;box-shadow:0 0 8px rgba(56,189,248,.35)"></div>
+                    </div>
+                    <div style="position:relative;display:flex;justify-content:center;">
+                        <canvas id="icy-canvas" width="420" height="520" style="background:#070b14;border:1px solid var(--border);border-radius:10px;display:block;max-width:100%;box-shadow:0 4px 20px rgba(0,0,0,.6);"></canvas>
+                    </div>
+                    <div id="icy-message" class="icy-message"></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div class="panel">
+                        <div class="panel-title"><span>⚙</span> Preset</div>
+                        <div id="icy-preset-btns" class="preset-row">
+                            <button class="preset-btn" data-preset="easy">Easy (25)</button>
+                            <button class="preset-btn preset-active" data-preset="normal">Normal (50)</button>
+                            <button class="preset-btn" data-preset="hard">Hard (100)</button>
+                            <button class="preset-btn" data-preset="endless">Endless</button>
+                        </div>
+                        <hr>
+                        <div class="config-group">
+                            <div class="config-label"><span>Docelowe piętro (10–200, 0=Endless)</span></div>
+                            <input type="number" id="icy-in-floors" class="config-input" min="0" max="500" value="50">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Szerokość platform (50–160 px)</span></div>
+                            <input type="number" id="icy-in-platw" class="config-input" min="50" max="160" value="100">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Prędkość scrolla / otchłani (0–8)</span></div>
+                            <input type="number" id="icy-in-scroll" class="config-input" min="0" max="8" step="0.5" value="1.2">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Grawitacja (0.08–0.40, mniejsza = wolniejsza)</span></div>
+                            <input type="number" id="icy-in-gravity" class="config-input" min="0.08" max="0.40" step="0.02" value="0.20">
+                        </div>
+                        <div class="config-group">
+                            <div class="config-label"><span>Limit czasu (s, 0=brak)</span></div>
+                            <input type="number" id="icy-in-time" class="config-input" min="0" max="300" value="0">
+                        </div>
+                    </div>
+                    <div class="panel" style="flex:1;">
+                        <div class="panel-title"><span>📋</span> Zasady Icy Tower</div>
+                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                            <li>▸ <strong style="color:var(--text)">A / D</strong> lub <strong style="color:var(--text)">Strzałki</strong>: bieg w lewo / prawo</li>
+                            <li>▸ <strong style="color:var(--text)">W</strong>, <strong style="color:var(--text)">Góra</strong> lub <strong style="color:var(--text)">[SPACJA]</strong>: skok</li>
+                            <li>▸ <span style="color:#38bdf8">Pęd = wyższy skok</span>: rozpędź się przed skokiem!</li>
+                            <li>▸ <span style="color:#a855f7">Odbicia od ścian</span> dają dodatkowy impet</li>
+                            <li>▸ Przeskocz 2+ piętra na raz, aby zdobyć <span style="color:#f59e0b">COMBO</span></li>
+                            <li>▸ Nie spadnij poniżej dolnej krawędzi ekranu!</li>
+                        </ul>
+                    </div>
+                    <div class="btn-row" style="flex-direction:column;">
+                        <button id="icy-btn-start" class="action-btn btn-primary btn-start-main" style="background:#38bdf8;color:#09090b;box-shadow:0 4px 18px rgba(56,189,248,.4)">▶ ROZPOCZNIJ GRĘ</button>
+                        <button id="icy-btn-restart" class="action-btn btn-primary hidden" style="background:#38bdf8;color:#09090b;box-shadow:0 4px 18px rgba(56,189,248,.35)">↺ Restart</button>
+                        <button id="icy-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                    </div>
+                    <div class="ready-hint" id="icy-ready-hint">Wciśnij [SPACJA] lub [ENTER] aby rozpocząć</div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /tool-view -->
+
+    <!-- Global countdown overlay (appended to body) -->
+    <div class="countdown-overlay" id="countdown-overlay">
+        <div class="countdown-num" id="countdown-num">3</div>
     </div>
 
-<script>
-    const presets = {
-        atm: { zoneSize: [10, 15], maxAttempts: 5, rounds: 2, fillSpeed: [1200, 1800], codeLength: 4, timeleft: 0 },
-        elektrozamek: { zoneSize: [10, 15], maxAttempts: 3, rounds: 4, fillSpeed: [1200, 1800], codeLength: 4, timeleft: 0 },
-        sejf: { zoneSize: [10, 20], maxAttempts: 3, rounds: 4, fillSpeed: [500, 800], codeLength: 4, timeleft: 20 }
-    };
+    <!-- JS — load order matters: main first, then hacks -->
+    <script src="js/main.js"></script>
+    <script src="js/hack-atmhold.js"></script>
+    <script src="js/hack-cables.js"></script>
+    <script src="js/hack-puzzle.js"></script>
+    <script src="js/hack-lightsout.js"></script>
+    <script src="js/hack-slider.js"></script>
+    <script src="js/hack-dotsequence.js"></script>
+    <script src="js/hack-brickbreaker.js"></script>
+    <script src="js/hack-flappybird.js"></script>
+    <script src="js/hack-arrows.js"></script>
+    <script src="js/hack-breach.js"></script>
+    <script src="js/hack-icytower.js"></script>
 
-    const cablePresets = {
-        normal: { cableCount: 5, timeleft: 15 },
-        easy: { cableCount: 4, timeleft: 25 },
-        hard: { cableCount: 8, timeleft: 10 }
-    };
-
-    const puzzlePresets = {
-        normal: { timeleft: 120 },
-        easy: { timeleft: 180 },
-        hard: { timeleft: 60 }
-    };
-
-    const lightsoutPresets = {
-        normal: { size: 9, timeleft: 180 }
-    };
-
-    const sliderPresets = {
-        normal: { gapWidth: 80, fallSpeed: 3, targetScore: 10, attempts: 3 },
-        easy: { gapWidth: 120, fallSpeed: 2, targetScore: 5, attempts: 5 },
-        hard: { gapWidth: 60, fallSpeed: 5, targetScore: 15, attempts: 2 }
-    };
-
-    let config = { ...presets.sejf };
-
-    let state = {
-        currentGame: 'keypad',
-        currentRound: 1,
-        attempts: config.maxAttempts,
-        targetCode: [],
-        currentIndex: 0,        
-        status: 'IDLE', 
-        timeLeft: 0,
-        timerInterval: null,
-        isHolding: false,
-        activeKeyNum: null,
-        startTime: 0,
-        fillDuration: 0,
-        progressValue: 0,
-        zoneStart: 0,
-        zoneEnd: 0,
-        animFrame: null
-    };
-
-    let cablesState = {
-        leftNodes: [], rightNodes: [], connections: {},
-        selectedLeft: null, mouseX: undefined, mouseY: undefined
-    };
-
-    let puzzleState = {
-        board: [], moves: 0, solvedBoard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]
-    };
-
-    let lightsoutState = {
-        board: [], size: 4
-    };
-
-    let sliderState = {
-        player: { x: 190, y: 350, w: 20, h: 25, speed: 5 },
-        bars: [], passed: 0, barSpacing: 180
-    };
-    const inputKeys = { a: false, d: false, ArrowLeft: false, ArrowRight: false };
-
-    const elements = {
-        screenSettings: document.getElementById('screen-settings'),
-        screenGame: document.getElementById('screen-game'),
-        overlay: document.getElementById('overlay'),
-        overlayCount: document.getElementById('overlay-count'),
-        roundText: document.getElementById('round-text'),
-        attemptsText: document.getElementById('attempts-text'),
-        timerText: document.getElementById('timer-text'),
-        codeDisplay: document.getElementById('code-display'),
-        keypad: document.getElementById('keypad'),
-        message: document.getElementById('message'),
-        presetSelect: document.getElementById('preset-select'),
-        gameSelect: document.getElementById('game-select'),
-        keys: {}
-    };
-
-    function switchGameSetup(gameType) {
-        document.getElementById('config-keypad').style.display = gameType === 'keypad' ? 'block' : 'none';
-        document.getElementById('config-cables').style.display = gameType === 'cables' ? 'block' : 'none';
-        document.getElementById('config-puzzle').style.display = gameType === 'puzzle' ? 'block' : 'none';
-        document.getElementById('config-lightsout').style.display = gameType === 'lightsout' ? 'block' : 'none';
-        document.getElementById('config-slider').style.display = gameType === 'slider' ? 'block' : 'none';
-    }
-
-    function loadPreset(presetName) {
-        if (presetName === 'custom') return;
-        const p = presets[presetName];
-        document.getElementById('in-zone-min').value = p.zoneSize[0];
-        document.getElementById('in-zone-max').value = p.zoneSize[1];
-        document.getElementById('in-speed-min').value = p.fillSpeed[0];
-        document.getElementById('in-speed-max').value = p.fillSpeed[1];
-        document.getElementById('in-attempts').value = p.maxAttempts;
-        document.getElementById('in-rounds').value = p.rounds;
-        document.getElementById('in-code-length').value = p.codeLength;
-        document.getElementById('in-time').value = p.timeleft || 0;
-    }
-    function markCustom() { elements.presetSelect.value = 'custom'; }
-
-    function loadCablePreset(presetName) {
-        if (presetName === 'custom') return;
-        const p = cablePresets[presetName];
-        document.getElementById('in-cable-count').value = p.cableCount;
-        document.getElementById('in-cable-time').value = p.timeleft;
-    }
-    function markCableCustom() { document.getElementById('preset-cable-select').value = 'custom'; }
-
-    function loadPuzzlePreset(presetName) {
-        if (presetName === 'custom') return;
-        const p = puzzlePresets[presetName];
-        document.getElementById('in-puzzle-time').value = p.timeleft;
-    }
-    function markPuzzleCustom() { document.getElementById('preset-puzzle-select').value = 'custom'; }
-
-    function loadLightsoutPreset(presetName) {
-        if (presetName === 'custom') return;
-        const p = lightsoutPresets[presetName];
-        document.getElementById('in-lo-size').value = p.size;
-        document.getElementById('in-lo-time').value = p.timeleft;
-    }
-    function markLightsoutCustom() { document.getElementById('preset-lightsout-select').value = 'custom'; }
-
-    function loadSliderPreset(presetName) {
-        if (presetName === 'custom') return;
-        const p = sliderPresets[presetName];
-        document.getElementById('in-slider-gap').value = p.gapWidth;
-        document.getElementById('in-slider-speed').value = p.fallSpeed;
-        document.getElementById('in-slider-target').value = p.targetScore;
-        document.getElementById('in-slider-attempts').value = p.attempts;
-    }
-    function markSliderCustom() { document.getElementById('preset-slider-select').value = 'custom'; }
-
-    function proceedToGame() {
-        const gameType = elements.gameSelect.value;
-        state.currentGame = gameType;
-
-        elements.screenSettings.style.display = 'none';
-        elements.screenGame.style.display = 'block';
-
-        document.getElementById('game-keypad-container').style.display = gameType === 'keypad' ? 'block' : 'none';
-        document.getElementById('game-cables-container').style.display = gameType === 'cables' ? 'block' : 'none';
-        document.getElementById('game-puzzle-container').style.display = gameType === 'puzzle' ? 'block' : 'none';
-        document.getElementById('game-lightsout-container').style.display = gameType === 'lightsout' ? 'block' : 'none';
-        document.getElementById('game-slider-container').style.display = gameType === 'slider' ? 'block' : 'none';
-
-        if (gameType === 'keypad') {
-            config = {
-                zoneSize: [ parseInt(document.getElementById('in-zone-min').value) || 10, parseInt(document.getElementById('in-zone-max').value) || 20 ],
-                fillSpeed: [ parseInt(document.getElementById('in-speed-min').value) || 500, parseInt(document.getElementById('in-speed-max').value) || 1000 ],
-                maxAttempts: parseInt(document.getElementById('in-attempts').value) || 3,
-                rounds: parseInt(document.getElementById('in-rounds').value) || 3,
-                codeLength: parseInt(document.getElementById('in-code-length').value) || 4,
-                timeleft: parseInt(document.getElementById('in-time').value) || 0
-            };
-            if (config.codeLength > 9) config.codeLength = 9;
-            initKeypadGame();
-        } 
-        else if (gameType === 'cables') {
-            config = {
-                cableCount: parseInt(document.getElementById('in-cable-count').value) || 5,
-                timeleft: parseInt(document.getElementById('in-cable-time').value) || 15
-            };
-            initCablesGame();
-        } 
-        else if (gameType === 'puzzle') {
-            config = { timeleft: parseInt(document.getElementById('in-puzzle-time').value) || 60 };
-            initPuzzleGame();
-        }
-        else if (gameType === 'lightsout') {
-            config = {
-                size: parseInt(document.getElementById('in-lo-size').value) || 4,
-                timeleft: parseInt(document.getElementById('in-lo-time').value) || 30
-            };
-            if(config.size < 3) config.size = 3; if(config.size > 12) config.size = 12;
-            initLightsOutGame();
-        }
-        else if (gameType === 'slider') {
-            config = {
-                gapWidth: parseInt(document.getElementById('in-slider-gap').value) || 80,
-                fallSpeed: parseInt(document.getElementById('in-slider-speed').value) || 3,
-                targetScore: parseInt(document.getElementById('in-slider-target').value) || 10,
-                maxAttempts: parseInt(document.getElementById('in-slider-attempts').value) || 3,
-                timeleft: 0
-            };
-            state.attempts = config.maxAttempts;
-            initSliderGame();
-        }
-    }
-
-    function returnToSettings() {
-        cancelAnimationFrame(state.animFrame);
-        clearInterval(state.timerInterval);
-        elements.screenSettings.style.display = 'block';
-        elements.screenGame.style.display = 'none';
-        state.status = 'IDLE';
-    }
-
-    function randomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-
-    function startPreparation() {
-        state.status = 'PREPARING';
-        elements.overlay.style.display = 'flex';
-        
-        let count = 3;
-        elements.overlayCount.innerText = count;
-        
-        let prepInterval = setInterval(() => {
-            count--;
-            if (count > 0) {
-                elements.overlayCount.innerText = count;
-            } else {
-                clearInterval(prepInterval);
-                elements.overlay.style.display = 'none';
-                startActualRound();
-            }
-        }, 1000);
-    }
-
-    function startActualRound() {
-        state.status = 'PLAYING';
-        if (state.currentGame === 'keypad') startRound();
-        else if (state.currentGame === 'slider') startSliderRound();
-        else { updateUI(); startTimer(); }
-    }
-
-    function startTimer() {
-        clearInterval(state.timerInterval);
-        
-        if (!config.timeleft || config.timeleft <= 0) {
-            elements.timerText.innerText = `Time: ∞`;
-            elements.timerText.className = 'timer-container text-muted';
-            return;
-        }
-
-        state.timeLeft = config.timeleft;
-        elements.timerText.className = 'timer-container';
-        elements.timerText.style.color = 'var(--warning)';
-        elements.timerText.innerText = `Time: ${state.timeLeft.toFixed(1)}s`;
-        
-        state.timerInterval = setInterval(() => {
-            if (state.status !== 'PLAYING') return;
-            
-            state.timeLeft -= 0.1;
-            if (state.timeLeft <= 0) {
-                state.timeLeft = 0;
-                clearInterval(state.timerInterval);
-                failGame("Czas minął!"); 
-            }
-            
-            elements.timerText.innerText = `Time: ${state.timeLeft.toFixed(1)}s`;
-            if (state.timeLeft <= 5) elements.timerText.style.color = 'var(--danger)';
-        }, 100);
-    }
-
-    function failGame(msg) {
-        state.status = 'PAUSED';
-        clearInterval(state.timerInterval);
-        showMessage(msg, "text-danger");
-
-        if (state.currentGame === 'keypad' || state.currentGame === 'slider') {
-            failAttempt(msg);
-        } else {
-            state.status = 'GAMEOVER';
-            setTimeout(returnToSettings, 3000);
-        }
-    }
-
-    function showMessage(text, className) {
-        elements.message.innerText = text;
-        elements.message.className = `message ${className}`;
-    }
-
-    function updateUI() {
-        if (state.currentGame === 'keypad') {
-            elements.roundText.innerText = `Runda: ${state.currentRound}/${config.rounds}`;
-            elements.attemptsText.innerText = `Próby: ${state.attempts}`;
-            
-            let codeHTML = '';
-            for(let i=0; i < config.codeLength; i++) {
-                if (i < state.currentIndex) codeHTML += `<span class="completed">${state.targetCode[i]}</span> `;
-                else if (i === state.currentIndex) codeHTML += `<span>${state.targetCode[i]}</span> `;
-                else codeHTML += `<span>_</span> `;
-            }
-            elements.codeDisplay.innerHTML = codeHTML.trim();
-        } 
-        else if (state.currentGame === 'cables') {
-            const connectedCount = Object.keys(cablesState.connections).length;
-            elements.roundText.innerText = `Cables Setup`;
-            elements.attemptsText.innerText = `Połączone: ${connectedCount}/${config.cableCount}`;
-        } 
-        else if (state.currentGame === 'puzzle') {
-            elements.roundText.innerText = `15-Puzzle`;
-            elements.attemptsText.innerText = `Ruchy: ${puzzleState.moves}`;
-        }
-        else if (state.currentGame === 'lightsout') {
-            let lightsOn = 0;
-            if(lightsoutState.board.length > 0) {
-                for(let r=0; r<config.size; r++){
-                    for(let c=0; c<config.size; c++){
-                        if(lightsoutState.board[r][c]) lightsOn++;
-                    }
-                }
-            }
-            elements.roundText.innerText = `Lights Out`;
-            elements.attemptsText.innerText = `Do wył.: ${lightsOn}`;
-        }
-        else if (state.currentGame === 'slider') {
-            elements.roundText.innerText = `Przeszkody: ${sliderState.passed}/${config.targetScore}`;
-            elements.attemptsText.innerText = `Życia: ${state.attempts}`;
-        }
-        
-        if (config.timeleft && state.timeLeft > 5) {
-            elements.timerText.style.color = 'var(--warning)';
-        }
-    }
-
-    function generateKeypad() {
-        elements.keypad.innerHTML = '';
-        for (let i = 1; i <= 9; i++) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'key-wrapper';
-            wrapper.innerHTML = `
-                <button class="key" data-key="${i}">${i}</button>
-                <div class="mini-progress-container" id="prog-container-${i}">
-                    <div class="mini-target-zone" id="zone-${i}"></div>
-                    <div class="mini-progress-fill" id="fill-${i}"></div>
-                </div>
-            `;
-            elements.keypad.appendChild(wrapper);
-
-            const btn = wrapper.querySelector('.key');
-            btn.addEventListener('mousedown', () => handleHoldStart(i, btn));
-            btn.addEventListener('touchstart', (e) => { e.preventDefault(); handleHoldStart(i, btn); });
-
-            elements.keys[i] = {
-                btn: btn,
-                zone: wrapper.querySelector('.mini-target-zone'),
-                fill: wrapper.querySelector('.mini-progress-fill')
-            };
-        }
-    }
-
-    function initKeypadGame() {
-        cancelAnimationFrame(state.animFrame);
-        clearInterval(state.timerInterval);
-        state.currentRound = 1;
-        state.attempts = config.maxAttempts;
-        showMessage('', '');
-        for(let i = 1; i <= 9; i++) resetProgressBar(i);
-        startPreparation(); 
-    }
-
-    function startRound() {
-        state.currentIndex = 0;
-        state.targetCode = [];
-        state.timeLeft = config.timeleft;
-        
-        let availableNumbers = [1,2,3,4,5,6,7,8,9];
-        for(let i=0; i < config.codeLength; i++) {
-            let randIndex = randomInt(0, availableNumbers.length - 1);
-            state.targetCode.push(availableNumbers.splice(randIndex, 1)[0]);
-        }
-        
-        updateUI();
-        prepareCurrentKey(); 
-        startTimer();
-    }
-
-    function resetProgressBar(keyNum) {
-        const k = elements.keys[keyNum];
-        k.zone.style.display = 'none'; k.fill.style.width = '0%';
-        k.fill.style.backgroundColor = 'var(--theme-pink)'; k.fill.style.boxShadow = '0 0 8px var(--theme-pink)';
-    }
-
-    function prepareCurrentKey() {
-        if (state.currentIndex >= config.codeLength) return;
-        for (let i = 1; i <= 9; i++) resetProgressBar(i);
-
-        const expectedKey = state.targetCode[state.currentIndex];
-        const zoneWidth = randomInt(config.zoneSize[0], config.zoneSize[1]);
-        state.zoneStart = randomInt(10, 100 - zoneWidth - 5); 
-        state.zoneEnd = state.zoneStart + zoneWidth;
-        state.fillDuration = randomInt(config.fillSpeed[0], config.fillSpeed[1]);
-
-        const activeElements = elements.keys[expectedKey];
-        activeElements.zone.style.display = 'block';
-        activeElements.zone.style.left = `${state.zoneStart}%`;
-        activeElements.zone.style.width = `${zoneWidth}%`;
-    }
-
-    function handleHoldStart(keyNum, keyElement) {
-        if (state.status !== 'PLAYING' || state.currentGame !== 'keypad') return;
-        
-        const expectedKey = state.targetCode[state.currentIndex];
-        state.activeKeyNum = parseInt(keyNum);
-
-        if (state.activeKeyNum !== expectedKey) { failAttempt("Zły przycisk!"); return; }
-
-        state.isHolding = true;
-        keyElement.classList.add('active');
-        
-        const activeElements = elements.keys[state.activeKeyNum];
-        activeElements.fill.style.backgroundColor = 'var(--theme-pink)';
-        activeElements.fill.style.boxShadow = '0 0 8px var(--theme-pink)';
-        activeElements.fill.style.width = '0%';
-
-        state.startTime = performance.now();
-        state.animFrame = requestAnimationFrame(animateProgress);
-    }
-
-    function animateProgress(timestamp) {
-        if (!state.isHolding || !state.activeKeyNum) return;
-        const elapsed = timestamp - state.startTime;
-        state.progressValue = Math.min((elapsed / state.fillDuration) * 100, 100);
-        elements.keys[state.activeKeyNum].fill.style.width = `${state.progressValue}%`;
-        if (state.progressValue >= 100) { handleHoldRelease(); return; }
-        state.animFrame = requestAnimationFrame(animateProgress);
-    }
-
-    function handleHoldRelease() {
-        if (!state.isHolding || state.status !== 'PLAYING' || state.currentGame !== 'keypad') return;
-        state.isHolding = false;
-        cancelAnimationFrame(state.animFrame);
-        
-        const activeKey = state.activeKeyNum;
-        state.activeKeyNum = null;
-        for(let i = 1; i <= 9; i++) elements.keys[i].btn.classList.remove('active');
-
-        if (state.progressValue >= state.zoneStart && state.progressValue <= state.zoneEnd) successStep(activeKey);
-        else failAttempt("Pudło!"); 
-    }
-
-    function successStep(keyNum) {
-        state.currentIndex++;
-        elements.keys[keyNum].fill.style.backgroundColor = 'var(--success)';
-        elements.keys[keyNum].fill.style.boxShadow = '0 0 8px var(--success)';
-        state.status = 'PAUSED'; 
-        
-        if (state.currentIndex >= config.codeLength) {
-            clearInterval(state.timerInterval);
-            showMessage("Runda Zakończona!", "text-success");
-            
-            setTimeout(() => {
-                state.currentRound++;
-                if (state.currentRound > config.rounds) {
-                    showMessage("HACKOWANIE UDANE", "text-success");
-                    state.status = 'WON';
-                    setTimeout(returnToSettings, 3000);
-                } else {
-                    showMessage("", "");
-                    startPreparation(); 
-                }
-            }, 1000);
-        } else {
-            updateUI(); 
-            setTimeout(() => { prepareCurrentKey(); state.status = 'PLAYING'; }, 250);
-        }
-    }
-
-    function failAttempt(msg) {
-        clearInterval(state.timerInterval);
-        state.status = 'PAUSED';
-        state.attempts--;
-        state.isHolding = false;
-        cancelAnimationFrame(state.animFrame);
-        
-        if (state.currentGame === 'keypad') {
-            for(let i = 1; i <= 9; i++) elements.keys[i].btn.classList.remove('active');
-            if (state.activeKeyNum) {
-                elements.keys[state.activeKeyNum].fill.style.backgroundColor = 'var(--danger)';
-                elements.keys[state.activeKeyNum].fill.style.boxShadow = '0 0 8px var(--danger)';
-                if (state.progressValue === 0) elements.keys[state.activeKeyNum].fill.style.width = '100%'; 
-            }
-        }
-
-        showMessage(msg, "text-danger");
-        updateUI();
-
-        setTimeout(() => {
-            if (state.attempts <= 0) {
-                showMessage("SYSTEM ZABLOKOWANY", "text-danger");
-                state.status = 'GAMEOVER';
-                setTimeout(returnToSettings, 3000);
-            } else {
-                state.status = 'PLAYING';
-                showMessage("", "");
-                
-                if (state.currentGame === 'keypad') {
-                    state.activeKeyNum = null;
-                    state.timeLeft = config.timeleft; 
-                    prepareCurrentKey(); 
-                    startTimer();
-                } else if (state.currentGame === 'slider') {
-                    startSliderRound();
-                }
-            }
-        }, 1000);
-    }
-
-    function initSliderGame() {
-        cancelAnimationFrame(state.animFrame);
-        clearInterval(state.timerInterval);
-        showMessage('', '');
-        
-        inputKeys.a = false; inputKeys.d = false; 
-        inputKeys.ArrowLeft = false; inputKeys.ArrowRight = false;
-        
-        startPreparation();
-    }
-
-    function startSliderRound() {
-        sliderState.player.x = 190;
-        sliderState.bars = [];
-        sliderState.passed = 0;
-        
-        spawnSliderBar(-20);
-
-        updateUI();
-        startTimer();
-        sliderLoop();
-    }
-
-    function spawnSliderBar(startY) {
-        let gapX = randomInt(10, 400 - config.gapWidth - 10);
-        sliderState.bars.push({
-            y: startY,
-            h: 15,
-            gapX: gapX,
-            gapW: config.gapWidth,
-            passed: false
+    <script>
+        // ── Bootstrap: wire all events once DOM is ready ──────────────────
+        window.addEventListener('DOMContentLoaded', () => {
+            atmWireEvents();
+            cablesWireEvents();
+            puzzleWireEvents();
+            loWireEvents();
+            sliderWireEvents();
+            dotWireEvents();
+            bbWireEvents();
+            fbWireEvents();
+            arrowsWireEvents();
+            breachWireEvents();
+            icyWireEvents();
         });
-    }
+    </script>
 
-    function sliderLoop() {
-        if (state.status !== 'PLAYING' || state.currentGame !== 'slider') return;
-
-        if (inputKeys.a || inputKeys.ArrowLeft) sliderState.player.x -= sliderState.player.speed;
-        if (inputKeys.d || inputKeys.ArrowRight) sliderState.player.x += sliderState.player.speed;
-
-        if (sliderState.player.x < 0) sliderState.player.x = 0;
-        if (sliderState.player.x + sliderState.player.w > 400) sliderState.player.x = 400 - sliderState.player.w;
-
-        let hit = false;
-        for (let i = 0; i < sliderState.bars.length; i++) {
-            let b = sliderState.bars[i];
-            b.y += config.fallSpeed;
-
-            if (sliderState.player.y < b.y + b.h && sliderState.player.y + sliderState.player.h > b.y) {
-                if (sliderState.player.x < b.gapX || sliderState.player.x + sliderState.player.w > b.gapX + b.gapW) {
-                    hit = true;
-                }
-            }
-
-            if (!b.passed && b.y > sliderState.player.y + sliderState.player.h) {
-                b.passed = true;
-                sliderState.passed++;
-                updateUI();
-                if (sliderState.passed >= config.targetScore) {
-                    state.status = 'WON';
-                    drawSlider();
-                    showMessage("HACKOWANIE UDANE", "text-success");
-                    setTimeout(returnToSettings, 3000);
-                    return;
-                }
-            }
-        }
-
-        if (hit) {
-            drawSlider();
-            failAttempt("Zderzenie!");
-            return; 
-        }
-
-        sliderState.bars = sliderState.bars.filter(b => b.y < 450);
-
-        let lastBar = sliderState.bars[sliderState.bars.length - 1];
-        if (!lastBar || lastBar.y >= sliderState.barSpacing) {
-            spawnSliderBar(lastBar ? lastBar.y - sliderState.barSpacing : -20);
-        }
-
-        drawSlider();
-        state.animFrame = requestAnimationFrame(sliderLoop);
-    }
-
-    function drawSlider() {
-        const canvas = document.getElementById('slider-canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = 'var(--theme-pink)';
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = 'var(--theme-pink)';
-
-        sliderState.bars.forEach(b => {
-            ctx.fillRect(0, b.y, b.gapX, b.h);
-            ctx.fillRect(b.gapX + b.gapW, b.y, canvas.width - (b.gapX + b.gapW), b.h);
-        });
-
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#ffffff';
-        
-        let p = sliderState.player;
-        ctx.beginPath();
-        ctx.moveTo(p.x + p.w / 2, p.y);
-        ctx.lineTo(p.x + p.w, p.y + p.h / 2);
-        ctx.lineTo(p.x + p.w * 0.75, p.y + p.h / 2);
-        ctx.lineTo(p.x + p.w * 0.75, p.y + p.h);
-        ctx.lineTo(p.x + p.w * 0.25, p.y + p.h);
-        ctx.lineTo(p.x + p.w * 0.25, p.y + p.h / 2);
-        ctx.lineTo(p.x, p.y + p.h / 2);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.shadowBlur = 0;
-    }
-
-    window.addEventListener('keydown', e => {
-        if (inputKeys.hasOwnProperty(e.key)) inputKeys[e.key] = true;
-        if (e.key === 'a' || e.key === 'A') inputKeys.a = true;
-        if (e.key === 'd' || e.key === 'D') inputKeys.d = true;
-    });
-    window.addEventListener('keyup', e => {
-        if (inputKeys.hasOwnProperty(e.key)) inputKeys[e.key] = false;
-        if (e.key === 'a' || e.key === 'A') inputKeys.a = false;
-        if (e.key === 'd' || e.key === 'D') inputKeys.d = false;
-    });
-
-    function initCablesGame() {
-        clearInterval(state.timerInterval);
-        showMessage('', '');
-        cablesState = { leftNodes: [], rightNodes: [], connections: {}, selectedLeft: null, mouseX: undefined, mouseY: undefined };
-        const colors = ['#f13a89', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#f97316', '#06b6d4', '#ef4444'];
-        const num = Math.min(config.cableCount, colors.length);
-        for (let i = 0; i < num; i++) { cablesState.leftNodes.push({ id: i, color: colors[i] }); }
-        cablesState.leftNodes.sort(() => Math.random() - 0.5);
-        for (let i = 0; i < num; i++) { cablesState.rightNodes.push({ id: i, color: colors[i] }); }
-        cablesState.rightNodes.sort(() => Math.random() - 0.5);
-        const leftCol = document.getElementById('cables-left'); const rightCol = document.getElementById('cables-right');
-        leftCol.innerHTML = ''; rightCol.innerHTML = '';
-        
-        cablesState.leftNodes.forEach(node => {
-            const btn = document.createElement('button'); btn.className = 'cable-node'; btn.id = `cable-left-${node.id}`;
-            btn.dataset.id = node.id; btn.dataset.color = node.color; btn.style.color = node.color;
-            btn.innerHTML = `<span class="cable-node-inner"></span>`;
-            btn.addEventListener('pointerdown', (e) => {
-                if (state.status !== 'PLAYING') return;
-                cablesState.selectedLeft = node.id;
-                const rect = document.getElementById('cables-board').getBoundingClientRect();
-                cablesState.mouseX = e.clientX - rect.left; cablesState.mouseY = e.clientY - rect.top;
-                delete cablesState.connections[node.id]; updateUI(); drawCables(); highlightNodes();
-            });
-            leftCol.appendChild(btn);
-        });
-        
-        cablesState.rightNodes.forEach(node => {
-            const btn = document.createElement('button'); btn.className = 'cable-node'; btn.id = `cable-right-${node.id}`;
-            btn.dataset.id = node.id; btn.dataset.color = node.color; btn.style.color = node.color;
-            btn.innerHTML = `<span class="cable-node-inner"></span>`;
-            btn.addEventListener('pointerup', () => {
-                if (state.status !== 'PLAYING' || cablesState.selectedLeft === null) return;
-                if (cablesState.selectedLeft === node.id) {
-                    cablesState.connections[cablesState.selectedLeft] = node.id;
-                    cablesState.selectedLeft = null; drawCables(); updateUI(); checkCablesWin();
-                } else {
-                    cablesState.selectedLeft = null; drawCables(); highlightNodes();
-                    showMessage("Zły kabel!", "text-danger");
-                    setTimeout(() => { if (state.status === 'PLAYING') showMessage("", ""); }, 1000);
-                }
-            });
-            rightCol.appendChild(btn);
-        });
-        
-        drawCables(); startPreparation();
-    }
-    function drawCables() {
-        const svg = document.getElementById('cables-svg'); const board = document.getElementById('cables-board');
-        const rect = board.getBoundingClientRect(); svg.innerHTML = ''; 
-        for (let leftIdx in cablesState.connections) {
-            const rightIdx = cablesState.connections[leftIdx];
-            const leftNode = document.getElementById(`cable-left-${leftIdx}`); const rightNode = document.getElementById(`cable-right-${rightIdx}`);
-            if (!leftNode || !rightNode) continue;
-            const leftRect = leftNode.getBoundingClientRect(); const rightRect = rightNode.getBoundingClientRect();
-            const x1 = leftRect.left - rect.left + leftRect.width / 2; const y1 = leftRect.top - rect.top + leftRect.height / 2;
-            const x2 = rightRect.left - rect.left + rightRect.width / 2; const y2 = rightRect.top - rect.top + rightRect.height / 2;
-            const color = leftNode.dataset.color;
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute('d', `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`);
-            path.setAttribute('stroke', color); path.setAttribute('stroke-width', '4'); path.setAttribute('fill', 'none'); path.setAttribute('style', `filter: drop-shadow(0px 0px 5px ${color})`);
-            svg.appendChild(path);
-        }
-        if (cablesState.selectedLeft !== null && cablesState.mouseX !== undefined && cablesState.mouseY !== undefined) {
-            const leftNode = document.getElementById(`cable-left-${cablesState.selectedLeft}`);
-            if (leftNode) {
-                const leftRect = leftNode.getBoundingClientRect();
-                const x1 = leftRect.left - rect.left + leftRect.width / 2; const y1 = leftRect.top - rect.top + leftRect.height / 2;
-                const x2 = cablesState.mouseX; const y2 = cablesState.mouseY; const color = leftNode.dataset.color;
-                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                path.setAttribute('d', `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`);
-                path.setAttribute('stroke', color); path.setAttribute('stroke-width', '4'); path.setAttribute('stroke-dasharray', '5,5'); path.setAttribute('fill', 'none'); path.setAttribute('style', `filter: drop-shadow(0px 0px 5px ${color})`);
-                svg.appendChild(path);
-            }
-        }
-    }
-    function highlightNodes() {
-        const leftNodes = document.querySelectorAll('#cables-left .cable-node');
-        leftNodes.forEach(node => {
-            const nodeId = parseInt(node.dataset.id);
-            if (cablesState.selectedLeft === nodeId) node.classList.add('active-start');
-            else node.classList.remove('active-start');
-        });
-    }
-    function checkCablesWin() {
-        if (Object.keys(cablesState.connections).length === cablesState.leftNodes.length) {
-            clearInterval(state.timerInterval); showMessage("POŁĄCZENIE UDANE!", "text-success");
-            state.status = 'WON'; setTimeout(returnToSettings, 3000);
-        }
-    }
-    const cablesBoard = document.getElementById('cables-board');
-    cablesBoard.addEventListener('pointermove', (e) => {
-        if (state.status !== 'PLAYING' || cablesState.selectedLeft === null) return;
-        const rect = cablesBoard.getBoundingClientRect();
-        cablesState.mouseX = e.clientX - rect.left; cablesState.mouseY = e.clientY - rect.top; drawCables();
-    });
-
-    function initPuzzleGame() {
-        clearInterval(state.timerInterval); showMessage('', '');
-        puzzleState = { board: [], moves: 0, solvedBoard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0] };
-        scramblePuzzle(); renderPuzzleBoard(); startPreparation();
-    }
-    function scramblePuzzle() {
-        let board = [...puzzleState.solvedBoard]; let blankIdx = 15; 
-        for (let i = 0; i < 180; i++) {
-            let validMoves = []; let row = Math.floor(blankIdx / 4); let col = blankIdx % 4;
-            if (row > 0) validMoves.push(blankIdx - 4); if (row < 3) validMoves.push(blankIdx + 4); 
-            if (col > 0) validMoves.push(blankIdx - 1); if (col < 3) validMoves.push(blankIdx + 1); 
-            let move = validMoves[Math.floor(Math.random() * validMoves.length)];
-            board[blankIdx] = board[move]; board[move] = 0; blankIdx = move;
-        }
-        puzzleState.board = board;
-    }
-    function renderPuzzleBoard() {
-        const boardContainer = document.getElementById('puzzle-board'); boardContainer.innerHTML = '';
-        for (let i = 0; i < 16; i++) {
-            const val = puzzleState.board[i]; const tile = document.createElement('div');
-            if (val === 0) { tile.className = 'puzzle-tile empty'; } else {
-                tile.className = 'puzzle-tile'; tile.innerText = val;
-                if (val === i + 1) tile.classList.add('correct');
-                tile.addEventListener('pointerdown', () => { if (state.status !== 'PLAYING') return; handlePuzzleTileClick(i); });
-            }
-            boardContainer.appendChild(tile);
-        }
-    }
-    function handlePuzzleTileClick(i) {
-        const blankIdx = puzzleState.board.indexOf(0);
-        const r1 = Math.floor(i / 4); const c1 = i % 4; const r2 = Math.floor(blankIdx / 4); const c2 = blankIdx % 4;
-        const isAdjacent = (Math.abs(r1 - r2) === 1 && c1 === c2) || (r1 === r2 && Math.abs(c1 - c2) === 1);
-        if (isAdjacent) {
-            puzzleState.board[blankIdx] = puzzleState.board[i]; puzzleState.board[i] = 0; puzzleState.moves++;
-            renderPuzzleBoard(); updateUI(); checkPuzzleWin();
-        }
-    }
-    function checkPuzzleWin() {
-        let isSolved = true;
-        for (let i = 0; i < 16; i++) { if (puzzleState.board[i] !== puzzleState.solvedBoard[i]) { isSolved = false; break; } }
-        if (isSolved) {
-            clearInterval(state.timerInterval); showMessage("DEKODOWANIE UDANE!", "text-success");
-            state.status = 'WON'; setTimeout(returnToSettings, 3000);
-        }
-    }
-
-    function initLightsOutGame() {
-        clearInterval(state.timerInterval); showMessage('', '');
-        lightsoutState.size = config.size; loGenerateGrid(); scrambleLightsOut(); loRender(); startPreparation();
-    }
-    function loGenerateGrid() {
-        const boardEl = document.getElementById('lightsout-board');
-        boardEl.style.gridTemplateColumns = `repeat(${lightsoutState.size}, 1fr)`; boardEl.innerHTML = ''; lightsoutState.board = [];
-        let cellSize = Math.floor(400 / lightsoutState.size) - 10;
-        if (cellSize > 80) cellSize = 80; if (cellSize < 30) cellSize = 30; 
-        for (let r = 0; r < lightsoutState.size; r++) {
-            let row = [];
-            for (let c = 0; c < lightsoutState.size; c++) {
-                row.push(false); let cell = document.createElement('div'); cell.className = 'lo-cell';
-                cell.style.width = `${cellSize}px`; cell.style.height = `${cellSize}px`; cell.dataset.r = r; cell.dataset.c = c;
-                const trigger = (e) => { e.preventDefault(); loHandleClick(r, c); };
-                cell.addEventListener('mousedown', trigger); cell.addEventListener('touchstart', trigger);
-                boardEl.appendChild(cell);
-            }
-            lightsoutState.board.push(row);
-        }
-    }
-    function scrambleLightsOut() {
-        let moves = lightsoutState.size * lightsoutState.size * 2;
-        for(let i=0; i<moves; i++) {
-            let rr = randomInt(0, lightsoutState.size-1); let cc = randomInt(0, lightsoutState.size-1);
-            loToggle(rr, cc, false);
-        }
-        if (loCheckWinCondition()) loToggle(0, 0, false); 
-    }
-    function loToggle(r, c, checkWinFlag = true) {
-        const toggleSingle = (row, col) => {
-            if (row >= 0 && row < lightsoutState.size && col >= 0 && col < lightsoutState.size) { lightsoutState.board[row][col] = !lightsoutState.board[row][col]; }
-        };
-        toggleSingle(r, c); toggleSingle(r-1, c); toggleSingle(r+1, c); toggleSingle(r, c-1); toggleSingle(r, c+1);
-        if (checkWinFlag) {
-            loRender(); updateUI();
-            if (loCheckWinCondition()) {
-                clearInterval(state.timerInterval); showMessage("ZASILANIE WYŁĄCZONE!", "text-success");
-                state.status = 'WON'; setTimeout(returnToSettings, 3000);
-            }
-        }
-    }
-    function loHandleClick(r, c) {
-        if (state.status !== 'PLAYING' || state.currentGame !== 'lightsout') return;
-        loToggle(r, c, true);
-    }
-    function loRender() {
-        const cells = document.querySelectorAll('#lightsout-board .lo-cell');
-        cells.forEach(cell => {
-            let r = parseInt(cell.dataset.r); let c = parseInt(cell.dataset.c);
-            if (lightsoutState.board[r][c]) cell.classList.add('on'); else cell.classList.remove('on');
-        });
-    }
-    function loCheckWinCondition() {
-        for(let r=0; r < lightsoutState.size; r++) { for(let c=0; c < lightsoutState.size; c++) { if (lightsoutState.board[r][c] === true) return false; } } return true;
-    }
-
-    window.addEventListener('mouseup', handleHoldRelease);
-    window.addEventListener('touchend', handleHoldRelease);
-    window.addEventListener('pointerup', () => {
-        if (state.currentGame === 'cables' && state.status === 'PLAYING') {
-            setTimeout(() => {
-                if (cablesState.selectedLeft !== null) { cablesState.selectedLeft = null; drawCables(); highlightNodes(); }
-            }, 100);
-        }
-    });
-    window.addEventListener('contextmenu', e => e.preventDefault());
-
-    generateKeypad();
-    loadPreset('sejf'); 
-    loadCablePreset('normal');
-    loadPuzzlePreset('normal');
-    loadLightsoutPreset('normal');
-    loadSliderPreset('normal');
-    switchGameSetup('keypad');
-</script>
 </body>
+
 </html>
