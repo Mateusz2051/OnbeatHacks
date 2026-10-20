@@ -827,9 +827,9 @@ function icyWireEvents() {
         if (sharedState.currentHack !== 'icytower') return;
         if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) return;
 
-        // Space / Enter starts game when in READY mode
+        // Enter starts game when in READY mode
         if (sharedState.status === 'READY') {
-            if (e.code === 'Space' || e.key === 'Enter') {
+            if (e.key === 'Enter') {
                 e.preventDefault();
                 startIcyGame();
                 return;

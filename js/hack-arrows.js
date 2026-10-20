@@ -294,8 +294,8 @@ function arrowsWireEvents() {
         if (sharedState.currentHack !== 'arrows') return;
         if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
 
-        // Space / Enter to start when in READY mode
-        if (sharedState.status === 'READY' && (e.code === 'Space' || e.key === 'Enter')) {
+        // Enter to start when in READY mode
+        if (sharedState.status === 'READY' && e.key === 'Enter') {
             e.preventDefault();
             startArrowsGame();
             return;

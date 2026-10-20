@@ -19,7 +19,7 @@ let fbState = {
     particles: [],  // death particles
 };
 
-// Pipe colors / theme stays pink to match Onbeat
+// Pipe colors 
 const FB_PIPE_COLOR = '#f13a89';
 const FB_PIPE_GLOW = 'rgba(241,58,137,0.5)';
 const FB_BIRD_COLOR = '#ffffff';
@@ -497,7 +497,7 @@ function fbWireEvents() {
         if (sharedState.currentHack !== 'flappybird') return;
         if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
 
-        if (sharedState.status === 'READY' && (e.code === 'Space' || e.key === 'Enter')) {
+        if (sharedState.status === 'READY' && e.key === 'Enter') {
             e.preventDefault();
             startFbGame();
             return;

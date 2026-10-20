@@ -306,7 +306,7 @@ function sliderWireEvents() {
         if (sharedState.currentHack !== 'slider') return;
         if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
 
-        if (sharedState.status === 'READY' && (e.code === 'Space' || e.key === 'Enter')) {
+        if (sharedState.status === 'READY' && e.key === 'Enter') {
             e.preventDefault();
             startSliderGame();
         }

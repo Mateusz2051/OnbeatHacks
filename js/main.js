@@ -1,5 +1,5 @@
 
-const HACKS = ['atmhold', 'cables', 'puzzle', 'lightsout', 'slider', 'dotsequence', 'brickbreaker', 'flappybird', 'arrows', 'breach', 'icytower'];
+const HACKS = ['atmhold', 'cables', 'puzzle', 'lightsout', 'slider', 'dotsequence', 'brickbreaker', 'flappybird', 'arrows', 'breach', 'icytower', 'switches'];
 
 const hackMeta = {
     atmhold:      { label: 'ATM Hold',          color: 'pink'   },
@@ -13,6 +13,7 @@ const hackMeta = {
     arrows:       { label: 'Strzałki',           color: 'pink'   },
     breach:       { label: 'Protokół włamania',  color: 'green'  },
     icytower:     { label: 'Icy Tower',          color: 'cyan'   },
+    switches:     { label: 'Skrzynka Elektryczna', color: 'yellow' },
 };
 
 // Global shared state (each hack reads/writes what it needs)
@@ -74,6 +75,7 @@ function openHack(hackId) {
         case 'arrows':       initArrows();       break;
         case 'breach':       initBreach();       break;
         case 'icytower':     initIcyTower();     break;
+        case 'switches':     initSwitches();     break;
     }
 }
 
@@ -194,11 +196,11 @@ function startGenericTimer(seconds, textEl, barEl, onExpire, onTick) {
     }, 100);
 }
 
-// Global Enter/Space shortcut to start current hack when in READY mode
+// Global Enter shortcut to start current hack when in READY mode
 window.addEventListener('keydown', e => {
     if (sharedState.status !== 'READY' || !sharedState.currentHack) return;
     if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) return;
-    if (e.code === 'Space' || e.key === 'Enter') {
+    if (e.key === 'Enter') {
         const btn = document.getElementById(`${sharedState.currentHack}-btn-start`);
         if (btn && !btn.classList.contains('hidden')) {
             e.preventDefault();
