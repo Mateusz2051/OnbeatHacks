@@ -119,6 +119,8 @@ function resetFlappyBird() {
 
 function startFbGame() {
     if (sharedState.status === 'PREPARING') return;
+    cancelAnimationFrame(fbState.animFrame);
+    fbState.animFrame = null;
 
     const startBtn = document.getElementById('fb-btn-start');
     const restartBtn = document.getElementById('fb-btn-restart');
@@ -157,6 +159,7 @@ function fbStart() {
 function fbLoop() {
     if (sharedState.currentHack !== 'flappybird') return;
     if (sharedState.status !== 'PLAYING') return;
+    cancelAnimationFrame(fbState.animFrame);
 
     const { canvas, ctx, bird, pipes } = fbState;
     const cw = canvas.width, ch = canvas.height;
@@ -260,7 +263,7 @@ function fbDie() {
         });
     }
     fbDraw(); // Draw final frame with particles
-    showFbOverlay(`CRASH! Przeleciałeś ${fbState.score}/${fbConfig.targetPipes} rur\nKliknij lub Spacja, by zagrać ponownie`, '#ef4444');
+    showFbOverlay(`CRASH! Przeleciałeś ${fbState.score}/${fbConfig.targetPipes} rur\nKliknij Restart lub [ENTER], by zagrać ponownie`, '#ef4444');
 }
 
 function fbWin() {
@@ -438,20 +441,7 @@ function updateFbUI() {
 
 function fbJump() {
     if (sharedState.currentHack !== 'flappybird') return;
-    if (fbState.dead) {
-        resetFlappyBird();
-        fbStart();
-        fbState.bird.vy = fbConfig.jumpForce;
-        fbState.birdAngle = -24;
-        return;
-    }
-    if (sharedState.status === 'IDLE') {
-        fbStart();
-        fbState.bird.vy = fbConfig.jumpForce;
-        fbState.birdAngle = -24;
-        return;
-    }
-    if (sharedState.status !== 'PLAYING') return;
+    if (sharedState.status !== 'PLAYING' || fbState.dead) return;
     fbState.bird.vy = fbConfig.jumpForce;
     fbState.birdAngle = -24;
 }
@@ -484,24 +474,52 @@ function fbWireEvents() {
     const canvas = document.getElementById('fb-canvas');
     if (!canvas) return;
 
-    canvas.addEventListener('click', fbJump);
-    canvas.addEventListener('touchstart', e => { e.preventDefault(); fbJump(); }, { passive: false });
+    canvas.addEventListener('click', () => {
+        if (sharedState.status === 'PLAYING') fbJump();
+    });
+    canvas.addEventListener('touchstart', e => {
+        if (sharedState.status === 'PLAYING') {
+            e.preventDefault();
+            fbJump();
+        }
+    }, { passive: false });
 
     const overlay = document.getElementById('fb-overlay');
     if (overlay) {
-        overlay.addEventListener('click', fbJump);
-        overlay.addEventListener('touchstart', e => { e.preventDefault(); fbJump(); }, { passive: false });
+        overlay.addEventListener('click', () => {
+            if (sharedState.currentHack !== 'flappybird') return;
+            if (sharedState.status === 'GAMEOVER') {
+                resetFlappyBird();
+            }
+        });
+        overlay.addEventListener('touchstart', e => {
+            if (sharedState.currentHack !== 'flappybird') return;
+            if (sharedState.status === 'GAMEOVER') {
+                e.preventDefault();
+                resetFlappyBird();
+            }
+        }, { passive: false });
     }
 
     window.addEventListener('keydown', e => {
         if (sharedState.currentHack !== 'flappybird') return;
         if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
 
-        if (sharedState.status === 'READY' && e.key === 'Enter') {
-            e.preventDefault();
-            startFbGame();
-            return;
+        if (e.key === 'Enter') {
+            if (sharedState.status === 'READY') {
+                e.preventDefault();
+                startFbGame();
+                return;
+            }
+            if (sharedState.status === 'GAMEOVER' || sharedState.status === 'WON') {
+                e.preventDefault();
+                resetFlappyBird();
+                return;
+            }
         }
+
+        // Only flap when actively playing
+        if (sharedState.status !== 'PLAYING' || fbState.dead) return;
 
         if (e.code === 'Space' || e.code === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
             e.preventDefault();
