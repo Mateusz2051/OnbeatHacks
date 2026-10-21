@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protokół Włamania // Escape Room Hack #5 — Onbeat Hacks</title>
+    <meta name="description" content="Moduł przełamania firewalla - odtwórz 4-bajtową sekwencję w matrycy 6x6 przed upływem 40s.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07090e;
+            --surface: #0e121a;
+            --surface2: #151b27;
+            --surface-elevated: #1b2333;
+            --border: #232c3d;
+            --border2: #344259;
+            --emerald: #10b981;
+            --emerald-dim: rgba(16, 185, 129, 0.12);
+            --emerald-glow: rgba(16, 185, 129, 0.45);
+            --cyan: #22d3ee;
+            --text: #f4f6fa;
+            --muted: #8391a8;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.35);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.4);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Inter', sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 10% 90%, rgba(34, 211, 238, 0.04) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+            color: var(--text);
+            font-family: var(--sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: inherit;
+            font: inherit;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 860px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: auto;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .terminal-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--emerald);
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 10px var(--emerald);
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .audio-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+            transition: all .15s;
+        }
+
+        .audio-toggle-btn:hover {
+            color: var(--text);
+            border-color: var(--emerald);
+        }
+
+        .mission-header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .mission-tag {
+            font-family: var(--mono);
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--emerald);
+            text-shadow: 0 0 20px var(--emerald-glow);
+        }
+
+        .mission-title {
+            font-family: var(--mono);
+            font-size: clamp(1.4rem, 4vw, 2.1rem);
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .mission-desc {
+            color: var(--muted);
+            font-size: .82rem;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .params-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+        }
+
+        .param-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2px;
+        }
+
+        .param-name {
+            font-size: .62rem;
+            color: var(--muted);
+            font-family: var(--mono);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .param-value {
+            font-family: var(--mono);
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--emerald);
+        }
+
+        .game-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--muted);
+        }
+
+        .timer-num {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--emerald);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-bar-wrap {
+            height: 8px;
+            background: var(--surface2);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .timer-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: var(--emerald);
+            box-shadow: 0 0 10px var(--emerald-glow);
+            transition: width 0.1s linear, background-color 0.3s ease;
+        }
+
+        /* ── Breach Layout ──────────────────────────────────────── */
+        .breach-layout {
+            display: grid;
+            grid-template-columns: 1fr 240px;
+            gap: 16px;
+            align-items: start;
+        }
+
+        @media (max-width: 720px) {
+            .breach-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .breach-grid-wrap {
+            background: #04060a;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .breach-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 6px;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+        }
+
+        .breach-cell {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--emerald);
+            font-family: var(--mono);
+            font-size: clamp(.8rem, 2vw, 1.05rem);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .15s;
+            cursor: default;
+        }
+
+        .breach-cell.selectable {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--emerald);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+            cursor: pointer;
+        }
+
+        .breach-cell.selectable:hover {
+            background: rgba(16, 185, 129, 0.3);
+            transform: scale(1.08);
+            box-shadow: 0 0 16px var(--emerald-glow);
+            color: #ffffff;
+        }
+
+        .breach-cell.dimmed {
+            opacity: 0.25;
+            border-color: var(--border);
+            color: var(--muted);
+        }
+
+        .breach-cell.used {
+            opacity: 0.15;
+            border: 1px dashed var(--border2);
+            background: transparent;
+            color: var(--muted);
+        }
+
+        /* Target Sequence & Buffer Panel */
+        .breach-side {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .side-card {
+            background: #04060a;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .side-card-title {
+            font-family: var(--mono);
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .seq-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .seq-slot {
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            font-family: var(--mono);
+            font-size: .95rem;
+            font-weight: 800;
+            color: var(--text);
+            min-width: 42px;
+            text-align: center;
+            transition: all .2s;
+        }
+
+        .seq-slot.matched {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+            box-shadow: 0 0 10px var(--success-glow);
+        }
+
+        .buffer-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .buffer-slot {
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            background: var(--surface);
+            border: 1px dashed var(--border2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: .85rem;
+            font-weight: 800;
+            color: var(--muted);
+        }
+
+        .buffer-slot.filled {
+            border-style: solid;
+            border-color: var(--emerald);
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+        }
+
+        .hints {
+            text-align: center;
+            font-size: .72rem;
+            color: var(--muted);
+            font-family: var(--mono);
+        }
+
+        /* Overlays */
+        .overlay-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s ease;
+        }
+
+        .overlay-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .countdown-number {
+            font-family: var(--mono);
+            font-size: clamp(5rem, 15vw, 9rem);
+            font-weight: 900;
+            color: var(--emerald);
+            text-shadow: 0 0 60px var(--emerald-glow);
+            animation: zoomPulse .8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        .countdown-sub {
+            font-family: var(--mono);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        @keyframes zoomPulse {
+            0% { transform: scale(0.6); opacity: 0; }
+            50% { transform: scale(1.08); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .start-modal, .win-modal, .fail-modal {
+            max-width: 580px;
+            width: 100%;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        .start-modal { border: 1px solid var(--border); }
+        .win-modal { border: 2px solid var(--success); box-shadow: 0 0 80px rgba(34, 197, 94, 0.35); }
+        .fail-modal { border: 2px solid var(--danger); box-shadow: 0 0 60px var(--danger-glow); }
+
+        .btn-launch, .btn-retry {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius);
+            font-family: var(--mono);
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            transition: all .15s;
+        }
+
+        .btn-launch {
+            background: var(--emerald);
+            color: #09090b;
+            box-shadow: 0 0 30px var(--emerald-glow);
+        }
+
+        .btn-launch:hover {
+            transform: scale(1.02);
+            filter: brightness(1.08);
+        }
+
+        .btn-retry {
+            background: var(--danger);
+            color: #fff;
+            box-shadow: 0 4px 20px var(--danger-glow);
+        }
+
+        .win-primary-output {
+            font-family: var(--mono);
+            font-size: clamp(1rem, 2.3vw, 1.2rem);
+            font-weight: 900;
+            color: #ffffff;
+            background: #000;
+            border: 1px solid var(--success);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            width: 100%;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.25);
+            word-break: break-word;
+        }
+
+        .code-display-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .code-big-val {
+            font-family: var(--mono);
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: var(--emerald);
+            text-shadow: 0 0 25px var(--emerald-glow);
+        }
+
+        .btn-copy-code {
+            align-self: center;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald);
+            border: 1px solid var(--emerald);
+            transition: all .15s;
+        }
+
+        .btn-copy-code:hover {
+            background: var(--emerald);
+            color: #09090b;
+            box-shadow: 0 0 15px var(--emerald-glow);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="top-nav">
+            <div class="terminal-status">
+                <span class="status-dot"></span>
+                <span>ESCAPE ROOM // HACK 05</span>
+            </div>
+            <button id="audio-btn" class="audio-toggle-btn" title="Włącz / wyłącz dźwięk" aria-label="Przełącz dźwięk">🔊</button>
+        </header>
+
+        <section class="mission-header">
+            <div class="mission-tag">// PROTOKÓŁ WŁAMANIA DO FIREWALLA</div>
+            <h1 class="mission-title">
+                <span>💾</span>
+                <span>BREACH PROTOCOL (6x6)</span>
+                <span>💾</span>
+            </h1>
+            <p class="mission-desc">
+                Główny firewall hydrauliki wymaga autoryzacji matrycowej. Wprowadź 4-bajtową sekwencję,
+                wybierając bajty naprzemiennie poziomo i pionowo przed upływem 40 sekund.
+            </p>
+        </section>
+
+        <div class="params-bar">
+            <div class="param-item">
+                <span class="param-name">Gra</span>
+                <span class="param-value">BREACH PROTOCOL</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Matryca</span>
+                <span class="param-value">6 × 6</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Sekwencja</span>
+                <span class="param-value">4 BAJTY</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Limit czasu</span>
+                <span class="param-value">40 SEKUND</span>
+            </div>
+        </div>
+
+        <main class="game-panel">
+            <div class="timer-container">
+                <div class="timer-header">
+                    <span>CZAS DO ZABLOKOWANIA FIREWALLA:</span>
+                    <span id="timer-text" class="timer-num">40.0s</span>
+                </div>
+                <div class="timer-bar-wrap">
+                    <div id="timer-bar" class="timer-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- Breach Layout -->
+            <div class="breach-layout">
+                <div class="breach-grid-wrap">
+                    <div class="breach-grid" id="breach-grid"></div>
+                </div>
+
+                <div class="breach-side">
+                    <div class="side-card">
+                        <span class="side-card-title">WYMAGANA SEKWENCJA:</span>
+                        <div class="seq-row" id="target-seq-row"></div>
+                    </div>
+
+                    <div class="side-card">
+                        <span class="side-card-title">BUFOR OPERACYJNY (4/4):</span>
+                        <div class="buffer-row" id="buffer-row"></div>
+                    </div>
+
+                    <div class="side-card">
+                        <span class="side-card-title">AKTYWNA OŚ:</span>
+                        <div id="axis-label" style="font-family:var(--mono); font-size:.85rem; font-weight:800; color:var(--emerald)">
+                            WIERSZ 1 (POZIOMO)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hints">Wybieraj bajty naprzemiennie: najpierw z aktywnego wiersza, potem z kolumny wybranego bajtu</div>
+        </main>
+    </div>
+
+    <!-- Ready Screen -->
+    <div id="ready-overlay" class="overlay-screen active">
+        <div class="start-modal">
+            <div style="font-size:3rem; color:var(--emerald); text-shadow:0 0 30px var(--emerald-glow)">💾⚡</div>
+            <h2 style="font-family:var(--mono); font-size:1.4rem; color:#fff">PRZEŁAMANIE FIREWALLA HYDRAULIKI</h2>
+            <p style="font-size:.85rem; color:var(--muted); line-height:1.6;">
+                Matryca ma rozmiar <strong>6x6</strong>. Odtwórz <strong>4-bajtowy ciąg</strong>
+                zanim firewall zamknie port po <strong>40 sekundach</strong>.
+            </p>
+            <button id="btn-start-game" class="btn-launch">▶ ROZPOCZNIJ PRZEŁAMANIE (40s)</button>
+        </div>
+    </div>
+
+    <!-- Countdown -->
+    <div id="countdown-overlay" class="overlay-screen">
+        <div id="countdown-num" class="countdown-number">3</div>
+        <div class="countdown-sub">INICJALIZACJA BUFORA TRANSMISJI...</div>
+    </div>
+
+    <!-- Win Screen -->
+    <div id="win-overlay" class="overlay-screen">
+        <div class="win-modal">
+            <div style="font-size:3.2rem">🔓🟢✅</div>
+            <div style="font-family:var(--mono); font-size:.75rem; font-weight:800; color:var(--success); border:1px solid var(--success); padding:4px 12px; border-radius:20px; background:rgba(34,197,94,.12)">
+                FIREWALL PRZEŁAMANY · ZAMEK HYDRAULICZNY ODBLOKOWANY
+            </div>
+
+            <div class="win-primary-output">
+                [FIREWALL PRZEŁAMANY] KOD DO ZAMKA HYDRAULICZNEGO: 7351
+            </div>
+
+            <div class="code-display-box">
+                <span style="font-family:var(--mono); font-size:.7rem; color:var(--muted); letter-spacing:1px">KOD DO ZAMKA HYDRAULICZNEGO:</span>
+                <div class="code-big-val">7351</div>
+                <button id="btn-copy-code" class="btn-copy-code">
+                    <span>📋</span><span id="copy-text">Skopiuj kod zamka</span>
+                </button>
+            </div>
+
+            <button id="btn-play-again" style="padding:12px 24px; border-radius:var(--radius-sm); background:var(--surface2); border:1px solid var(--border2); color:var(--muted); font-family:var(--mono); font-size:.82rem; font-weight:700">
+                ↺ Zresetuj moduł i zagraj ponownie
+            </button>
+        </div>
+    </div>
+
+    <!-- Fail Screen -->
+    <div id="fail-overlay" class="overlay-screen">
+        <div class="fail-modal">
+            <div style="font-size:3rem; color:var(--danger)">⛔🔒</div>
+            <h2 style="font-family:var(--mono); font-size:1.4rem; color:var(--danger)">FIREWALL ZABLOKOWANY!</h2>
+            <p style="font-size:.85rem; color:var(--muted); line-height:1.5">
+                Czas 40 sekund minął lub bufor został zapełniony bez poprawnej sekwencji.
+            </p>
+            <button id="btn-retry-game" class="btn-retry">↺ SPRÓBUJ PONOWNIE (40s)</button>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            size: 6,
+            seqLen: 4,
+            timeLimit: 40.0,
+            winCode: '7351',
+            winMessage: '[FIREWALL PRZEŁAMANY] KOD DO ZAMKA HYDRAULICZNEGO: 7351'
+        };
+
+        const HEX_POOL = ['7A', 'FF', 'A0', '3D', '91', '1C', 'C2', 'BD', 'E9', '55'];
+
+        const state = {
+            status: 'READY',
+            grid: [], // [r][c] -> { hex, used }
+            sequence: [],
+            buffer: [],
+            axis: 'row', // 'row' | 'col'
+            activeIdx: 0, // row or col index
+            remainingTime: 40.0,
+            timerInterval: null,
+            startTime: 0,
+            audioEnabled: true
+        };
+
+        // Web Audio API
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioClass) audioCtx = new AudioClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.08, gainVal = 0.15) {
+            if (!state.audioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function generateSolvablePuzzle() {
+            // Fill 6x6 grid with random hex bytes
+            state.grid = [];
+            for (let r = 0; r < CONFIG.size; r++) {
+                state.grid.push([]);
+                for (let c = 0; c < CONFIG.size; c++) {
+                    const hex = HEX_POOL[Math.floor(Math.random() * HEX_POOL.length)];
+                    state.grid[r].push({ hex, used: false });
+                }
+            }
+
+            // Guaranteed path of length 4:
+            // 1. Pick c1 from Row 0
+            const c1 = Math.floor(Math.random() * CONFIG.size);
+            // 2. Pick r1 from Column c1 (r1 != 0)
+            let r1 = Math.floor(Math.random() * CONFIG.size);
+            while (r1 === 0) r1 = Math.floor(Math.random() * CONFIG.size);
+            // 3. Pick c2 from Row r1 (c2 != c1)
+            let c2 = Math.floor(Math.random() * CONFIG.size);
+            while (c2 === c1) c2 = Math.floor(Math.random() * CONFIG.size);
+            // 4. Pick r2 from Column c2 (r2 != r1)
+            let r2 = Math.floor(Math.random() * CONFIG.size);
+            while (r2 === r1) r2 = Math.floor(Math.random() * CONFIG.size);
+
+            state.sequence = [
+                state.grid[0][c1].hex,
+                state.grid[r1][c1].hex,
+                state.grid[r1][c2].hex,
+                state.grid[r2][c2].hex
+            ];
+
+            state.buffer = [];
+            state.axis = 'row';
+            state.activeIdx = 0;
+        }
+
+        function renderBoard() {
+            const gridEl = document.getElementById('breach-grid');
+            gridEl.innerHTML = '';
+
+            for (let r = 0; r < CONFIG.size; r++) {
+                for (let c = 0; c < CONFIG.size; c++) {
+                    const cellData = state.grid[r][c];
+                    const btn = document.createElement('div');
+                    btn.className = 'breach-cell';
+                    btn.id = `bcell-${r}-${c}`;
+                    btn.textContent = cellData.hex;
+
+                    btn.addEventListener('click', () => handleCellClick(r, c));
+                    gridEl.appendChild(btn);
+                }
+            }
+
+            renderSequence();
+            renderBuffer();
+            updateGridHighlights();
+        }
+
+        function renderSequence() {
+            const seqRow = document.getElementById('target-seq-row');
+            seqRow.innerHTML = '';
+            state.sequence.forEach((hex, i) => {
+                const slot = document.createElement('div');
+                slot.className = 'seq-slot';
+                slot.id = `seq-slot-${i}`;
+                slot.textContent = hex;
+                seqRow.appendChild(slot);
+            });
+        }
+
+        function renderBuffer() {
+            const bufRow = document.getElementById('buffer-row');
+            bufRow.innerHTML = '';
+            for (let i = 0; i < CONFIG.seqLen; i++) {
+                const slot = document.createElement('div');
+                const val = state.buffer[i];
+                slot.className = 'buffer-slot' + (val ? ' filled' : '');
+                slot.textContent = val || '·';
+                bufRow.appendChild(slot);
+            }
+        }
+
+        function updateGridHighlights() {
+            for (let r = 0; r < CONFIG.size; r++) {
+                for (let c = 0; c < CONFIG.size; c++) {
+                    const btn = document.getElementById(`bcell-${r}-${c}`);
+                    const cellData = state.grid[r][c];
+                    if (!btn) continue;
+
+                    btn.className = 'breach-cell';
+
+                    if (cellData.used) {
+                        btn.classList.add('used');
+                    } else if ((state.axis === 'row' && r === state.activeIdx) ||
+                               (state.axis === 'col' && c === state.activeIdx)) {
+                        btn.classList.add('selectable');
+                    } else {
+                        btn.classList.add('dimmed');
+                    }
+                }
+            }
+
+            const axisLabel = document.getElementById('axis-label');
+            if (state.axis === 'row') {
+                axisLabel.textContent = `WIERSZ ${state.activeIdx + 1} (POZIOMO)`;
+            } else {
+                axisLabel.textContent = `KOLUMNA ${state.activeIdx + 1} (PIONOWO)`;
+            }
+
+            // Check matched count in sequence
+            checkSequenceMatch();
+        }
+
+        function checkSequenceMatch() {
+            let matchedPrefix = 0;
+            for (let i = 0; i < state.buffer.length; i++) {
+                if (state.buffer[i] === state.sequence[i]) {
+                    matchedPrefix++;
+                } else {
+                    break;
+                }
+            }
+
+            for (let i = 0; i < CONFIG.seqLen; i++) {
+                const slot = document.getElementById(`seq-slot-${i}`);
+                if (slot) slot.classList.toggle('matched', i < matchedPrefix);
+            }
+
+            return matchedPrefix === CONFIG.seqLen;
+        }
+
+        function handleCellClick(r, c) {
+            if (state.status !== 'PLAYING') return;
+
+            const cellData = state.grid[r][c];
+            if (cellData.used) return;
+
+            const isSelectable = (state.axis === 'row' && r === state.activeIdx) ||
+                                 (state.axis === 'col' && c === state.activeIdx);
+            if (!isSelectable) return;
+
+            // Pick byte
+            cellData.used = true;
+            state.buffer.push(cellData.hex);
+            playTone(480 + state.buffer.length * 60, 'sine', 0.08, 0.15);
+
+            renderBuffer();
+
+            // Toggle axis
+            if (state.axis === 'row') {
+                state.axis = 'col';
+                state.activeIdx = c;
+            } else {
+                state.axis = 'row';
+                state.activeIdx = r;
+            }
+
+            updateGridHighlights();
+
+            // Check if full sequence matched
+            if (checkSequenceMatch()) {
+                setTimeout(handleWin, 350);
+                return;
+            }
+
+            // Check if buffer is full without matching
+            if (state.buffer.length >= CONFIG.seqLen) {
+                setTimeout(handleGameOver, 300);
+            }
+        }
+
+        function startTimer() {
+            clearInterval(state.timerInterval);
+            const total = CONFIG.timeLimit;
+            state.remainingTime = total;
+            state.startTime = performance.now();
+
+            const timerText = document.getElementById('timer-text');
+            const timerBar = document.getElementById('timer-bar');
+
+            state.timerInterval = setInterval(() => {
+                if (state.status !== 'PLAYING') return;
+                const elapsed = (performance.now() - state.startTime) / 1000;
+                state.remainingTime = Math.max(0, parseFloat((total - elapsed).toFixed(1)));
+
+                timerText.textContent = state.remainingTime.toFixed(1) + 's';
+                const frac = state.remainingTime / total;
+                timerBar.style.width = Math.max(0, frac * 100) + '%';
+
+                if (frac > 0.4) {
+                    timerBar.style.background = 'var(--emerald)';
+                } else if (frac > 0.2) {
+                    timerBar.style.background = '#f59e0b';
+                } else {
+                    timerBar.style.background = 'var(--danger)';
+                }
+
+                if (state.remainingTime <= 0) {
+                    clearInterval(state.timerInterval);
+                    handleGameOver();
+                }
+            }, 100);
+        }
+
+        function startCountdown(cb) {
+            state.status = 'COUNTDOWN';
+            document.getElementById('ready-overlay').classList.remove('active');
+            document.getElementById('fail-overlay').classList.remove('active');
+            document.getElementById('win-overlay').classList.remove('active');
+
+            const overlay = document.getElementById('countdown-overlay');
+            const numEl = document.getElementById('countdown-num');
+            overlay.classList.add('active');
+
+            let count = 3;
+            numEl.textContent = count;
+            playTone(440, 'sine', 0.15, 0.2);
+
+            const iv = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    numEl.textContent = count;
+                    playTone(440, 'sine', 0.15, 0.2);
+                } else {
+                    clearInterval(iv);
+                    playTone(880, 'sine', 0.25, 0.25);
+                    overlay.classList.remove('active');
+                    state.status = 'PLAYING';
+                    cb();
+                }
+            }, 750);
+        }
+
+        function startGame() {
+            getAudioContext();
+            generateSolvablePuzzle();
+            renderBoard();
+            startCountdown(() => {
+                startTimer();
+            });
+        }
+
+        function handleWin() {
+            clearInterval(state.timerInterval);
+            state.status = 'WON';
+            playTone(523, 'triangle', 0.3, 0.2);
+            setTimeout(() => playTone(659, 'triangle', 0.3, 0.2), 100);
+            setTimeout(() => playTone(784, 'triangle', 0.4, 0.25), 200);
+            document.getElementById('win-overlay').classList.add('active');
+        }
+
+        function handleGameOver() {
+            state.status = 'GAMEOVER';
+            playTone(130, 'sawtooth', 0.4, 0.25);
+            document.getElementById('fail-overlay').classList.add('active');
+        }
+
+        function setupListeners() {
+            document.getElementById('btn-start-game').addEventListener('click', startGame);
+            document.getElementById('btn-retry-game').addEventListener('click', startGame);
+            document.getElementById('btn-play-again').addEventListener('click', () => {
+                document.getElementById('win-overlay').classList.remove('active');
+                document.getElementById('ready-overlay').classList.add('active');
+                generateSolvablePuzzle();
+                renderBoard();
+            });
+
+            document.getElementById('btn-copy-code').addEventListener('click', () => {
+                navigator.clipboard.writeText(CONFIG.winCode);
+                const txt = document.getElementById('copy-text');
+                txt.textContent = 'Skopiowano!';
+                setTimeout(() => txt.textContent = 'Skopiuj kod zamka', 2000);
+            });
+
+            document.getElementById('audio-btn').addEventListener('click', () => {
+                state.audioEnabled = !state.audioEnabled;
+                document.getElementById('audio-btn').textContent = state.audioEnabled ? '🔊' : '🔇';
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    if (state.status === 'READY' || state.status === 'GAMEOVER') startGame();
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateSolvablePuzzle();
+            renderBoard();
+            setupListeners();
+        });
+    </script>
+</body>
+</html>

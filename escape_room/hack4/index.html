@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strzałki // Escape Room Hack #4 — Onbeat Hacks</title>
+    <meta name="description" content="Moduł stabilizacji ciśnienia - odtwórz 3 sekwencje po 8 strzałek w 15 sekund na rundę.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07090e;
+            --surface: #0e121a;
+            --surface2: #151b27;
+            --surface-elevated: #1b2333;
+            --border: #232c3d;
+            --border2: #344259;
+            --pink: #f13a89;
+            --pink-dim: rgba(241, 58, 137, 0.12);
+            --pink-glow: rgba(241, 58, 137, 0.45);
+            --purple: #a855f7;
+            --text: #f4f6fa;
+            --muted: #8391a8;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.35);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.4);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Inter', sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(241, 58, 137, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 10% 90%, rgba(168, 85, 247, 0.04) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+            color: var(--text);
+            font-family: var(--sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: inherit;
+            font: inherit;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 860px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: auto;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .terminal-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--pink);
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--pink);
+            box-shadow: 0 0 10px var(--pink);
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .audio-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+            transition: all .15s;
+        }
+
+        .audio-toggle-btn:hover {
+            color: var(--text);
+            border-color: var(--pink);
+        }
+
+        .mission-header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .mission-tag {
+            font-family: var(--mono);
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--pink);
+            text-shadow: 0 0 20px var(--pink-glow);
+        }
+
+        .mission-title {
+            font-family: var(--mono);
+            font-size: clamp(1.4rem, 4vw, 2.1rem);
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .mission-desc {
+            color: var(--muted);
+            font-size: .82rem;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .params-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+        }
+
+        .param-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2px;
+        }
+
+        .param-name {
+            font-size: .62rem;
+            color: var(--muted);
+            font-family: var(--mono);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .param-value {
+            font-family: var(--mono);
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--pink);
+        }
+
+        .game-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .panel-top-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--mono);
+            font-size: .78rem;
+            color: var(--muted);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pills-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .stage-pill {
+            width: 24px;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            transition: all .2s;
+        }
+
+        .stage-pill.done {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 8px var(--success-glow);
+        }
+
+        .stage-pill.current {
+            background: var(--pink);
+            border-color: var(--pink);
+            box-shadow: 0 0 10px var(--pink-glow);
+        }
+
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--muted);
+        }
+
+        .timer-num {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--pink);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-bar-wrap {
+            height: 8px;
+            background: var(--surface2);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .timer-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: var(--pink);
+            box-shadow: 0 0 10px var(--pink-glow);
+            transition: width 0.1s linear, background-color 0.3s ease;
+        }
+
+        /* ── Sequence Display ──────────────────────────────────── */
+        .seq-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            min-height: 110px;
+            padding: 18px;
+            background: #04060a;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.7);
+            transition: border-color .2s;
+        }
+
+        .seq-box.shake {
+            animation: shakeErr .35s ease-in-out;
+            border-color: var(--danger);
+        }
+
+        @keyframes shakeErr {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
+        .seq-item {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+            transition: all .15s ease-out;
+        }
+
+        .seq-item.done {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: var(--success);
+            color: var(--success);
+            box-shadow: 0 0 14px var(--success-glow);
+        }
+
+        .seq-item.active {
+            background: var(--pink-dim);
+            border: 2px solid var(--pink);
+            color: var(--pink);
+            box-shadow: 0 0 20px var(--pink-glow);
+            transform: scale(1.1);
+        }
+
+        /* On-Screen Arrow Controls */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .controls-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .arrow-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--text);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .arrow-btn:hover {
+            border-color: var(--pink);
+            background: rgba(241, 58, 137, 0.08);
+        }
+
+        .arrow-btn:active, .arrow-btn.pressed {
+            transform: scale(0.96);
+            background: var(--pink-dim);
+            border-color: var(--pink);
+        }
+
+        .arrow-icon {
+            font-size: 1.6rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .arrow-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .arrow-title {
+            font-family: var(--mono);
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        .arrow-sub {
+            font-size: .65rem;
+            color: var(--muted);
+            font-family: var(--mono);
+        }
+
+        .msg-area {
+            min-height: 24px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .85rem;
+            font-weight: 700;
+        }
+
+        .hints {
+            text-align: center;
+            font-size: .72rem;
+            color: var(--muted);
+            font-family: var(--mono);
+        }
+
+        /* Overlays */
+        .overlay-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s ease;
+        }
+
+        .overlay-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .countdown-number {
+            font-family: var(--mono);
+            font-size: clamp(5rem, 15vw, 9rem);
+            font-weight: 900;
+            color: var(--pink);
+            text-shadow: 0 0 60px var(--pink-glow);
+            animation: zoomPulse .8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        .countdown-sub {
+            font-family: var(--mono);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        @keyframes zoomPulse {
+            0% { transform: scale(0.6); opacity: 0; }
+            50% { transform: scale(1.08); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .start-modal, .win-modal, .fail-modal {
+            max-width: 580px;
+            width: 100%;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        .start-modal { border: 1px solid var(--border); }
+        .win-modal { border: 2px solid var(--success); box-shadow: 0 0 80px rgba(34, 197, 94, 0.35); }
+        .fail-modal { border: 2px solid var(--danger); box-shadow: 0 0 60px var(--danger-glow); }
+
+        .btn-launch, .btn-retry {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius);
+            font-family: var(--mono);
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            transition: all .15s;
+        }
+
+        .btn-launch {
+            background: var(--pink);
+            color: #ffffff;
+            box-shadow: 0 0 30px var(--pink-glow);
+        }
+
+        .btn-launch:hover {
+            transform: scale(1.02);
+            filter: brightness(1.08);
+        }
+
+        .btn-retry {
+            background: var(--danger);
+            color: #fff;
+            box-shadow: 0 4px 20px var(--danger-glow);
+        }
+
+        .win-primary-output {
+            font-family: var(--mono);
+            font-size: clamp(1rem, 2.3vw, 1.2rem);
+            font-weight: 900;
+            color: #ffffff;
+            background: #000;
+            border: 1px solid var(--success);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            width: 100%;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.25);
+            word-break: break-word;
+        }
+
+        .code-display-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .code-big-val {
+            font-family: var(--mono);
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: var(--pink);
+            text-shadow: 0 0 25px var(--pink-glow);
+        }
+
+        .btn-copy-code {
+            align-self: center;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: .8rem;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            background: rgba(241, 58, 137, 0.15);
+            color: var(--pink);
+            border: 1px solid var(--pink);
+            transition: all .15s;
+        }
+
+        .btn-copy-code:hover {
+            background: var(--pink);
+            color: #fff;
+            box-shadow: 0 0 15px var(--pink-glow);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="top-nav">
+            <div class="terminal-status">
+                <span class="status-dot"></span>
+                <span>ESCAPE ROOM // HACK 04</span>
+            </div>
+            <button id="audio-btn" class="audio-toggle-btn" title="Włącz / wyłącz dźwięk" aria-label="Przełącz dźwięk">🔊</button>
+        </header>
+
+        <section class="mission-header">
+            <div class="mission-tag">// SYSTEM STABILIZACJI CIŚNIENIA</div>
+            <h1 class="mission-title">
+                <span>🎮</span>
+                <span>STRZAŁKI KONTROLNE</span>
+                <span>🎮</span>
+            </h1>
+            <p class="mission-desc">
+                Zawory ciśnieniowe wymagają natychmiastowej sekwencji manualnej. Wprowadź 3 kolejne rundy
+                po 8 strzałek. Na każdą rundę masz dokładnie 15 sekund!
+            </p>
+        </section>
+
+        <div class="params-bar">
+            <div class="param-item">
+                <span class="param-name">Gra</span>
+                <span class="param-value">STRZAŁKI</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Długość serii</span>
+                <span class="param-value">8 STRZAŁEK</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Liczba etapów</span>
+                <span class="param-value">3 RUNDY</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Limit czasu</span>
+                <span class="param-value">15s / RUNDA</span>
+            </div>
+        </div>
+
+        <main class="game-panel">
+            <div class="panel-top-stats">
+                <div style="display:flex; align-items:center; gap:10px">
+                    <span>RUNDA: <strong id="stage-text" style="color:var(--pink)">1 / 3</strong></span>
+                    <div class="pills-row" id="pills-row">
+                        <div class="stage-pill current" id="sp-0"></div>
+                        <div class="stage-pill" id="sp-1"></div>
+                        <div class="stage-pill" id="sp-2"></div>
+                    </div>
+                </div>
+                <span>POSTĘP: <strong id="progress-text" style="color:var(--text)">0 / 8</strong></span>
+            </div>
+
+            <div class="timer-container">
+                <div class="timer-header">
+                    <span>CZAS RUNDY:</span>
+                    <span id="timer-text" class="timer-num">15.0s</span>
+                </div>
+                <div class="timer-bar-wrap">
+                    <div id="timer-bar" class="timer-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- Sequence Display -->
+            <div class="seq-box" id="seq-box"></div>
+
+            <!-- Controls Grid -->
+            <div class="controls-grid">
+                <button class="arrow-btn" id="btn-up" data-dir="up">
+                    <span class="arrow-icon">↑</span>
+                    <div class="arrow-text">
+                        <span class="arrow-title">GÓRA</span>
+                        <span class="arrow-sub">W / ↑</span>
+                    </div>
+                </button>
+                <button class="arrow-btn" id="btn-down" data-dir="down">
+                    <span class="arrow-icon">↓</span>
+                    <div class="arrow-text">
+                        <span class="arrow-title">DÓŁ</span>
+                        <span class="arrow-sub">S / ↓</span>
+                    </div>
+                </button>
+                <button class="arrow-btn" id="btn-left" data-dir="left">
+                    <span class="arrow-icon">←</span>
+                    <div class="arrow-text">
+                        <span class="arrow-title">LEWO</span>
+                        <span class="arrow-sub">A / ←</span>
+                    </div>
+                </button>
+                <button class="arrow-btn" id="btn-right" data-dir="right">
+                    <span class="arrow-icon">→</span>
+                    <div class="arrow-text">
+                        <span class="arrow-title">PRAWO</span>
+                        <span class="arrow-sub">D / →</span>
+                    </div>
+                </button>
+            </div>
+
+            <div id="msg-area" class="msg-area"></div>
+            <div class="hints">Używaj klawiszy WASD lub strzałek na klawiaturze albo przycisków ekranowych</div>
+        </main>
+    </div>
+
+    <!-- Ready Screen -->
+    <div id="ready-overlay" class="overlay-screen active">
+        <div class="start-modal">
+            <div style="font-size:3rem; color:var(--pink); text-shadow:0 0 30px var(--pink-glow)">🎮⚡</div>
+            <h2 style="font-family:var(--mono); font-size:1.4rem; color:#fff">RĘCZNA KALIBRACJA CIŚNIENIA</h2>
+            <p style="font-size:.85rem; color:var(--muted); line-height:1.6;">
+                Aby odblokować główny mainframe, musisz bezbłędnie wprowadzić <strong>3 rundy po 8 strzałek</strong>.
+                Na każdą rundę masz <strong>15 sekund</strong>. Błąd resetuje bieżący etap!
+            </p>
+            <button id="btn-start-game" class="btn-launch">▶ ROZPOCZNIJ RUNDĘ 1 (15s)</button>
+        </div>
+    </div>
+
+    <!-- Countdown -->
+    <div id="countdown-overlay" class="overlay-screen">
+        <div id="countdown-num" class="countdown-number">3</div>
+        <div class="countdown-sub">SYNCHRONIZACJA Z MAINFRAME...</div>
+    </div>
+
+    <!-- Win Screen -->
+    <div id="win-overlay" class="overlay-screen">
+        <div class="win-modal">
+            <div style="font-size:3.2rem">💻🔓✅</div>
+            <div style="font-family:var(--mono); font-size:.75rem; font-weight:800; color:var(--success); border:1px solid var(--success); padding:4px 12px; border-radius:20px; background:rgba(34,197,94,.12)">
+                CIŚNIENIE USTABILIZOWANE · ROOT ODBLOKOWANY
+            </div>
+
+            <div class="win-primary-output">
+                [CIŚNIENIE USTABILIZOWANE - ODBLOKOWANO GŁÓWNY MAINFRAME] LOGIN ROOT: ROOT99
+            </div>
+
+            <div class="code-display-box">
+                <span style="font-family:var(--mono); font-size:.7rem; color:var(--muted); letter-spacing:1px">LOGIN ROOT:</span>
+                <div class="code-big-val">ROOT99</div>
+                <button id="btn-copy-code" class="btn-copy-code">
+                    <span>📋</span><span id="copy-text">Skopiuj login</span>
+                </button>
+            </div>
+
+            <button id="btn-play-again" style="padding:12px 24px; border-radius:var(--radius-sm); background:var(--surface2); border:1px solid var(--border2); color:var(--muted); font-family:var(--mono); font-size:.82rem; font-weight:700">
+                ↺ Zresetuj moduł i zagraj ponownie
+            </button>
+        </div>
+    </div>
+
+    <!-- Fail Screen -->
+    <div id="fail-overlay" class="overlay-screen">
+        <div class="fail-modal">
+            <div style="font-size:3rem; color:var(--danger)">💥⚠️</div>
+            <h2 style="font-family:var(--mono); font-size:1.4rem; color:var(--danger)">PRZEKROCZENIE CIŚNIENIA!</h2>
+            <p style="font-size:.85rem; color:var(--muted); line-height:1.5">
+                Czas 15 sekund minął. Sekwencja zaworów nie została wprowadzona na czas.
+            </p>
+            <button id="btn-retry-game" class="btn-retry">↺ SPRÓBUJ PONOWNIE OD RUNDY 1</button>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            arrowCount: 8,
+            totalStages: 3,
+            timePerStage: 15.0,
+            winCode: 'ROOT99',
+            winMessage: '[CIŚNIENIE USTABILIZOWANE - ODBLOKOWANO GŁÓWNY MAINFRAME] LOGIN ROOT: ROOT99'
+        };
+
+        const DIRS = ['up', 'down', 'left', 'right'];
+        const SYMBOLS = { up: '↑', down: '↓', left: '←', right: '→' };
+
+        const state = {
+            status: 'READY',
+            stage: 0, // 0, 1, 2
+            sequence: [],
+            currentIdx: 0,
+            remainingTime: 15.0,
+            timerInterval: null,
+            startTime: 0,
+            audioEnabled: true
+        };
+
+        // Web Audio API
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioClass) audioCtx = new AudioClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.08, gainVal = 0.15) {
+            if (!state.audioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function generateSequence() {
+            state.sequence = [];
+            state.currentIdx = 0;
+            for (let i = 0; i < CONFIG.arrowCount; i++) {
+                const r = Math.floor(Math.random() * DIRS.length);
+                state.sequence.push(DIRS[r]);
+            }
+            renderSequence();
+        }
+
+        function renderSequence() {
+            const box = document.getElementById('seq-box');
+            box.innerHTML = '';
+            state.sequence.forEach((dir, i) => {
+                const el = document.createElement('div');
+                el.className = 'seq-item' + (i < state.currentIdx ? ' done' : i === state.currentIdx ? ' active' : '');
+                el.id = `arrow-item-${i}`;
+                el.textContent = SYMBOLS[dir];
+                box.appendChild(el);
+            });
+        }
+
+        function updateSequenceVisuals() {
+            state.sequence.forEach((dir, i) => {
+                const el = document.getElementById(`arrow-item-${i}`);
+                if (el) {
+                    el.className = 'seq-item' + (i < state.currentIdx ? ' done' : i === state.currentIdx ? ' active' : '');
+                }
+            });
+            document.getElementById('progress-text').textContent = `${state.currentIdx} / ${CONFIG.arrowCount}`;
+        }
+
+        function updateStageUI() {
+            document.getElementById('stage-text').textContent = `${state.stage + 1} / ${CONFIG.totalStages}`;
+            for (let s = 0; s < CONFIG.totalStages; s++) {
+                const pill = document.getElementById(`sp-${s}`);
+                if (pill) {
+                    pill.className = 'stage-pill';
+                    if (s < state.stage) pill.classList.add('done');
+                    else if (s === state.stage) pill.classList.add('current');
+                }
+            }
+        }
+
+        function handleInput(dir) {
+            if (state.status !== 'PLAYING') return;
+
+            // Visual feedback on on-screen button
+            const btn = document.getElementById(`btn-${dir}`);
+            if (btn) {
+                btn.classList.add('pressed');
+                setTimeout(() => btn.classList.remove('pressed'), 120);
+            }
+
+            const expected = state.sequence[state.currentIdx];
+            if (dir === expected) {
+                // Correct arrow!
+                state.currentIdx++;
+                playTone(450 + state.currentIdx * 40, 'sine', 0.08, 0.15);
+                updateSequenceVisuals();
+
+                if (state.currentIdx >= CONFIG.arrowCount) {
+                    // Stage cleared!
+                    playTone(800, 'triangle', 0.15, 0.2);
+                    state.stage++;
+                    if (state.stage >= CONFIG.totalStages) {
+                        setTimeout(handleWin, 300);
+                    } else {
+                        // Advance to next stage & reset round timer to 15s
+                        updateStageUI();
+                        generateSequence();
+                        startTimer();
+                        showMessage(`✓ RUNDA UKOŃCZONA! RUNDA ${state.stage + 1} START!`, 'var(--success)');
+                        setTimeout(() => showMessage('', ''), 1000);
+                    }
+                }
+            } else {
+                // Mistake: reset current round progress
+                playTone(150, 'sawtooth', 0.25, 0.25);
+                state.currentIdx = 0;
+                updateSequenceVisuals();
+
+                const box = document.getElementById('seq-box');
+                box.classList.add('shake');
+                setTimeout(() => box.classList.remove('shake'), 400);
+
+                showMessage('BŁĄD KIERUNKU! RESET RUNDY!', 'var(--danger)');
+                setTimeout(() => showMessage('', ''), 1200);
+            }
+        }
+
+        function showMessage(text, color) {
+            const el = document.getElementById('msg-area');
+            el.textContent = text;
+            el.style.color = color;
+        }
+
+        function startTimer() {
+            clearInterval(state.timerInterval);
+            const total = CONFIG.timePerStage;
+            state.remainingTime = total;
+            state.startTime = performance.now();
+
+            const timerText = document.getElementById('timer-text');
+            const timerBar = document.getElementById('timer-bar');
+
+            state.timerInterval = setInterval(() => {
+                if (state.status !== 'PLAYING') return;
+                const elapsed = (performance.now() - state.startTime) / 1000;
+                state.remainingTime = Math.max(0, parseFloat((total - elapsed).toFixed(1)));
+
+                timerText.textContent = state.remainingTime.toFixed(1) + 's';
+                const frac = state.remainingTime / total;
+                timerBar.style.width = Math.max(0, frac * 100) + '%';
+
+                if (frac > 0.4) {
+                    timerBar.style.background = 'var(--pink)';
+                } else if (frac > 0.2) {
+                    timerBar.style.background = '#f59e0b';
+                } else {
+                    timerBar.style.background = 'var(--danger)';
+                }
+
+                if (state.remainingTime <= 0) {
+                    clearInterval(state.timerInterval);
+                    handleGameOver();
+                }
+            }, 100);
+        }
+
+        function startCountdown(cb) {
+            state.status = 'COUNTDOWN';
+            document.getElementById('ready-overlay').classList.remove('active');
+            document.getElementById('fail-overlay').classList.remove('active');
+            document.getElementById('win-overlay').classList.remove('active');
+
+            const overlay = document.getElementById('countdown-overlay');
+            const numEl = document.getElementById('countdown-num');
+            overlay.classList.add('active');
+
+            let count = 3;
+            numEl.textContent = count;
+            playTone(440, 'sine', 0.15, 0.2);
+
+            const iv = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    numEl.textContent = count;
+                    playTone(440, 'sine', 0.15, 0.2);
+                } else {
+                    clearInterval(iv);
+                    playTone(880, 'sine', 0.25, 0.25);
+                    overlay.classList.remove('active');
+                    state.status = 'PLAYING';
+                    cb();
+                }
+            }, 750);
+        }
+
+        function startGame() {
+            getAudioContext();
+            state.status = 'READY';
+            state.stage = 0;
+            updateStageUI();
+            generateSequence();
+            startCountdown(() => {
+                startTimer();
+            });
+        }
+
+        function handleWin() {
+            clearInterval(state.timerInterval);
+            state.status = 'WON';
+            playTone(523, 'triangle', 0.3, 0.2);
+            setTimeout(() => playTone(659, 'triangle', 0.3, 0.2), 100);
+            setTimeout(() => playTone(784, 'triangle', 0.4, 0.25), 200);
+            document.getElementById('win-overlay').classList.add('active');
+        }
+
+        function handleGameOver() {
+            state.status = 'GAMEOVER';
+            playTone(130, 'sawtooth', 0.4, 0.25);
+            document.getElementById('fail-overlay').classList.add('active');
+        }
+
+        function setupListeners() {
+            document.getElementById('btn-start-game').addEventListener('click', startGame);
+            document.getElementById('btn-retry-game').addEventListener('click', startGame);
+            document.getElementById('btn-play-again').addEventListener('click', () => {
+                document.getElementById('win-overlay').classList.remove('active');
+                document.getElementById('ready-overlay').classList.add('active');
+                state.stage = 0;
+                updateStageUI();
+                generateSequence();
+            });
+
+            document.getElementById('btn-copy-code').addEventListener('click', () => {
+                navigator.clipboard.writeText(CONFIG.winCode);
+                const txt = document.getElementById('copy-text');
+                txt.textContent = 'Skopiowano!';
+                setTimeout(() => txt.textContent = 'Skopiuj login', 2000);
+            });
+
+            document.getElementById('audio-btn').addEventListener('click', () => {
+                state.audioEnabled = !state.audioEnabled;
+                document.getElementById('audio-btn').textContent = state.audioEnabled ? '🔊' : '🔇';
+            });
+
+            // On screen buttons
+            ['up', 'down', 'left', 'right'].forEach(dir => {
+                document.getElementById(`btn-${dir}`).addEventListener('click', () => handleInput(dir));
+            });
+
+            // Keyboard
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    if (state.status === 'READY' || state.status === 'GAMEOVER') {
+                        startGame();
+                        return;
+                    }
+                }
+
+                if (state.status === 'PLAYING') {
+                    if (['ArrowUp', 'KeyW', 'w', 'W'].includes(e.code) || ['w', 'W'].includes(e.key)) {
+                        e.preventDefault(); handleInput('up');
+                    } else if (['ArrowDown', 'KeyS', 's', 'S'].includes(e.code) || ['s', 'S'].includes(e.key)) {
+                        e.preventDefault(); handleInput('down');
+                    } else if (['ArrowLeft', 'KeyA', 'a', 'A'].includes(e.code) || ['a', 'A'].includes(e.key)) {
+                        e.preventDefault(); handleInput('left');
+                    } else if (['ArrowRight', 'KeyD', 'd', 'D'].includes(e.code) || ['d', 'D'].includes(e.key)) {
+                        e.preventDefault(); handleInput('right');
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            state.stage = 0;
+            updateStageUI();
+            generateSequence();
+            setupListeners();
+        });
+    </script>
+</body>
+</html>

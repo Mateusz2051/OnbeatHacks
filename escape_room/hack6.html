@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Hold // Escape Room Hack #6 — Onbeat Hacks</title>
+    <meta name="description" content="Moduł zwolnienia rygla wrót ewakuacyjnych - wprowadź kod 7, 3, 5, 1 przytrzymując klawisze.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07090e;
+            --surface: #0e121a;
+            --surface2: #151b27;
+            --surface-elevated: #1b2333;
+            --border: #232c3d;
+            --border2: #344259;
+            --amber: #f59e0b;
+            --amber-dim: rgba(245, 158, 11, 0.12);
+            --amber-glow: rgba(245, 158, 11, 0.45);
+            --red: #ef4444;
+            --text: #f4f6fa;
+            --muted: #8391a8;
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.35);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.4);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Inter', sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 10% 90%, rgba(239, 68, 68, 0.04) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+            color: var(--text);
+            font-family: var(--sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: inherit;
+            font: inherit;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 860px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: auto;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .terminal-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--amber);
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--amber);
+            box-shadow: 0 0 10px var(--amber);
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .audio-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            color: var(--muted);
+            transition: all .15s;
+        }
+
+        .audio-toggle-btn:hover {
+            color: var(--text);
+            border-color: var(--amber);
+        }
+
+        .mission-header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .mission-tag {
+            font-family: var(--mono);
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--amber);
+            text-shadow: 0 0 20px var(--amber-glow);
+        }
+
+        .mission-title {
+            font-family: var(--mono);
+            font-size: clamp(1.4rem, 4vw, 2.1rem);
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .mission-desc {
+            color: var(--muted);
+            font-size: .82rem;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .params-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+        }
+
+        .param-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2px;
+        }
+
+        .param-name {
+            font-size: .62rem;
+            color: var(--muted);
+            font-family: var(--mono);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .param-value {
+            font-family: var(--mono);
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--amber);
+        }
+
+        .game-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        /* Target Sequence Slots */
+        .seq-display-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .seq-slots {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .code-slot {
+            width: 60px;
+            height: 64px;
+            border-radius: var(--radius);
+            background: #04060a;
+            border: 2px solid var(--border2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--muted);
+            transition: all .2s;
+        }
+
+        .code-slot.active {
+            border-color: var(--amber);
+            color: var(--amber);
+            box-shadow: 0 0 20px var(--amber-glow);
+            transform: scale(1.08);
+            background: var(--amber-dim);
+        }
+
+        .code-slot.done {
+            border-color: var(--success);
+            color: var(--success);
+            background: rgba(34, 197, 94, 0.12);
+            box-shadow: 0 0 15px var(--success-glow);
+        }
+
+        /* Hold Timing Gauge Bar */
+        .gauge-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .gauge-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--mono);
+            font-size: .75rem;
+            color: var(--muted);
+        }
+
+        .gauge-bar-track {
+            height: 24px;
+            background: #04060a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gauge-target-zone {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 70%;
+            width: 18%;
+            background: rgba(34, 197, 94, 0.3);
+            border-left: 2px dashed var(--success);
+            border-right: 2px dashed var(--success);
+            z-index: 2;
+        }
+
+        .gauge-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, var(--amber));
+            border-radius: 12px;
+            transition: width 0.05s linear;
+            z-index: 1;
+        }
+
+        .gauge-fill.in-zone {
+            background: var(--success);
+            box-shadow: 0 0 16px var(--success-glow);
+        }
+
+        /* Keypad */
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .keypad-btn {
+            height: 64px;
+            border-radius: var(--radius);
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text);
+            transition: all .15s;
+            touch-action: none;
+        }
+
+        .keypad-btn:hover {
+            border-color: var(--amber);
+            background: var(--surface-elevated);
+        }
+
+        .keypad-btn.holding {
+            border-color: var(--amber);
+            background: var(--amber-dim);
+            color: var(--amber);
+            transform: scale(0.96);
+            box-shadow: 0 0 16px var(--amber-glow);
+        }
+
+        .keypad-btn.target-hint {
+            border-color: rgba(245, 158, 11, 0.6);
+            animation: pulseKey 1.5s infinite;
+        }
+
+        @keyframes pulseKey {
+            0%, 100% { border-color: rgba(245, 158, 11, 0.4); }
+            50% { border-color: var(--amber); box-shadow: 0 0 12px var(--amber-glow); }
+        }
+
+        .msg-area {
+            min-height: 24px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: .85rem;
+            font-weight: 700;
+        }
+
+        .hints {
+            text-align: center;
+            font-size: .72rem;
+            color: var(--muted);
+            font-family: var(--mono);
+        }
+
+        /* Overlays */
+        .overlay-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s ease;
+        }
+
+        .overlay-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .countdown-number {
+            font-family: var(--mono);
+            font-size: clamp(5rem, 15vw, 9rem);
+            font-weight: 900;
+            color: var(--amber);
+            text-shadow: 0 0 60px var(--amber-glow);
+            animation: zoomPulse .8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        .countdown-sub {
+            font-family: var(--mono);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        @keyframes zoomPulse {
+            0% { transform: scale(0.6); opacity: 0; }
+            50% { transform: scale(1.08); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .start-modal, .win-modal, .fail-modal {
+            max-width: 620px;
+            width: 100%;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        .start-modal { border: 1px solid var(--border); }
+        .win-modal { border: 2px solid var(--success); box-shadow: 0 0 80px rgba(34, 197, 94, 0.35); }
+
+        .btn-launch {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius);
+            font-family: var(--mono);
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: var(--amber);
+            color: #09090b;
+            box-shadow: 0 0 30px var(--amber-glow);
+            transition: all .15s;
+        }
+
+        .btn-launch:hover {
+            transform: scale(1.02);
+            filter: brightness(1.08);
+        }
+
+        .win-primary-output {
+            font-family: var(--mono);
+            font-size: clamp(.85rem, 2vw, 1.05rem);
+            font-weight: 900;
+            color: #ffffff;
+            background: #000;
+            border: 1px solid var(--success);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            width: 100%;
+            letter-spacing: 0.5px;
+            line-height: 1.7;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.25);
+            word-break: break-word;
+            text-align: left;
+            white-space: pre-line;
+        }
+
+        .callout-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--amber);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .callout-val {
+            font-family: var(--mono);
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--amber);
+            text-shadow: 0 0 15px var(--amber-glow);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="top-nav">
+            <div class="terminal-status">
+                <span class="status-dot"></span>
+                <span>ESCAPE ROOM // HACK 06 (FINAŁ)</span>
+            </div>
+            <button id="audio-btn" class="audio-toggle-btn" title="Włącz / wyłącz dźwięk" aria-label="Przełącz dźwięk">🔊</button>
+        </header>
+
+        <section class="mission-header">
+            <div class="mission-tag">// GŁÓWNE WROTA EWAKUACYJNE</div>
+            <h1 class="mission-title">
+                <span>🚪</span>
+                <span>ATM HOLD (ZWOLNIENIE RYGLA)</span>
+                <span>🚪</span>
+            </h1>
+            <p class="mission-desc">
+                Zdobądź dostęp do wyjścia ewakuacyjnego! Wprowadź kod <strong>7, 3, 5, 1</strong> na terminalu rygla.
+                Przytrzymaj każdą cyfrę i zwolnij ją precyzyjnie w zielonej strefie wskaźnika. Brak limitu czasu!
+            </p>
+        </section>
+
+        <div class="params-bar">
+            <div class="param-item">
+                <span class="param-name">Gra</span>
+                <span class="param-value">ATM HOLD</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Kod dostępu</span>
+                <span class="param-value">7 - 3 - 5 - 1</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Limit czasu</span>
+                <span class="param-value" style="color:var(--success)">BEZ LIMITU</span>
+            </div>
+            <div class="param-item">
+                <span class="param-name">Procedura</span>
+                <span class="param-value">PRECYZJA ZWOLNIENIA</span>
+            </div>
+        </div>
+
+        <main class="game-panel">
+            <!-- Target Code Slots -->
+            <div class="seq-display-wrap">
+                <span style="font-family:var(--mono); font-size:.72rem; color:var(--muted); letter-spacing:1px">KOD RYGLA EWAKUACYJNEGO:</span>
+                <div class="seq-slots">
+                    <div class="code-slot active" id="slot-0">7</div>
+                    <div class="code-slot" id="slot-1">3</div>
+                    <div class="code-slot" id="slot-2">5</div>
+                    <div class="code-slot" id="slot-3">1</div>
+                </div>
+            </div>
+
+            <!-- Holding Progress Gauge -->
+            <div class="gauge-wrap">
+                <div class="gauge-header">
+                    <span>SIŁA NACISKU / STREFA ZWOLNIENIA:</span>
+                    <span id="gauge-percent" style="font-weight:800; color:var(--amber)">0%</span>
+                </div>
+                <div class="gauge-bar-track">
+                    <div class="gauge-target-zone"></div>
+                    <div class="gauge-fill" id="gauge-fill"></div>
+                </div>
+            </div>
+
+            <!-- Keypad -->
+            <div class="keypad-grid" id="keypad">
+                <button class="keypad-btn" data-key="1">1</button>
+                <button class="keypad-btn" data-key="2">2</button>
+                <button class="keypad-btn" data-key="3">3</button>
+                <button class="keypad-btn" data-key="4">4</button>
+                <button class="keypad-btn" data-key="5">5</button>
+                <button class="keypad-btn" data-key="6">6</button>
+                <button class="keypad-btn target-hint" data-key="7">7</button>
+                <button class="keypad-btn" data-key="8">8</button>
+                <button class="keypad-btn" data-key="9">9</button>
+                <div style="visibility:hidden"></div>
+                <button class="keypad-btn" data-key="0">0</button>
+                <div style="visibility:hidden"></div>
+            </div>
+
+            <div id="msg-area" class="msg-area"></div>
+            <div class="hints">Przytrzymaj cyfrę (myszą lub klawiaturą numeryczną) i ZWOLNIJ w zielonej strefie</div>
+        </main>
+    </div>
+
+    <!-- Ready Screen -->
+    <div id="ready-overlay" class="overlay-screen active">
+        <div class="start-modal">
+            <div style="font-size:3rem; color:var(--amber); text-shadow:0 0 30px var(--amber-glow)">🚪🔐</div>
+            <h2 style="font-family:var(--mono); font-size:1.4rem; color:#fff">TERMINAL RYGLA WRÓT EWAKUACJI</h2>
+            <p style="font-size:.85rem; color:var(--muted); line-height:1.6;">
+                Ostatnia przeszkoda przed opuszczeniem obiektu! Wprowadź kod <strong>7, 3, 5, 1</strong>.
+                Przytrzymuj kolejne cyfry i zwalniaj je idealnie w zielonej strefie. <strong>Bez limitu czasu!</strong>
+            </p>
+            <button id="btn-start-game" class="btn-launch">▶ ROZPOCZNIJ ODBLOKOWYWANIE WRÓT</button>
+        </div>
+    </div>
+
+    <!-- Countdown -->
+    <div id="countdown-overlay" class="overlay-screen">
+        <div id="countdown-num" class="countdown-number">3</div>
+        <div class="countdown-sub">POŁĄCZENIE Z ELEKTROMAGNESEM RYGLA...</div>
+    </div>
+
+    <!-- Win Screen (Final Escape Room Victory!) -->
+    <div id="win-overlay" class="overlay-screen">
+        <div class="win-modal">
+            <div style="font-size:3.2rem">🚨📻🎉</div>
+            <div style="font-family:var(--mono); font-size:.75rem; font-weight:800; color:var(--success); border:1px solid var(--success); padding:4px 14px; border-radius:20px; background:rgba(34,197,94,.12)">
+                STATUS: RYGIEL ZWOLNIONY · WROTA ODBLOKOWANE
+            </div>
+
+            <!-- Exact required winning output string -->
+            <div class="win-primary-output" id="win-text">[STATUS: RYGIEL ZWOLNIONY - WROTA ODBLOKOWANE]
+[UWAGA: PROCEDURA EWAKUACJI ROZPOCZĘTA]
+PRZEŁĄCZCIE RADIO W Los Santos NA CZĘSTOTLIWOŚĆ: 91.2 MHz
+I NADAJCIE DO DYSPOZYTORA HASŁO: "CZERWONY ŚWIT"</div>
+
+            <div class="callout-box">
+                <span style="font-family:var(--mono); font-size:.7rem; color:var(--muted); letter-spacing:1px">CZĘSTOTLIWOŚĆ RADIOWA & HASŁO:</span>
+                <div class="callout-val">91.2 MHz</div>
+                <div style="font-family:var(--mono); font-size:1.15rem; font-weight:800; color:#ffffff; letter-spacing:1px">"CZERWONY ŚWIT"</div>
+            </div>
+
+            <button id="btn-play-again" style="padding:12px 24px; border-radius:var(--radius-sm); background:var(--surface2); border:1px solid var(--border2); color:var(--muted); font-family:var(--mono); font-size:.82rem; font-weight:700">
+                ↺ Zresetuj moduł
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const SEQUENCE = [7, 3, 5, 1];
+        const ZONE_START = 70;
+        const ZONE_END = 88;
+        const FILL_DURATION_MS = 1400; // time to fill from 0 to 100%
+
+        const state = {
+            status: 'READY',
+            currentIdx: 0,
+            isHolding: false,
+            heldKey: null,
+            holdStartTime: 0,
+            progress: 0,
+            animFrame: null,
+            audioEnabled: true
+        };
+
+        // Web Audio API
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioClass) audioCtx = new AudioClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.1, gainVal = 0.15) {
+            if (!state.audioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function updateSlotVisuals() {
+            SEQUENCE.forEach((val, i) => {
+                const slot = document.getElementById(`slot-${i}`);
+                if (!slot) return;
+                slot.className = 'code-slot';
+                if (i < state.currentIdx) {
+                    slot.classList.add('done');
+                } else if (i === state.currentIdx) {
+                    slot.classList.add('active');
+                }
+            });
+
+            // Update keypad target hints
+            const expectedKey = SEQUENCE[state.currentIdx];
+            document.querySelectorAll('.keypad-btn').forEach(btn => {
+                const k = parseInt(btn.dataset.key, 10);
+                btn.classList.toggle('target-hint', k === expectedKey);
+            });
+        }
+
+        function startHold(key) {
+            if (state.status !== 'PLAYING') return;
+            if (state.isHolding) return;
+
+            const expectedKey = SEQUENCE[state.currentIdx];
+            if (key !== expectedKey) {
+                playTone(160, 'sawtooth', 0.2, 0.2);
+                showMessage(`BŁĘDNA CYFRA! Wprowadź ${expectedKey}!`, 'var(--danger)');
+                setTimeout(() => showMessage('', ''), 1200);
+                return;
+            }
+
+            state.isHolding = true;
+            state.heldKey = key;
+            state.holdStartTime = performance.now();
+
+            const btn = document.querySelector(`.keypad-btn[data-key="${key}"]`);
+            if (btn) btn.classList.add('holding');
+
+            animateHold();
+        }
+
+        function animateHold() {
+            if (!state.isHolding) return;
+
+            const elapsed = performance.now() - state.holdStartTime;
+            state.progress = Math.min(100, (elapsed / FILL_DURATION_MS) * 100);
+
+            const fillEl = document.getElementById('gauge-fill');
+            const percentEl = document.getElementById('gauge-percent');
+
+            fillEl.style.width = state.progress + '%';
+            percentEl.textContent = Math.round(state.progress) + '%';
+
+            const inZone = state.progress >= ZONE_START && state.progress <= ZONE_END;
+            fillEl.classList.toggle('in-zone', inZone);
+
+            if (state.progress >= 100) {
+                // Overfilled!
+                endHold();
+                playTone(140, 'sawtooth', 0.3, 0.25);
+                showMessage('PRZEPEŁNIENIE! Zwolnij wcześniej w zielonej strefie!', 'var(--danger)');
+                setTimeout(() => showMessage('', ''), 1400);
+                return;
+            }
+
+            state.animFrame = requestAnimationFrame(animateHold);
+        }
+
+        function endHold() {
+            if (!state.isHolding) return;
+            cancelAnimationFrame(state.animFrame);
+            state.isHolding = false;
+
+            const btn = document.querySelector(`.keypad-btn[data-key="${state.heldKey}"]`);
+            if (btn) btn.classList.remove('holding');
+
+            const inZone = state.progress >= ZONE_START && state.progress <= ZONE_END;
+
+            if (inZone) {
+                // Success for this digit!
+                playTone(523 + state.currentIdx * 80, 'triangle', 0.15, 0.2);
+                state.currentIdx++;
+                updateSlotVisuals();
+
+                showMessage(`✓ CYFRA ${state.heldKey} ZATWIERDZONA!`, 'var(--success)');
+                setTimeout(() => showMessage('', ''), 1000);
+
+                if (state.currentIdx >= SEQUENCE.length) {
+                    setTimeout(handleWin, 400);
+                }
+            } else if (state.progress < ZONE_START) {
+                // Released too early
+                playTone(180, 'sawtooth', 0.2, 0.2);
+                showMessage('ZA WCZEŚNIE! Przytrzymaj dłużej do zielonej strefy!', 'var(--danger)');
+                setTimeout(() => showMessage('', ''), 1200);
+            }
+
+            // Reset gauge
+            setTimeout(() => {
+                const fillEl = document.getElementById('gauge-fill');
+                const percentEl = document.getElementById('gauge-percent');
+                fillEl.style.width = '0%';
+                fillEl.classList.remove('in-zone');
+                percentEl.textContent = '0%';
+            }, 200);
+        }
+
+        function showMessage(text, color) {
+            const el = document.getElementById('msg-area');
+            el.textContent = text;
+            el.style.color = color;
+        }
+
+        function startCountdown(cb) {
+            state.status = 'COUNTDOWN';
+            document.getElementById('ready-overlay').classList.remove('active');
+            document.getElementById('win-overlay').classList.remove('active');
+
+            const overlay = document.getElementById('countdown-overlay');
+            const numEl = document.getElementById('countdown-num');
+            overlay.classList.add('active');
+
+            let count = 3;
+            numEl.textContent = count;
+            playTone(440, 'sine', 0.15, 0.2);
+
+            const iv = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    numEl.textContent = count;
+                    playTone(440, 'sine', 0.15, 0.2);
+                } else {
+                    clearInterval(iv);
+                    playTone(880, 'sine', 0.25, 0.25);
+                    overlay.classList.remove('active');
+                    state.status = 'PLAYING';
+                    cb();
+                }
+            }, 750);
+        }
+
+        function startGame() {
+            getAudioContext();
+            state.status = 'READY';
+            state.currentIdx = 0;
+            updateSlotVisuals();
+            startCountdown(() => {});
+        }
+
+        function handleWin() {
+            state.status = 'WON';
+            // Grand final chords
+            const fanfare = [523, 659, 784, 1046];
+            fanfare.forEach((f, idx) => setTimeout(() => playTone(f, 'triangle', 0.4, 0.25), idx * 120));
+            document.getElementById('win-overlay').classList.add('active');
+        }
+
+        function setupListeners() {
+            document.getElementById('btn-start-game').addEventListener('click', startGame);
+            document.getElementById('btn-play-again').addEventListener('click', () => {
+                document.getElementById('win-overlay').classList.remove('active');
+                document.getElementById('ready-overlay').classList.add('active');
+                state.currentIdx = 0;
+                updateSlotVisuals();
+            });
+
+            document.getElementById('audio-btn').addEventListener('click', () => {
+                state.audioEnabled = !state.audioEnabled;
+                document.getElementById('audio-btn').textContent = state.audioEnabled ? '🔊' : '🔇';
+            });
+
+            // Keypad mouse & touch events
+            document.querySelectorAll('.keypad-btn').forEach(btn => {
+                const key = parseInt(btn.dataset.key, 10);
+
+                btn.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    btn.setPointerCapture(e.pointerId);
+                    startHold(key);
+                });
+
+                btn.addEventListener('pointerup', (e) => {
+                    e.preventDefault();
+                    btn.releasePointerCapture(e.pointerId);
+                    endHold();
+                });
+
+                btn.addEventListener('pointercancel', () => endHold());
+            });
+
+            // Keyboard number hold
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    if (state.status === 'READY') {
+                        startGame();
+                        return;
+                    }
+                }
+
+                if (state.status === 'PLAYING') {
+                    if (e.repeat) return;
+                    if (e.key >= '0' && e.key <= '9') {
+                        e.preventDefault();
+                        startHold(parseInt(e.key, 10));
+                    }
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (state.status === 'PLAYING') {
+                    if (e.key >= '0' && e.key <= '9') {
+                        e.preventDefault();
+                        if (state.heldKey === parseInt(e.key, 10)) {
+                            endHold();
+                        }
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateSlotVisuals();
+            setupListeners();
+        });
+    </script>
+</body>
+</html>
