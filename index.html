@@ -1934,7 +1934,7 @@
             border-radius: 50%;
             background: #fff;
             transition: transform .2s;
-            box-shadow: 0 1px 4px rgba(0,0,0,.4);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .4);
         }
 
         .sw-toggle.sw-toggle-on .sw-thumb {
@@ -1976,11 +1976,27 @@
         }
 
         @keyframes swShake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-6px); }
-            40% { transform: translateX(6px); }
-            60% { transform: translateX(-4px); }
-            80% { transform: translateX(4px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-6px);
+            }
+
+            40% {
+                transform: translateX(6px);
+            }
+
+            60% {
+                transform: translateX(-4px);
+            }
+
+            80% {
+                transform: translateX(4px);
+            }
         }
 
         .sw-btn-shake {
@@ -1997,9 +2013,19 @@
             margin-top: 4px;
         }
 
-        .sw-msg-success { color: var(--success); text-shadow: 0 0 10px rgba(34,197,94,.4); }
-        .sw-msg-fail    { color: var(--danger);  text-shadow: 0 0 10px rgba(239,68,68,.4); }
-        .sw-msg-info    { color: var(--cyan); }
+        .sw-msg-success {
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(34, 197, 94, .4);
+        }
+
+        .sw-msg-fail {
+            color: var(--danger);
+            text-shadow: 0 0 10px rgba(239, 68, 68, .4);
+        }
+
+        .sw-msg-info {
+            color: var(--cyan);
+        }
 
         /* Simon playback highlight — cyan pulse */
         .sw-simon-show {
@@ -2008,10 +2034,17 @@
             box-shadow: 0 0 28px rgba(34, 211, 238, .5) !important;
             animation: swSimonPulse .5s ease-out;
         }
+
         @keyframes swSimonPulse {
-            0%   { transform: scale(1.04); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1.04);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
+
         .sw-simon-show .sw-val-num {
             color: #22d3ee;
             text-shadow: 0 0 14px rgba(34, 211, 238, .7);
@@ -2019,10 +2052,22 @@
 
         /* Mode label flash when it changes between steps */
         @keyframes swModeFlash {
-            0%   { transform: scale(1.4); opacity: 0; }
-            40%  { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1);   opacity: 1; }
+            0% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+
+            40% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
+
         .sw-mode-flash {
             display: inline-block;
             animation: swModeFlash .5s ease-out;
@@ -2036,7 +2081,8 @@
     <div id="hub-view" class="page" style="justify-content:center; gap:24px;">
         <div class="hub-header">
             <div class="hub-title">// ONBEAT_HACKS</div>
-            <div class="hub-sub">Wybierz hacka · <span class="mono" style="color:var(--pink)">12 hacków standardowych</span> + <span class="mono" style="color:var(--yellow)">Escape Room</span>
+            <div class="hub-sub">Wybierz hacka · <span class="mono" style="color:var(--pink)">12 hacków
+                    standardowych</span>
             </div>
         </div>
 
@@ -2139,1105 +2185,1085 @@
             </div>
         </div>
 
-        <!-- Escape Room Missions -->
-        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:0 2px;">
-                <span style="font-family:var(--mono);font-size:.78rem;font-weight:800;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;">
-                    🔒 ESCAPE ROOM — DEDYKOWANE MODUŁY
-                </span>
-                <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted);">6 modułów misji</span>
+        <!-- ════════════════════ TOOL VIEW ═════════════════════════════════ -->
+        <div id="tool-view" class="page hidden">
+
+            <!-- Top navigation bar -->
+            <div class="tool-topbar">
+                <button class="back-btn" onclick="showHub()">← Powrót</button>
+                <span id="current-hack-badge" class="topbar-badge">Hack</span>
             </div>
-            
-            <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:10px;">
-                <!-- Hack 1 -->
-                <a href="escape_room/hack1/index.html" style="text-decoration:none;">
-                    <div class="game-card" style="border-color:rgba(250,204,21,.4);background:linear-gradient(135deg,rgba(250,204,21,.06) 0%,var(--surface) 100%);">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="card-icon" style="border-color:#facc15;color:#facc15;">⚡</div>
-                            <div>
-                                <div class="card-name" style="color:#facc15;font-size:.9rem;">#1 Skrzynka Elektryczna</div>
-                                <div class="card-desc" style="font-size:.68rem;">Cel Matem. &bull; 8 etapów &bull; 90s</div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
 
-                <!-- Hack 2 -->
-                <a href="escape_room/hack2/index.html" style="text-decoration:none;">
-                    <div class="game-card" style="border-color:rgba(59,130,246,.4);background:linear-gradient(135deg,rgba(59,130,246,.06) 0%,var(--surface) 100%);">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="card-icon" style="border-color:#3b82f6;color:#3b82f6;">🔌</div>
-                            <div>
-                                <div class="card-name" style="color:#3b82f6;font-size:.9rem;">#2 Kabelki</div>
-                                <div class="card-desc" style="font-size:.68rem;">5 kabli &bull; 15s &bull; Pompy grodzi</div>
+            <!-- ═══ ATM HOLD ══════════════════════════════════════════════ -->
+            <div id="hack-atmhold" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title">// ATM_HOLD</div>
+                    <div class="hack-subtitle">Przytrzymaj cyfrę · zwolnij w <span style="color:var(--success)">zielonej
+                            strefie</span></div>
+                </div>
+                <div class="hack-layout">
+                    <!-- Main game panel -->
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="atm-info-row">
+                            <span>Krok: <span id="atm-step" class="stat-val">1/4</span></span>
+                            <span>Próby: <span id="atm-attempts" class="stat-val">3</span></span>
+                        </div>
+                        <!-- Global timer -->
+                        <div>
+                            <div class="stat-row" style="margin-bottom:4px;">
+                                <span>⏱ Czas na cyfrę:</span>
+                                <span id="atm-timer-text" class="stat-val">—</span>
+                            </div>
+                            <div class="timer-bar-wrap">
+                                <div id="atm-timer-bar" class="timer-bar-fill" style="width:100%"></div>
                             </div>
                         </div>
+                        <!-- Sequence display -->
+                        <div id="atm-seq-display" class="atm-seq-display"></div>
+                        <!-- Keypad -->
+                        <div id="atm-keypad-container" class="atm-keypad"></div>
+                        <div id="atm-message" class="atm-message"></div>
                     </div>
-                </a>
-
-                <!-- Hack 3 -->
-                <a href="escape_room/hack3/index.html" style="text-decoration:none;">
-                    <div class="game-card" style="border-color:rgba(34,197,94,.4);background:linear-gradient(135deg,rgba(34,197,94,.06) 0%,var(--surface) 100%);">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="card-icon" style="border-color:#22c55e;color:#22c55e;">💡</div>
-                            <div>
-                                <div class="card-name" style="color:#22c55e;font-size:.9rem;">#3 Lights Out</div>
-                                <div class="card-desc" style="font-size:.68rem;">Plansza 5x5 &bull; 180s &bull; Lasery</div>
+                    <!-- Options panel -->
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="atm-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                                <button class="preset-btn" data-preset="hard">Hard</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Długość sekwencji</span></div>
+                                <input type="number" id="atm-in-seqlen" class="config-input" min="1" max="9" value="4">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Strefa (min% / max%)</span></div>
+                                <div class="config-2col">
+                                    <input type="number" id="atm-in-zonemin" class="config-input" min="5" max="40"
+                                        value="12">
+                                    <input type="number" id="atm-in-zonemax" class="config-input" min="5" max="50"
+                                        value="18">
+                                </div>
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Prędkość fill (ms min/max)</span></div>
+                                <div class="config-2col">
+                                    <input type="number" id="atm-in-speedmin" class="config-input" min="200" step="100"
+                                        value="1200">
+                                    <input type="number" id="atm-in-speedmax" class="config-input" min="200" step="100"
+                                        value="1800">
+                                </div>
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Próby</span></div>
+                                <input type="number" id="atm-in-attempts" class="config-input" min="1" max="10"
+                                    value="3">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Czas na cyfrę (s)</span></div>
+                                <input type="number" id="atm-in-time" class="config-input" min="5" max="60" value="20">
                             </div>
                         </div>
-                    </div>
-                </a>
-
-                <!-- Hack 4 -->
-                <a href="escape_room/hack4/index.html" style="text-decoration:none;">
-                    <div class="game-card" style="border-color:rgba(241,58,137,.4);background:linear-gradient(135deg,rgba(241,58,137,.06) 0%,var(--surface) 100%);">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="card-icon" style="border-color:#f13a89;color:#f13a89;">🎮</div>
-                            <div>
-                                <div class="card-name" style="color:#f13a89;font-size:.9rem;">#4 Strzałki</div>
-                                <div class="card-desc" style="font-size:.68rem;">8 strzałek &bull; 3 rundy &bull; 15s/runda</div>
-                            </div>
+                        <div class="btn-row">
+                            <button id="atm-btn-start" class="action-btn btn-primary btn-start-main">▶ ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="atm-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
+                            <button id="atm-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
                         </div>
+                        <div class="ready-hint" id="atm-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
                     </div>
-                </a>
-
-                <!-- Hack 5 -->
-                <a href="escape_room/hack5/index.html" style="text-decoration:none;">
-                    <div class="game-card" style="border-color:rgba(16,185,129,.4);background:linear-gradient(135deg,rgba(16,185,129,.06) 0%,var(--surface) 100%);">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="card-icon" style="border-color:#10b981;color:#10b981;">💾</div>
-                            <div>
-                                <div class="card-name" style="color:#10b981;font-size:.9rem;">#5 Protokół Włamania</div>
-                                <div class="card-desc" style="font-size:.68rem;">Matryca 6x6 &bull; 4 bajty &bull; 40s</div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Hack 6 -->
-                <a href="escape_room/hack6/index.html" style="text-decoration:none;">
-                    <div class="game-card" style="border-color:rgba(245,158,11,.4);background:linear-gradient(135deg,rgba(245,158,11,.06) 0%,var(--surface) 100%);">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="card-icon" style="border-color:#f59e0b;color:#f59e0b;">🚪</div>
-                            <div>
-                                <div class="card-name" style="color:#f59e0b;font-size:.9rem;">#6 ATM Hold (Finał)</div>
-                                <div class="card-desc" style="font-size:.68rem;">Kod 7-3-5-1 &bull; Bez limitu czasu</div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <!-- ════════════════════ TOOL VIEW ═════════════════════════════════ -->
-    <div id="tool-view" class="page hidden">
-
-        <!-- Top navigation bar -->
-        <div class="tool-topbar">
-            <button class="back-btn" onclick="showHub()">← Powrót</button>
-            <span id="current-hack-badge" class="topbar-badge">Hack</span>
-        </div>
-
-        <!-- ═══ ATM HOLD ══════════════════════════════════════════════ -->
-        <div id="hack-atmhold" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title">// ATM_HOLD</div>
-                <div class="hack-subtitle">Przytrzymaj cyfrę · zwolnij w <span style="color:var(--success)">zielonej
-                        strefie</span></div>
-            </div>
-            <div class="hack-layout">
-                <!-- Main game panel -->
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="atm-info-row">
-                        <span>Krok: <span id="atm-step" class="stat-val">1/4</span></span>
-                        <span>Próby: <span id="atm-attempts" class="stat-val">3</span></span>
+            <!-- ═══ CABLES ════════════════════════════════════════════════ -->
+            <div id="hack-cables" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#3b82f6;text-shadow:0 0 30px rgba(59,130,246,.4)">// KABELKI
                     </div>
-                    <!-- Global timer -->
-                    <div>
-                        <div class="stat-row" style="margin-bottom:4px;">
-                            <span>⏱ Czas na cyfrę:</span>
-                            <span id="atm-timer-text" class="stat-val">—</span>
+                    <div class="hack-subtitle">Połącz kable tych samych kolorów</div>
+                </div>
+                <div class="hack-layout">
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="stat-row">
+                            <span>⏱ Czas:</span><span id="cables-timer-text" class="stat-val"
+                                style="color:#3b82f6">—</span>
                         </div>
                         <div class="timer-bar-wrap">
-                            <div id="atm-timer-bar" class="timer-bar-fill" style="width:100%"></div>
+                            <div id="cables-timer-bar" class="timer-bar-fill"
+                                style="width:100%;background:#3b82f6;box-shadow:0 0 8px rgba(59,130,246,.4)"></div>
                         </div>
+                        <div class="cables-board" id="cables-board">
+                            <svg class="cables-svg" id="cables-svg"></svg>
+                            <div class="cable-column" id="cables-left"></div>
+                            <div class="cable-column" id="cables-right"></div>
+                        </div>
+                        <div class="stat-row">
+                            <span>Połączone:</span><span id="cables-connected" class="stat-val" style="color:#3b82f6">0
+                                /
+                                5</span>
+                        </div>
+                        <div id="cables-message" class="cables-message"></div>
                     </div>
-                    <!-- Sequence display -->
-                    <div id="atm-seq-display" class="atm-seq-display"></div>
-                    <!-- Keypad -->
-                    <div id="atm-keypad-container" class="atm-keypad"></div>
-                    <div id="atm-message" class="atm-message"></div>
-                </div>
-                <!-- Options panel -->
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="atm-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
-                            <button class="preset-btn" data-preset="hard">Hard</button>
-                        </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Długość sekwencji</span></div>
-                            <input type="number" id="atm-in-seqlen" class="config-input" min="1" max="9" value="4">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Strefa (min% / max%)</span></div>
-                            <div class="config-2col">
-                                <input type="number" id="atm-in-zonemin" class="config-input" min="5" max="40"
-                                    value="12">
-                                <input type="number" id="atm-in-zonemax" class="config-input" min="5" max="50"
-                                    value="18">
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="cable-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy" style="--p:#3b82f6">Easy</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                                <button class="preset-btn" data-preset="hard">Hard</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Liczba kabelków (3–8)</span></div>
+                                <input type="number" id="cable-in-count" class="config-input" min="3" max="8" value="5">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Czas (s)</span></div>
+                                <input type="number" id="cable-in-time" class="config-input" min="5" max="120"
+                                    value="15">
                             </div>
                         </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Prędkość fill (ms min/max)</span></div>
-                            <div class="config-2col">
-                                <input type="number" id="atm-in-speedmin" class="config-input" min="200" step="100"
-                                    value="1200">
-                                <input type="number" id="atm-in-speedmax" class="config-input" min="200" step="100"
-                                    value="1800">
+                        <div class="btn-row">
+                            <button id="cables-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#3b82f6;color:#fff;box-shadow:0 4px 18px rgba(59,130,246,.4)">▶
+                                ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="cables-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#3b82f6;box-shadow:0 4px 18px rgba(59,130,246,.35)">↺ Restart</button>
+                            <button id="cables-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="cables-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ PUZZLE ════════════════════════════════════════════════ -->
+            <div id="hack-puzzle" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#14b8a6;text-shadow:0 0 30px rgba(20,184,166,.4)">// 15_PUZZLE
+                    </div>
+                    <div class="hack-subtitle">Ułóż kafelki w kolejności rosnącej</div>
+                </div>
+                <div class="hack-layout">
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="stat-row">
+                            <span>⏱ Czas:</span><span id="puzzle-timer-text" class="stat-val"
+                                style="color:#14b8a6">—</span>
+                            <span>Ruchy: <span id="puzzle-moves" class="stat-val" style="color:#14b8a6">0</span></span>
+                        </div>
+                        <div class="timer-bar-wrap">
+                            <div id="puzzle-timer-bar" class="timer-bar-fill"
+                                style="width:100%;background:#14b8a6;box-shadow:0 0 8px rgba(20,184,166,.35)"></div>
+                        </div>
+                        <div class="puzzle-board-wrap">
+                            <div id="puzzle-board"></div>
+                        </div>
+                        <div id="puzzle-message" class="puzzle-message"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="puzzle-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy (3×3)</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal (4×4)</button>
+                                <button class="preset-btn" data-preset="hard">Hard (5×5)</button>
+                            </div>
+                            <div class="stat-row" style="margin-top:10px;"><span>Rozmiar:</span><span
+                                    id="puzzle-size-label" class="stat-val" style="color:#14b8a6">4×4</span></div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Czas (s, 0=bez limitu)</span></div>
+                                <input type="number" id="puzzle-in-time" class="config-input" min="0" value="120">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Sterowanie klawiaturą</span></div>
+                                <select id="puzzle-in-mode" class="config-input" style="cursor:pointer">
+                                    <option value="tile">Ruch kafelka (W = przesuń w górę)</option>
+                                    <option value="gap">Ruch pustego pola (W = puste w górę)</option>
+                                </select>
+                            </div>
+                            <div style="font-size:.72rem;color:var(--muted);line-height:1.6;margin-top:6px;">
+                                Klawisze: <span style="color:var(--text);font-family:var(--mono);font-weight:700">W / A
+                                    / S
+                                    / D</span> lub <span
+                                    style="color:var(--text);font-family:var(--mono);font-weight:700">↑
+                                    / ↓ / ← / →</span> oraz kliknięcie myszką.
                             </div>
                         </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Próby</span></div>
-                            <input type="number" id="atm-in-attempts" class="config-input" min="1" max="10" value="3">
+                        <div class="btn-row" style="flex-direction:column;">
+                            <button id="puzzle-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#14b8a6;color:#111;box-shadow:0 4px 18px rgba(20,184,166,.4)">▶
+                                ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="puzzle-btn-shuffle" class="action-btn btn-secondary">🔀 Nowa plansza</button>
+                            <button id="puzzle-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#14b8a6;color:#111;box-shadow:0 4px 18px rgba(20,184,166,.35)">↺
+                                Restart</button>
+                            <button id="puzzle-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
                         </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Czas na cyfrę (s)</span></div>
-                            <input type="number" id="atm-in-time" class="config-input" min="5" max="60" value="20">
-                        </div>
+                        <div class="ready-hint" id="puzzle-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
                     </div>
-                    <div class="btn-row">
-                        <button id="atm-btn-start" class="action-btn btn-primary btn-start-main">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="atm-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
-                        <button id="atm-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="atm-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
                 </div>
             </div>
-        </div>
 
-        <!-- ═══ CABLES ════════════════════════════════════════════════ -->
-        <div id="hack-cables" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#3b82f6;text-shadow:0 0 30px rgba(59,130,246,.4)">// KABELKI</div>
-                <div class="hack-subtitle">Połącz kable tych samych kolorów</div>
-            </div>
-            <div class="hack-layout">
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="stat-row">
-                        <span>⏱ Czas:</span><span id="cables-timer-text" class="stat-val" style="color:#3b82f6">—</span>
+            <!-- ═══ LIGHTS OUT ════════════════════════════════════════════ -->
+            <div id="hack-lightsout" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#22c55e;text-shadow:0 0 30px rgba(34,197,94,.4)">// LIGHTS_OUT
                     </div>
-                    <div class="timer-bar-wrap">
-                        <div id="cables-timer-bar" class="timer-bar-fill"
-                            style="width:100%;background:#3b82f6;box-shadow:0 0 8px rgba(59,130,246,.4)"></div>
-                    </div>
-                    <div class="cables-board" id="cables-board">
-                        <svg class="cables-svg" id="cables-svg"></svg>
-                        <div class="cable-column" id="cables-left"></div>
-                        <div class="cable-column" id="cables-right"></div>
-                    </div>
-                    <div class="stat-row">
-                        <span>Połączone:</span><span id="cables-connected" class="stat-val" style="color:#3b82f6">0 /
-                            5</span>
-                    </div>
-                    <div id="cables-message" class="cables-message"></div>
+                    <div class="hack-subtitle">Wyłącz wszystkie lampy na planszy</div>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="cable-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy" style="--p:#3b82f6">Easy</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
-                            <button class="preset-btn" data-preset="hard">Hard</button>
+                <div class="hack-layout">
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="stat-row">
+                            <span>⏱ Czas:</span><span id="lo-timer-text" class="stat-val" style="color:#22c55e">—</span>
+                            <span>Włączone: <span id="lo-lights-on" class="stat-val"
+                                    style="color:#22c55e">0</span></span>
                         </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Liczba kabelków (3–8)</span></div>
-                            <input type="number" id="cable-in-count" class="config-input" min="3" max="8" value="5">
+                        <div class="timer-bar-wrap">
+                            <div id="lo-timer-bar" class="timer-bar-fill"
+                                style="width:100%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.35)"></div>
                         </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Czas (s)</span></div>
-                            <input type="number" id="cable-in-time" class="config-input" min="5" max="120" value="15">
+                        <div class="lo-board-wrap">
+                            <div id="lo-board"></div>
                         </div>
+                        <div id="lo-message" class="lo-message"></div>
                     </div>
-                    <div class="btn-row">
-                        <button id="cables-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:#3b82f6;color:#fff;box-shadow:0 4px 18px rgba(59,130,246,.4)">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="cables-btn-restart" class="action-btn btn-primary hidden"
-                            style="background:#3b82f6;box-shadow:0 4px 18px rgba(59,130,246,.35)">↺ Restart</button>
-                        <button id="cables-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="cables-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ PUZZLE ════════════════════════════════════════════════ -->
-        <div id="hack-puzzle" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#14b8a6;text-shadow:0 0 30px rgba(20,184,166,.4)">// 15_PUZZLE
-                </div>
-                <div class="hack-subtitle">Ułóż kafelki w kolejności rosnącej</div>
-            </div>
-            <div class="hack-layout">
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="stat-row">
-                        <span>⏱ Czas:</span><span id="puzzle-timer-text" class="stat-val" style="color:#14b8a6">—</span>
-                        <span>Ruchy: <span id="puzzle-moves" class="stat-val" style="color:#14b8a6">0</span></span>
-                    </div>
-                    <div class="timer-bar-wrap">
-                        <div id="puzzle-timer-bar" class="timer-bar-fill"
-                            style="width:100%;background:#14b8a6;box-shadow:0 0 8px rgba(20,184,166,.35)"></div>
-                    </div>
-                    <div class="puzzle-board-wrap">
-                        <div id="puzzle-board"></div>
-                    </div>
-                    <div id="puzzle-message" class="puzzle-message"></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="puzzle-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy (3×3)</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal (4×4)</button>
-                            <button class="preset-btn" data-preset="hard">Hard (5×5)</button>
-                        </div>
-                        <div class="stat-row" style="margin-top:10px;"><span>Rozmiar:</span><span id="puzzle-size-label"
-                                class="stat-val" style="color:#14b8a6">4×4</span></div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Czas (s, 0=bez limitu)</span></div>
-                            <input type="number" id="puzzle-in-time" class="config-input" min="0" value="120">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Sterowanie klawiaturą</span></div>
-                            <select id="puzzle-in-mode" class="config-input" style="cursor:pointer">
-                                <option value="tile">Ruch kafelka (W = przesuń w górę)</option>
-                                <option value="gap">Ruch pustego pola (W = puste w górę)</option>
-                            </select>
-                        </div>
-                        <div style="font-size:.72rem;color:var(--muted);line-height:1.6;margin-top:6px;">
-                            Klawisze: <span style="color:var(--text);font-family:var(--mono);font-weight:700">W / A / S
-                                / D</span> lub <span style="color:var(--text);font-family:var(--mono);font-weight:700">↑
-                                / ↓ / ← / →</span> oraz kliknięcie myszką.
-                        </div>
-                    </div>
-                    <div class="btn-row" style="flex-direction:column;">
-                        <button id="puzzle-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:#14b8a6;color:#111;box-shadow:0 4px 18px rgba(20,184,166,.4)">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="puzzle-btn-shuffle" class="action-btn btn-secondary">🔀 Nowa plansza</button>
-                        <button id="puzzle-btn-restart" class="action-btn btn-primary hidden"
-                            style="background:#14b8a6;color:#111;box-shadow:0 4px 18px rgba(20,184,166,.35)">↺
-                            Restart</button>
-                        <button id="puzzle-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="puzzle-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ LIGHTS OUT ════════════════════════════════════════════ -->
-        <div id="hack-lightsout" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#22c55e;text-shadow:0 0 30px rgba(34,197,94,.4)">// LIGHTS_OUT
-                </div>
-                <div class="hack-subtitle">Wyłącz wszystkie lampy na planszy</div>
-            </div>
-            <div class="hack-layout">
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="stat-row">
-                        <span>⏱ Czas:</span><span id="lo-timer-text" class="stat-val" style="color:#22c55e">—</span>
-                        <span>Włączone: <span id="lo-lights-on" class="stat-val" style="color:#22c55e">0</span></span>
-                    </div>
-                    <div class="timer-bar-wrap">
-                        <div id="lo-timer-bar" class="timer-bar-fill"
-                            style="width:100%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.35)"></div>
-                    </div>
-                    <div class="lo-board-wrap">
-                        <div id="lo-board"></div>
-                    </div>
-                    <div id="lo-message" class="lo-message"></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="lo-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy (5×5)</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal (7×7)</button>
-                            <button class="preset-btn" data-preset="hard">Hard (9×9)</button>
-                        </div>
-                        <div class="stat-row" style="margin-top:10px;"><span>Rozmiar:</span><span id="lo-size-label"
-                                class="stat-val" style="color:#22c55e">7×7</span></div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Rozmiar planszy (3–12)</span></div>
-                            <input type="number" id="lo-in-size" class="config-input" min="3" max="12" value="7">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Czas (s, 0=bez limitu)</span></div>
-                            <input type="number" id="lo-in-time" class="config-input" min="0" value="180">
-                        </div>
-                    </div>
-                    <div class="btn-row" style="flex-direction:column;">
-                        <button id="lo-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:#22c55e;color:#111;box-shadow:0 4px 18px rgba(34,197,94,.4)">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="lo-btn-randomize" class="action-btn btn-secondary">🎲 Nowa plansza</button>
-                        <button id="lo-btn-restart" class="action-btn btn-primary hidden"
-                            style="background:#22c55e;color:#111;box-shadow:0 4px 18px rgba(34,197,94,.35)">↺
-                            Restart</button>
-                        <button id="lo-btn-clear" class="action-btn btn-secondary">🧹 Wyczyść</button>
-                        <button id="lo-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="lo-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ SLIDER ════════════════════════════════════════════════ -->
-        <div id="hack-slider" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#f97316;text-shadow:0 0 30px rgba(249,115,22,.4)">// SLIDER</div>
-                <div class="hack-subtitle">Unikaj przeszkód · A/D lub strzałki lub myszka</div>
-            </div>
-            <div class="hack-layout">
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="stat-row">
-                        <span>Przeszkody: <span id="slider-passed" class="stat-val" style="color:#f97316">0</span> /
-                            <span id="slider-target" class="stat-val" style="color:#f97316">10</span></span>
-                        <span>Życia: <span id="slider-attempts" class="stat-val" style="color:#f97316">3</span></span>
-                    </div>
-                    <canvas id="slider-canvas" width="400" height="400"></canvas>
-                    <div id="slider-message" class="slider-message"></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="slider-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
-                            <button class="preset-btn" data-preset="hard">Hard</button>
-                        </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Szerokość luki (px)</span></div>
-                            <input type="number" id="slider-in-gap" class="config-input" min="30" max="180" value="80">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Prędkość spadania (1–10)</span></div>
-                            <input type="number" id="slider-in-speed" class="config-input" min="1" max="10" value="3">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Cel (ile przeszkód)</span></div>
-                            <input type="number" id="slider-in-target" class="config-input" min="1" value="10">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Życia</span></div>
-                            <input type="number" id="slider-in-attempts" class="config-input" min="1" max="10"
-                                value="3">
-                        </div>
-                    </div>
-                    <div class="btn-row">
-                        <button id="slider-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:#f97316;color:#111;box-shadow:0 4px 18px rgba(249,115,22,.4)">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="slider-btn-restart" class="action-btn btn-primary hidden"
-                            style="background:#f97316;box-shadow:0 4px 18px rgba(249,115,22,.35)">↺ Restart</button>
-                        <button id="slider-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="slider-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ DOT SEQUENCE ══════════════════════════════════════════ -->
-        <div id="hack-dotsequence" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#22d3ee;text-shadow:0 0 30px rgba(34,211,238,.4)">// KROPKI</div>
-                <div class="hack-subtitle">Klikaj w kolejności <span style="color:#22d3ee">1 → 6</span> · zaliczyj 2
-                    etapy</div>
-            </div>
-            <div class="hack-layout">
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="stat-row">
-                        <span>Etap: <span id="dot-stage-badge" class="stat-val" style="color:#22d3ee">1/2</span></span>
-                        <span>Następna: <span id="dot-next-badge" class="stat-val" style="color:#22d3ee">1</span></span>
-                        <span id="dot-timer-text" class="stat-val" style="color:#22d3ee">—</span>
-                    </div>
-                    <div class="timer-bar-wrap">
-                        <div id="dot-timer-bar" class="timer-bar-fill"
-                            style="width:100%;background:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.35)"></div>
-                    </div>
-                    <div id="dot-play-area">
-                        <svg id="dot-svg-lines"
-                            style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;"></svg>
-                        <div id="dot-start-overlay" style="display:none">
-                            <h3>🎯 Sekwencja Kropek</h3>
-                            <p>Klikaj kropki w kolejności 1→6. Zaliczyj 2 etapy z rzędu pod presją czasu!</p>
-                            <button id="dot-btn-start-overlay" class="action-btn btn-primary"
-                                style="padding:10px 28px;">Rozpocznij</button>
-                        </div>
-                    </div>
-                    <div id="dot-message" class="dot-message"></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="dot-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
-                            <button class="preset-btn" data-preset="hard">Hard</button>
-                        </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label">
-                                <span>Limit czasu</span>
-                                <span id="dot-time-label" class="stat-val" style="color:#22d3ee;font-size:.7rem">8
-                                    sek.</span>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="lo-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy (5×5)</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal (7×7)</button>
+                                <button class="preset-btn" data-preset="hard">Hard (9×9)</button>
                             </div>
-                            <input type="number" id="dot-in-time" class="config-input" min="3" max="30" value="8">
-                        </div>
-                    </div>
-                    <div class="panel" style="flex:1;">
-                        <div class="panel-title"><span>📋</span> Zasady</div>
-                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.8;list-style:none;padding:0;">
-                            <li>▸ 2 etapy z 6 kropkami każdy</li>
-                            <li>▸ Klikaj od <strong style="color:var(--text)">1</strong> do <strong
-                                    style="color:var(--text)">6</strong></li>
-                            <li>▸ Błąd lub czas → restart od etapu 1</li>
-                            <li>▸ Linie łączą kliknięte kropki</li>
-                        </ul>
-                    </div>
-                    <div class="btn-row">
-                        <button id="dot-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:#22d3ee;color:#000;box-shadow:0 4px 18px rgba(34,211,238,.4)">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="dot-btn-restart" class="action-btn btn-primary hidden"
-                            style="background:#22d3ee;color:#000;box-shadow:0 4px 18px rgba(34,211,238,.35)">↺
-                            Restart</button>
-                        <button id="dot-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="dot-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ BRICK BREAKER ═════════════════════════════════════════ -->
-        <div id="hack-brickbreaker" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#f59e0b;text-shadow:0 0 30px rgba(245,158,11,.4)">// BRICK_BREAKER
-                </div>
-                <div class="hack-subtitle">Zbij wszystkie bloki · <span style="color:#22c55e">×3</span> = potrzeba 3
-                    trafień</div>
-            </div>
-            <div class="hack-layout">
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="stat-row">
-                        <span>❤ Życia: <span id="bb-lives" class="stat-val" style="color:#ef4444">❤❤❤</span></span>
-                        <span>Wynik: <span id="bb-score" class="stat-val" style="color:#f59e0b">0</span></span>
-                        <span>Bloki: <span id="bb-bricks-left" class="stat-val" style="color:#f59e0b">—</span></span>
-                    </div>
-                    <div class="bb-canvas-wrap">
-                        <canvas id="bb-canvas" width="480" height="380"></canvas>
-                        <div id="bb-overlay">
-                            <div id="bb-overlay-text" style="color:#f59e0b">Gotowy do gry!</div>
-                            <small style="color:var(--muted)">Skonfiguruj parametry i kliknij Rozpocznij</small>
-                        </div>
-                    </div>
-                    <div style="font-size:.7rem;color:var(--muted);text-align:center;">
-                        Myszka / dotyk = paletka &nbsp;·&nbsp; A/D lub ← → = klawiatura
-                    </div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="bb-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
-                            <button class="preset-btn" data-preset="hard">Hard</button>
-                        </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Wiersze</span></div>
-                            <input type="number" id="bb-in-rows" class="config-input" min="2" max="12" value="6">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Kolumny</span></div>
-                            <input type="number" id="bb-in-cols" class="config-input" min="4" max="14" value="9">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Prędkość piłki</span></div>
-                            <input type="number" id="bb-in-speed" class="config-input" min="2" max="12" step="0.5"
-                                value="5.5">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Szerokość paletki (px)</span></div>
-                            <input type="number" id="bb-in-paddle" class="config-input" min="40" max="160" value="80">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Bloki ×3 (potrójne)</span></div>
-                            <input type="number" id="bb-in-triple" class="config-input" min="0" max="10" value="3">
-                        </div>
-                    </div>
-                    <div class="panel" style="flex:1;">
-                        <div class="panel-title"><span>📋</span> Legenda</div>
-                        <div style="font-size:.72rem;color:var(--muted);line-height:2;">
-                            <div>🟥 <strong style="color:var(--text)">Zwykły blok</strong> — 1 trafienie</div>
-                            <div>🟩 <span style="color:#22c55e">×3</span> — 3 HP (zielony→żółty→czerwony)</div>
-                            <div>Liczba na bloku = pozostałe HP</div>
-                        </div>
-                    </div>
-                    <div class="btn-row">
-                        <button id="bb-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:#f59e0b;color:#000;box-shadow:0 4px 18px rgba(245,158,11,.4)">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="bb-btn-restart" class="action-btn btn-primary hidden"
-                            style="background:#f59e0b;color:#000;box-shadow:0 4px 18px rgba(245,158,11,.35)">↺
-                            Restart</button>
-                        <button id="bb-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="bb-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ FLAPPY BIRD ═══════════════════════════════════════════ -->
-        <div id="hack-flappybird" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#f13a89;text-shadow:0 0 30px rgba(241,58,137,.4)">// FLAPPY_BIRD
-                </div>
-                <div class="hack-subtitle">Przeleciej przez <span style="color:var(--pink)">15 rur</span> · Kliknij /
-                    Spacja / Dotknij = skok</div>
-            </div>
-            <div class="hack-layout">
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="stat-row">
-                        <span>🐦 Rury: <span id="fb-score" class="stat-val">0</span> / <span id="fb-target"
-                                class="stat-val">15</span></span>
-                    </div>
-                    <!-- Progress bar for pipes -->
-                    <div class="timer-bar-wrap">
-                        <div id="fb-progress-bar" class="timer-bar-fill"
-                            style="width:0%;background:var(--pink);transition:width .3s ease"></div>
-                    </div>
-                    <div class="fb-canvas-wrap">
-                        <canvas id="fb-canvas" width="480" height="380"></canvas>
-                        <div id="fb-overlay">
-                            <div id="fb-overlay-text" style="color:#f13a89">🐦 Gotowy do lotu!</div>
-                            <small style="color:var(--muted)">Skonfiguruj parametry i kliknij Rozpocznij</small>
-                        </div>
-                    </div>
-                    <div style="font-size:.7rem;color:var(--muted);text-align:center;">
-                        Kliknij / Dotknij / Spacja / ↑ / W = skok
-                    </div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="fb-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
-                            <button class="preset-btn" data-preset="hard">Hard</button>
-                        </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Cel: ile rur przelecieć</span></div>
-                            <input type="number" id="fb-in-pipes" class="config-input" min="1" max="50" value="15">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Szczelina między rurami (px)</span></div>
-                            <input type="number" id="fb-in-gap" class="config-input" min="70" max="220" value="135">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Prędkość rur (px/klatkę)</span></div>
-                            <input type="number" id="fb-in-speed" class="config-input" min="1.5" max="8" step="0.5"
-                                value="2.5">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Grawitacja</span></div>
-                            <input type="number" id="fb-in-gravity" class="config-input" min="0.10" max="0.5"
-                                step="0.02" value="0.22">
-                        </div>
-                    </div>
-                    <div class="panel" style="flex:1;">
-                        <div class="panel-title"><span>📋</span> Jak grać</div>
-                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
-                            <li>▸ Kliknij / Spacja / ↑ / W = skok</li>
-                            <li>▸ Dotknij ekranu = skok (mobile)</li>
-                            <li>▸ Przeleciej przez <strong style="color:var(--text)">wszystkie rury</strong></li>
-                            <li>▸ Uderzenie w rurę lub podłoże = koniec</li>
-                            <li>▸ Paski <span style="color:var(--pink)">różowe</span> = rury</li>
-                        </ul>
-                    </div>
-                    <div class="btn-row">
-                        <button id="fb-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:var(--pink);color:#111;box-shadow:0 4px 18px var(--pink-glow)">▶
-                            ROZPOCZNIJ GRĘ</button>
-                        <button id="fb-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
-                        <button id="fb-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="fb-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ STRZAŁKI ═════════════════════════════════════════════ -->
-        <div id="hack-arrows" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:var(--pink);text-shadow:0 0 30px var(--pink-glow)">// STRZAŁKI
-                </div>
-                <div class="hack-subtitle">Wciskaj strzałki w kolejności · <span style="color:var(--danger)">błąd
-                        resetuje postęp</span></div>
-            </div>
-            <div class="hack-layout">
-                <!-- Main game area -->
-                <div class="arrows-panel">
-                    <!-- Top status bar -->
-                    <div class="arrows-top-status">
-                        <span id="arrows-stage-badge">ETAP 1/1</span>
-                        <span>DOPASUJ KIERUNEK</span>
-                        <span class="arrows-badge-warn">BŁĄD RESETUJE</span>
-                    </div>
-
-                    <!-- Sequence row -->
-                    <div id="arrows-sequence-box" class="arrows-sequence-box">
-                        <!-- Populated dynamically by JS -->
-                    </div>
-
-                    <!-- 4 Direction Action Buttons -->
-                    <div class="arrows-controls-grid">
-                        <button class="arrows-btn" id="arrows-btn-up">
-                            <span class="arrows-btn-icon">↑</span>
-                            <div class="arrows-btn-text">
-                                <span class="arrows-btn-title">GÓRA</span>
-                                <span class="arrows-btn-sub">W / GÓRA</span>
+                            <div class="stat-row" style="margin-top:10px;"><span>Rozmiar:</span><span id="lo-size-label"
+                                    class="stat-val" style="color:#22c55e">7×7</span></div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Rozmiar planszy (3–12)</span></div>
+                                <input type="number" id="lo-in-size" class="config-input" min="3" max="12" value="7">
                             </div>
-                        </button>
-                        <button class="arrows-btn" id="arrows-btn-down">
-                            <span class="arrows-btn-icon">↓</span>
-                            <div class="arrows-btn-text">
-                                <span class="arrows-btn-title">DÓŁ</span>
-                                <span class="arrows-btn-sub">S / DÓŁ</span>
-                            </div>
-                        </button>
-                        <button class="arrows-btn" id="arrows-btn-left">
-                            <span class="arrows-btn-icon">←</span>
-                            <div class="arrows-btn-text">
-                                <span class="arrows-btn-title">LEWO</span>
-                                <span class="arrows-btn-sub">A / LEWO</span>
-                            </div>
-                        </button>
-                        <button class="arrows-btn" id="arrows-btn-right">
-                            <span class="arrows-btn-icon">→</span>
-                            <div class="arrows-btn-text">
-                                <span class="arrows-btn-title">PRAWO</span>
-                                <span class="arrows-btn-sub">D / PRAWO</span>
-                            </div>
-                        </button>
-                    </div>
-
-                    <!-- Progress and Timer -->
-                    <div class="arrows-progress-wrap">
-                        <div class="arrows-progress-info">
-                            <span>POSTĘP</span>
-                            <span id="arrows-progress-text">0/8</span>
-                        </div>
-                        <div class="timer-bar-wrap" style="height:10px;margin-bottom:0;">
-                            <div id="arrows-progress-fill" class="timer-bar-fill"
-                                style="width:0%;background:var(--pink);box-shadow:0 0 12px var(--pink-glow);transition:width .15s ease">
+                            <div class="config-group">
+                                <div class="config-label"><span>Czas (s, 0=bez limitu)</span></div>
+                                <input type="number" id="lo-in-time" class="config-input" min="0" value="180">
                             </div>
                         </div>
+                        <div class="btn-row" style="flex-direction:column;">
+                            <button id="lo-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#22c55e;color:#111;box-shadow:0 4px 18px rgba(34,197,94,.4)">▶
+                                ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="lo-btn-randomize" class="action-btn btn-secondary">🎲 Nowa plansza</button>
+                            <button id="lo-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#22c55e;color:#111;box-shadow:0 4px 18px rgba(34,197,94,.35)">↺
+                                Restart</button>
+                            <button id="lo-btn-clear" class="action-btn btn-secondary">🧹 Wyczyść</button>
+                            <button id="lo-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="lo-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ SLIDER ════════════════════════════════════════════════ -->
+            <div id="hack-slider" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#f97316;text-shadow:0 0 30px rgba(249,115,22,.4)">// SLIDER
+                    </div>
+                    <div class="hack-subtitle">Unikaj przeszkód · A/D lub strzałki lub myszka</div>
+                </div>
+                <div class="hack-layout">
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="stat-row">
+                            <span>Przeszkody: <span id="slider-passed" class="stat-val" style="color:#f97316">0</span> /
+                                <span id="slider-target" class="stat-val" style="color:#f97316">10</span></span>
+                            <span>Życia: <span id="slider-attempts" class="stat-val"
+                                    style="color:#f97316">3</span></span>
+                        </div>
+                        <canvas id="slider-canvas" width="400" height="400"></canvas>
+                        <div id="slider-message" class="slider-message"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="slider-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                                <button class="preset-btn" data-preset="hard">Hard</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Szerokość luki (px)</span></div>
+                                <input type="number" id="slider-in-gap" class="config-input" min="30" max="180"
+                                    value="80">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Prędkość spadania (1–10)</span></div>
+                                <input type="number" id="slider-in-speed" class="config-input" min="1" max="10"
+                                    value="3">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Cel (ile przeszkód)</span></div>
+                                <input type="number" id="slider-in-target" class="config-input" min="1" value="10">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Życia</span></div>
+                                <input type="number" id="slider-in-attempts" class="config-input" min="1" max="10"
+                                    value="3">
+                            </div>
+                        </div>
+                        <div class="btn-row">
+                            <button id="slider-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#f97316;color:#111;box-shadow:0 4px 18px rgba(249,115,22,.4)">▶
+                                ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="slider-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#f97316;box-shadow:0 4px 18px rgba(249,115,22,.35)">↺ Restart</button>
+                            <button id="slider-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="slider-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ DOT SEQUENCE ══════════════════════════════════════════ -->
+            <div id="hack-dotsequence" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#22d3ee;text-shadow:0 0 30px rgba(34,211,238,.4)">// KROPKI
+                    </div>
+                    <div class="hack-subtitle">Klikaj w kolejności <span style="color:#22d3ee">1 → 6</span> · zaliczyj 2
+                        etapy</div>
+                </div>
+                <div class="hack-layout">
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="stat-row">
+                            <span>Etap: <span id="dot-stage-badge" class="stat-val"
+                                    style="color:#22d3ee">1/2</span></span>
+                            <span>Następna: <span id="dot-next-badge" class="stat-val"
+                                    style="color:#22d3ee">1</span></span>
+                            <span id="dot-timer-text" class="stat-val" style="color:#22d3ee">—</span>
+                        </div>
+                        <div class="timer-bar-wrap">
+                            <div id="dot-timer-bar" class="timer-bar-fill"
+                                style="width:100%;background:#22d3ee;box-shadow:0 0 8px rgba(34,211,238,.35)"></div>
+                        </div>
+                        <div id="dot-play-area">
+                            <svg id="dot-svg-lines"
+                                style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;"></svg>
+                            <div id="dot-start-overlay" style="display:none">
+                                <h3>🎯 Sekwencja Kropek</h3>
+                                <p>Klikaj kropki w kolejności 1→6. Zaliczyj 2 etapy z rzędu pod presją czasu!</p>
+                                <button id="dot-btn-start-overlay" class="action-btn btn-primary"
+                                    style="padding:10px 28px;">Rozpocznij</button>
+                            </div>
+                        </div>
+                        <div id="dot-message" class="dot-message"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="dot-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                                <button class="preset-btn" data-preset="hard">Hard</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label">
+                                    <span>Limit czasu</span>
+                                    <span id="dot-time-label" class="stat-val" style="color:#22d3ee;font-size:.7rem">8
+                                        sek.</span>
+                                </div>
+                                <input type="number" id="dot-in-time" class="config-input" min="3" max="30" value="8">
+                            </div>
+                        </div>
+                        <div class="panel" style="flex:1;">
+                            <div class="panel-title"><span>📋</span> Zasady</div>
+                            <ul style="font-size:.72rem;color:var(--muted);line-height:1.8;list-style:none;padding:0;">
+                                <li>▸ 2 etapy z 6 kropkami każdy</li>
+                                <li>▸ Klikaj od <strong style="color:var(--text)">1</strong> do <strong
+                                        style="color:var(--text)">6</strong></li>
+                                <li>▸ Błąd lub czas → restart od etapu 1</li>
+                                <li>▸ Linie łączą kliknięte kropki</li>
+                            </ul>
+                        </div>
+                        <div class="btn-row">
+                            <button id="dot-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#22d3ee;color:#000;box-shadow:0 4px 18px rgba(34,211,238,.4)">▶
+                                ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="dot-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#22d3ee;color:#000;box-shadow:0 4px 18px rgba(34,211,238,.35)">↺
+                                Restart</button>
+                            <button id="dot-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="dot-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ BRICK BREAKER ═════════════════════════════════════════ -->
+            <div id="hack-brickbreaker" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#f59e0b;text-shadow:0 0 30px rgba(245,158,11,.4)">//
+                        BRICK_BREAKER
+                    </div>
+                    <div class="hack-subtitle">Zbij wszystkie bloki · <span style="color:#22c55e">×3</span> = potrzeba 3
+                        trafień</div>
+                </div>
+                <div class="hack-layout">
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="stat-row">
+                            <span>❤ Życia: <span id="bb-lives" class="stat-val" style="color:#ef4444">❤❤❤</span></span>
+                            <span>Wynik: <span id="bb-score" class="stat-val" style="color:#f59e0b">0</span></span>
+                            <span>Bloki: <span id="bb-bricks-left" class="stat-val"
+                                    style="color:#f59e0b">—</span></span>
+                        </div>
+                        <div class="bb-canvas-wrap">
+                            <canvas id="bb-canvas" width="480" height="380"></canvas>
+                            <div id="bb-overlay">
+                                <div id="bb-overlay-text" style="color:#f59e0b">Gotowy do gry!</div>
+                                <small style="color:var(--muted)">Skonfiguruj parametry i kliknij Rozpocznij</small>
+                            </div>
+                        </div>
+                        <div style="font-size:.7rem;color:var(--muted);text-align:center;">
+                            Myszka / dotyk = paletka &nbsp;·&nbsp; A/D lub ← → = klawiatura
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="bb-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                                <button class="preset-btn" data-preset="hard">Hard</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Wiersze</span></div>
+                                <input type="number" id="bb-in-rows" class="config-input" min="2" max="12" value="6">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Kolumny</span></div>
+                                <input type="number" id="bb-in-cols" class="config-input" min="4" max="14" value="9">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Prędkość piłki</span></div>
+                                <input type="number" id="bb-in-speed" class="config-input" min="2" max="12" step="0.5"
+                                    value="5.5">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Szerokość paletki (px)</span></div>
+                                <input type="number" id="bb-in-paddle" class="config-input" min="40" max="160"
+                                    value="80">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Bloki ×3 (potrójne)</span></div>
+                                <input type="number" id="bb-in-triple" class="config-input" min="0" max="10" value="3">
+                            </div>
+                        </div>
+                        <div class="panel" style="flex:1;">
+                            <div class="panel-title"><span>📋</span> Legenda</div>
+                            <div style="font-size:.72rem;color:var(--muted);line-height:2;">
+                                <div>🟥 <strong style="color:var(--text)">Zwykły blok</strong> — 1 trafienie</div>
+                                <div>🟩 <span style="color:#22c55e">×3</span> — 3 HP (zielony→żółty→czerwony)</div>
+                                <div>Liczba na bloku = pozostałe HP</div>
+                            </div>
+                        </div>
+                        <div class="btn-row">
+                            <button id="bb-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#f59e0b;color:#000;box-shadow:0 4px 18px rgba(245,158,11,.4)">▶
+                                ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="bb-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#f59e0b;color:#000;box-shadow:0 4px 18px rgba(245,158,11,.35)">↺
+                                Restart</button>
+                            <button id="bb-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="bb-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ FLAPPY BIRD ═══════════════════════════════════════════ -->
+            <div id="hack-flappybird" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#f13a89;text-shadow:0 0 30px rgba(241,58,137,.4)">//
+                        FLAPPY_BIRD
+                    </div>
+                    <div class="hack-subtitle">Przeleciej przez <span style="color:var(--pink)">15 rur</span> · Kliknij
+                        /
+                        Spacja / Dotknij = skok</div>
+                </div>
+                <div class="hack-layout">
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="stat-row">
+                            <span>🐦 Rury: <span id="fb-score" class="stat-val">0</span> / <span id="fb-target"
+                                    class="stat-val">15</span></span>
+                        </div>
+                        <!-- Progress bar for pipes -->
+                        <div class="timer-bar-wrap">
+                            <div id="fb-progress-bar" class="timer-bar-fill"
+                                style="width:0%;background:var(--pink);transition:width .3s ease"></div>
+                        </div>
+                        <div class="fb-canvas-wrap">
+                            <canvas id="fb-canvas" width="480" height="380"></canvas>
+                            <div id="fb-overlay">
+                                <div id="fb-overlay-text" style="color:#f13a89">🐦 Gotowy do lotu!</div>
+                                <small style="color:var(--muted)">Skonfiguruj parametry i kliknij Rozpocznij</small>
+                            </div>
+                        </div>
+                        <div style="font-size:.7rem;color:var(--muted);text-align:center;">
+                            Kliknij / Dotknij / Spacja / ↑ / W = skok
+                        </div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="fb-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                                <button class="preset-btn" data-preset="hard">Hard</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Cel: ile rur przelecieć</span></div>
+                                <input type="number" id="fb-in-pipes" class="config-input" min="1" max="50" value="15">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Szczelina między rurami (px)</span></div>
+                                <input type="number" id="fb-in-gap" class="config-input" min="70" max="220" value="135">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Prędkość rur (px/klatkę)</span></div>
+                                <input type="number" id="fb-in-speed" class="config-input" min="1.5" max="8" step="0.5"
+                                    value="2.5">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Grawitacja</span></div>
+                                <input type="number" id="fb-in-gravity" class="config-input" min="0.10" max="0.5"
+                                    step="0.02" value="0.22">
+                            </div>
+                        </div>
+                        <div class="panel" style="flex:1;">
+                            <div class="panel-title"><span>📋</span> Jak grać</div>
+                            <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                                <li>▸ Kliknij / Spacja / ↑ / W = skok</li>
+                                <li>▸ Dotknij ekranu = skok (mobile)</li>
+                                <li>▸ Przeleciej przez <strong style="color:var(--text)">wszystkie rury</strong></li>
+                                <li>▸ Uderzenie w rurę lub podłoże = koniec</li>
+                                <li>▸ Paski <span style="color:var(--pink)">różowe</span> = rury</li>
+                            </ul>
+                        </div>
+                        <div class="btn-row">
+                            <button id="fb-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:var(--pink);color:#111;box-shadow:0 4px 18px var(--pink-glow)">▶
+                                ROZPOCZNIJ GRĘ</button>
+                            <button id="fb-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
+                            <button id="fb-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="fb-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ STRZAŁKI ═════════════════════════════════════════════ -->
+            <div id="hack-arrows" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:var(--pink);text-shadow:0 0 30px var(--pink-glow)">// STRZAŁKI
+                    </div>
+                    <div class="hack-subtitle">Wciskaj strzałki w kolejności · <span style="color:var(--danger)">błąd
+                            resetuje postęp</span></div>
+                </div>
+                <div class="hack-layout">
+                    <!-- Main game area -->
+                    <div class="arrows-panel">
+                        <!-- Top status bar -->
+                        <div class="arrows-top-status">
+                            <span id="arrows-stage-badge">ETAP 1/1</span>
+                            <span>DOPASUJ KIERUNEK</span>
+                            <span class="arrows-badge-warn">BŁĄD RESETUJE</span>
+                        </div>
+
+                        <!-- Sequence row -->
+                        <div id="arrows-sequence-box" class="arrows-sequence-box">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+
+                        <!-- 4 Direction Action Buttons -->
+                        <div class="arrows-controls-grid">
+                            <button class="arrows-btn" id="arrows-btn-up">
+                                <span class="arrows-btn-icon">↑</span>
+                                <div class="arrows-btn-text">
+                                    <span class="arrows-btn-title">GÓRA</span>
+                                    <span class="arrows-btn-sub">W / GÓRA</span>
+                                </div>
+                            </button>
+                            <button class="arrows-btn" id="arrows-btn-down">
+                                <span class="arrows-btn-icon">↓</span>
+                                <div class="arrows-btn-text">
+                                    <span class="arrows-btn-title">DÓŁ</span>
+                                    <span class="arrows-btn-sub">S / DÓŁ</span>
+                                </div>
+                            </button>
+                            <button class="arrows-btn" id="arrows-btn-left">
+                                <span class="arrows-btn-icon">←</span>
+                                <div class="arrows-btn-text">
+                                    <span class="arrows-btn-title">LEWO</span>
+                                    <span class="arrows-btn-sub">A / LEWO</span>
+                                </div>
+                            </button>
+                            <button class="arrows-btn" id="arrows-btn-right">
+                                <span class="arrows-btn-icon">→</span>
+                                <div class="arrows-btn-text">
+                                    <span class="arrows-btn-title">PRAWO</span>
+                                    <span class="arrows-btn-sub">D / PRAWO</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Progress and Timer -->
+                        <div class="arrows-progress-wrap">
+                            <div class="arrows-progress-info">
+                                <span>POSTĘP</span>
+                                <span id="arrows-progress-text">0/8</span>
+                            </div>
+                            <div class="timer-bar-wrap" style="height:10px;margin-bottom:0;">
+                                <div id="arrows-progress-fill" class="timer-bar-fill"
+                                    style="width:0%;background:var(--pink);box-shadow:0 0 12px var(--pink-glow);transition:width .15s ease">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Global Countdown timer bar -->
+                        <div>
+                            <div class="stat-row" style="margin-bottom:4px;">
+                                <span>⏱ Czas:</span>
+                                <span id="arrows-timer-text" class="stat-val">—</span>
+                            </div>
+                            <div class="timer-bar-wrap">
+                                <div id="arrows-timer-bar" class="timer-bar-fill"
+                                    style="width:100%;background:var(--pink)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="arrows-message" class="arrows-message"></div>
                     </div>
 
-                    <!-- Global Countdown timer bar -->
-                    <div>
-                        <div class="stat-row" style="margin-bottom:4px;">
+                    <!-- Config panel -->
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="arrows-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy (6)</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal (8)</button>
+                                <button class="preset-btn" data-preset="hard">Hard (12)</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Liczba strzałek (4–16)</span></div>
+                                <input type="number" id="arrows-in-count" class="config-input" min="4" max="16"
+                                    value="8">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Liczba etapów (1–5)</span></div>
+                                <input type="number" id="arrows-in-stages" class="config-input" min="1" max="5"
+                                    value="1">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Czas na sekwencję (s)</span></div>
+                                <input type="number" id="arrows-in-time" class="config-input" min="5" max="60"
+                                    value="15">
+                            </div>
+                        </div>
+                        <div class="panel" style="flex:1;">
+                            <div class="panel-title"><span>📋</span> Zasady</div>
+                            <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                                <li>▸ Używaj <strong style="color:var(--text)">W / S / A / D</strong> lub <strong
+                                        style="color:var(--text)">Strzałek</strong></li>
+                                <li>▸ Możesz także klikać w przyciski</li>
+                                <li>▸ Podświetlona <span style="color:var(--pink)">różowa strzałka</span> to Twój cel
+                                </li>
+                                <li>▸ <strong style="color:var(--danger)">Błędny kierunek</strong> resetuje sekwencję do
+                                    0!
+                                </li>
+                                <li>▸ Ukończ cały etap przed upływem czasu</li>
+                            </ul>
+                        </div>
+                        <div class="btn-row">
+                            <button id="arrows-btn-start" class="action-btn btn-primary btn-start-main">▶ ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="arrows-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
+                            <button id="arrows-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="arrows-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ PROTOKÓŁ WŁAMANIA ═══════════════════════════════════════ -->
+            <div id="hack-breach" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#10b981;text-shadow:0 0 30px rgba(16,185,129,.4)">//
+                        PROTOKÓŁ_WŁAMANIA</div>
+                    <div class="hack-subtitle">Wybieraj bajty naprzemiennie w wierszach i kolumnach</div>
+                </div>
+                <div class="hack-layout">
+                    <!-- Main matrix game area -->
+                    <div class="panel" style="display:flex;flex-direction:column;gap:12px;">
+                        <div class="stat-row">
+                            <span>ETAP 1/1</span>
+                            <span id="breach-size-badge" class="stat-val" style="color:#10b981">7X7</span>
+                        </div>
+
+                        <!-- Timer bar -->
+                        <div>
+                            <div class="stat-row" style="margin-bottom:4px;">
+                                <span>⏱ Czas:</span>
+                                <span id="breach-timer-text" class="stat-val" style="color:#10b981">—</span>
+                            </div>
+                            <div class="timer-bar-wrap">
+                                <div id="breach-timer-bar" class="timer-bar-fill"
+                                    style="width:100%;background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.4)"></div>
+                            </div>
+                        </div>
+
+                        <div class="breach-layout">
+                            <!-- Left: Grid matrix -->
+                            <div class="breach-grid-wrap">
+                                <div id="breach-grid"></div>
+                            </div>
+
+                            <!-- Right: Target Sequence list -->
+                            <div class="breach-seq-wrap">
+                                <div class="breach-seq-title">SEKWENCJA</div>
+                                <div id="breach-seq-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom status & ESC bar -->
+                        <div class="breach-bottom-bar">
+                            <div class="breach-stat-box">
+                                <span class="breach-stat-lbl">OŚ</span>
+                                <span id="breach-axis-val" class="breach-stat-val" style="color:#10b981">DOWOLNE</span>
+                            </div>
+                            <div class="breach-stat-box">
+                                <span class="breach-stat-lbl">BŁĘDY</span>
+                                <span id="breach-errors-val" class="breach-stat-val" style="color:#ef4444">0</span>
+                            </div>
+                            <button class="breach-esc-btn" id="breach-btn-esc">ESC</button>
+                        </div>
+
+                        <div id="breach-message" class="breach-message"></div>
+                    </div>
+
+                    <!-- Config panel -->
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="breach-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy (5×5)</button>
+                                <button class="preset-btn" data-preset="normal">Normal (6×6)</button>
+                                <button class="preset-btn preset-active" data-preset="hard">Hard (7×7)</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Rozmiar matrycy (4–8)</span></div>
+                                <input type="number" id="breach-in-size" class="config-input" min="4" max="8" value="7">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Długość sekwencji (3–8)</span></div>
+                                <input type="number" id="breach-in-seq" class="config-input" min="3" max="8" value="6">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Dozwolone błędy (0–5)</span></div>
+                                <input type="number" id="breach-in-errors" class="config-input" min="0" max="5"
+                                    value="1">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Czas (s)</span></div>
+                                <input type="number" id="breach-in-time" class="config-input" min="10" max="120"
+                                    value="30">
+                            </div>
+                        </div>
+                        <div class="panel" style="flex:1;">
+                            <div class="panel-title"><span>📋</span> Zasady</div>
+                            <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                                <li>▸ Pierwszy wybór jest <strong style="color:var(--text)">dowolny</strong></li>
+                                <li>▸ Kolejny wybór w <strong style="color:var(--text)">kolumnie</strong> wybranego
+                                    kafelka
+                                </li>
+                                <li>▸ Następny w <strong style="color:var(--text)">wierszu</strong>, i tak na zmianę!
+                                </li>
+                                <li>▸ Dobieraj bajty zgodnie z <span style="color:var(--pink)">SEKWENCJĄ</span></li>
+                                <li>▸ Każdy kafelek można użyć tylko raz</li>
+                            </ul>
+                        </div>
+                        <div class="btn-row">
+                            <button id="breach-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#10b981;color:#111;box-shadow:0 4px 18px rgba(16,185,129,.4)">▶
+                                ROZPOCZNIJ
+                                GRĘ</button>
+                            <button id="breach-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#10b981;box-shadow:0 4px 18px rgba(16,185,129,.35)">↺ Restart</button>
+                            <button id="breach-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="breach-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ ICY TOWER ════════════════════════════════════════════ -->
+            <div id="hack-icytower" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#38bdf8;text-shadow:0 0 30px rgba(56,189,248,.4)">// ICY_TOWER
+                    </div>
+                    <div class="hack-subtitle">Wspinaj się coraz wyżej · A/D / Strzałki: ruch · W/Spacja/Góra: skok ·
+                        Ściany odbijają!</div>
+                </div>
+                <div class="hack-layout">
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="stat-row">
+                            <span>Piętro: <span id="icy-floor" class="stat-val" style="color:#38bdf8">0</span> / <span
+                                    id="icy-target-floor" class="stat-val" style="color:#38bdf8">50</span></span>
+                            <span>Rekord: <span id="icy-best-floor" class="stat-val"
+                                    style="color:#a855f7">0</span></span>
+                            <span>Combo: <span id="icy-combo" class="stat-val" style="color:#f59e0b">—</span></span>
+                            <span>⏱ Czas: <span id="icy-timer-text" class="stat-val"
+                                    style="color:#38bdf8">—</span></span>
+                        </div>
+                        <div class="timer-bar-wrap">
+                            <div id="icy-timer-bar" class="timer-bar-fill"
+                                style="width:100%;background:#38bdf8;box-shadow:0 0 8px rgba(56,189,248,.35)"></div>
+                        </div>
+                        <div style="position:relative;display:flex;justify-content:center;">
+                            <canvas id="icy-canvas" width="420" height="520"
+                                style="background:#070b14;border:1px solid var(--border);border-radius:10px;display:block;max-width:100%;box-shadow:0 4px 20px rgba(0,0,0,.6);"></canvas>
+                        </div>
+                        <div id="icy-message" class="icy-message"></div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>⚙</span> Preset</div>
+                            <div id="icy-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy (25)</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal (50)</button>
+                                <button class="preset-btn" data-preset="hard">Hard (100)</button>
+                                <button class="preset-btn" data-preset="endless">Endless</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Docelowe piętro (10–200, 0=Endless)</span></div>
+                                <input type="number" id="icy-in-floors" class="config-input" min="0" max="500"
+                                    value="50">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Szerokość platform (50–160 px)</span></div>
+                                <input type="number" id="icy-in-platw" class="config-input" min="50" max="160"
+                                    value="100">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Prędkość scrolla / otchłani (0–8)</span></div>
+                                <input type="number" id="icy-in-scroll" class="config-input" min="0" max="8" step="0.5"
+                                    value="1.2">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Grawitacja (0.08–0.40, mniejsza = wolniejsza)</span>
+                                </div>
+                                <input type="number" id="icy-in-gravity" class="config-input" min="0.08" max="0.40"
+                                    step="0.02" value="0.20">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Limit czasu (s, 0=brak)</span></div>
+                                <input type="number" id="icy-in-time" class="config-input" min="0" max="300" value="0">
+                            </div>
+                        </div>
+                        <div class="panel" style="flex:1;">
+                            <div class="panel-title"><span>📋</span> Zasady Icy Tower</div>
+                            <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                                <li>▸ <strong style="color:var(--text)">A / D</strong> lub <strong
+                                        style="color:var(--text)">Strzałki</strong>: bieg w lewo / prawo</li>
+                                <li>▸ <strong style="color:var(--text)">W</strong>, <strong
+                                        style="color:var(--text)">Góra</strong> lub <strong
+                                        style="color:var(--text)">[SPACJA]</strong>: skok</li>
+                                <li>▸ <span style="color:#38bdf8">Pęd = wyższy skok</span>: rozpędź się przed skokiem!
+                                </li>
+                                <li>▸ <span style="color:#a855f7">Odbicia od ścian</span> dają dodatkowy impet</li>
+                                <li>▸ Przeskocz 2+ piętra na raz, aby zdobyć <span style="color:#f59e0b">COMBO</span>
+                                </li>
+                                <li>▸ Nie spadnij poniżej dolnej krawędzi ekranu!</li>
+                            </ul>
+                        </div>
+                        <div class="btn-row" style="flex-direction:column;">
+                            <button id="icy-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#38bdf8;color:#09090b;box-shadow:0 4px 18px rgba(56,189,248,.4)">▶
+                                ROZPOCZNIJ GRĘ</button>
+                            <button id="icy-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#38bdf8;color:#09090b;box-shadow:0 4px 18px rgba(56,189,248,.35)">↺
+                                Restart</button>
+                            <button id="icy-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
+                        </div>
+                        <div class="ready-hint" id="icy-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ SKRZYNKA ELEKTRYCZNA ═══════════════════════════════════ -->
+            <div id="hack-switches" class="hack-section">
+                <div class="hack-header">
+                    <div class="hack-title" style="color:#facc15;text-shadow:0 0 30px rgba(250,204,21,.4)">//
+                        SKRZYNKA_ELEKTRYCZNA</div>
+                    <div class="hack-subtitle">Cel matematyczny: przełącz przełączniki do sumy &bull; Sekwencja: kliknij
+                        w odpowiedniej kolejności</div>
+                </div>
+                <div class="hack-layout">
+                    <!-- Main game panel -->
+                    <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
+                        <!-- Stats row -->
+                        <div class="sw-stats-row">
+                            <span>ETAP <span id="sw-step" class="stat-val" style="color:#facc15">1/5</span></span>
+                            <span>TRYB <span id="sw-mode-label" class="stat-val" style="color:var(--pink)">CEL
+                                    MATEM.</span></span>
+                            <span>USTERKI <span id="sw-faults" class="stat-val"
+                                    style="color:var(--danger)">0</span></span>
+                        </div>
+                        <!-- Timer -->
+                        <div class="timer-bar-wrap">
+                            <div id="sw-timer-bar" class="timer-bar-fill"
+                                style="width:100%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.35)"></div>
+                        </div>
+                        <!-- Switch grid -->
+                        <div id="sw-grid" class="sw-grid"></div>
+                        <!-- Target / Result rows -->
+                        <div id="sw-target-row" class="sw-info-row">
+                            <span class="sw-info-label">CEL</span>
+                            <span id="sw-target" class="sw-info-val">—</span>
+                        </div>
+                        <div id="sw-result-row" class="sw-info-row">
+                            <span class="sw-info-label">WYNIK</span>
+                            <span id="sw-result" class="sw-info-val">0</span>
+                        </div>
+                        <!-- Set Switches button (math mode) -->
+                        <button id="sw-set-btn" class="action-btn sw-set-btn"
+                            style="background:transparent;border:2px solid #facc15;color:#facc15;font-family:var(--mono);letter-spacing:1px;">SET
+                            SWITCHES</button>
+                        <div id="sw-message" class="sw-message"></div>
+                        <div class="stat-row" style="margin-top:2px;">
                             <span>⏱ Czas:</span>
-                            <span id="arrows-timer-text" class="stat-val">—</span>
+                            <span id="sw-timer-text" class="stat-val" style="color:#facc15">—</span>
                         </div>
-                        <div class="timer-bar-wrap">
-                            <div id="arrows-timer-bar" class="timer-bar-fill" style="width:100%;background:var(--pink)">
+                    </div>
+                    <!-- Options panel -->
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <div class="panel">
+                            <div class="panel-title"><span>🎲</span> Tryb gry</div>
+                            <div style="font-size:.72rem;color:var(--muted);line-height:1.6;padding:4px 0 8px;">
+                                Tryb jest <strong style="color:#facc15">losowany automatycznie</strong> dla każdego
+                                etapu
+                                — możesz dostać <span style="color:var(--pink)">Cel Matematyczny</span>
+                                lub <span style="color:#22d3ee">Sekwencję</span>!
+                            </div>
+                            <div class="panel-title" style="margin-top:4px;"><span>⚙</span> Preset</div>
+                            <div id="sw-preset-btns" class="preset-row">
+                                <button class="preset-btn" data-preset="easy">Easy</button>
+                                <button class="preset-btn preset-active" data-preset="normal">Normal</button>
+                                <button class="preset-btn" data-preset="hard">Hard</button>
+                            </div>
+                            <hr>
+                            <div class="config-group">
+                                <div class="config-label"><span>Liczba przełączników (2–8)</span></div>
+                                <input type="number" id="sw-in-count" class="config-input" min="2" max="8" value="6">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Wartość min / max</span></div>
+                                <div class="config-2col">
+                                    <input type="number" id="sw-in-valmin" class="config-input" min="1" max="20"
+                                        value="1">
+                                    <input type="number" id="sw-in-valmax" class="config-input" min="2" max="30"
+                                        value="10">
+                                </div>
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Liczba etapów (1–10)</span></div>
+                                <input type="number" id="sw-in-steps" class="config-input" min="1" max="10" value="5">
+                            </div>
+                            <div class="config-group">
+                                <div class="config-label"><span>Limit czasu (s, 0=brak)</span></div>
+                                <input type="number" id="sw-in-time" class="config-input" min="0" max="300" value="90">
                             </div>
                         </div>
-                    </div>
-
-                    <div id="arrows-message" class="arrows-message"></div>
-                </div>
-
-                <!-- Config panel -->
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="arrows-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy (6)</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal (8)</button>
-                            <button class="preset-btn" data-preset="hard">Hard (12)</button>
+                        <div class="panel" style="flex:1;">
+                            <div class="panel-title"><span>📋</span> Zasady</div>
+                            <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
+                                <li>▸ <strong style="color:#facc15">Cel Matematyczny</strong>: włącz przełączniki tak,
+                                    by ich suma równała się celowi</li>
+                                <li>▸ Kliknij <strong style="color:#facc15">SET SWITCHES</strong> gdy suma jest poprawna
+                                </li>
+                                <li>▸ <strong style="color:var(--cyan)">Sekwencja</strong>: przełączaj przełączniki we
+                                    właściwej kolejności</li>
+                                <li>▸ Wartości są <span style="color:#facc15">losowane</span> na każdym etapie</li>
+                                <li>▸ Uważaj na <span style="color:var(--danger)">usterki</span> — każdy błąd się liczy!
+                                </li>
+                            </ul>
                         </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Liczba strzałek (4–16)</span></div>
-                            <input type="number" id="arrows-in-count" class="config-input" min="4" max="16" value="8">
+                        <div class="btn-row" style="flex-direction:column;">
+                            <button id="sw-btn-start" class="action-btn btn-primary btn-start-main"
+                                style="background:#facc15;color:#09090b;box-shadow:0 4px 18px rgba(250,204,21,.4)">&#9654;
+                                ROZPOCZNIJ GRĘ</button>
+                            <button id="sw-btn-restart" class="action-btn btn-primary hidden"
+                                style="background:#facc15;color:#09090b;box-shadow:0 4px 18px rgba(250,204,21,.35)">&#8635;
+                                Restart</button>
+                            <button id="sw-btn-config" class="action-btn btn-secondary hidden">&#9881;
+                                Konfiguruj</button>
                         </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Liczba etapów (1–5)</span></div>
-                            <input type="number" id="arrows-in-stages" class="config-input" min="1" max="5" value="1">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Czas na sekwencję (s)</span></div>
-                            <input type="number" id="arrows-in-time" class="config-input" min="5" max="60" value="15">
-                        </div>
+                        <div class="ready-hint" id="sw-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
                     </div>
-                    <div class="panel" style="flex:1;">
-                        <div class="panel-title"><span>📋</span> Zasady</div>
-                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
-                            <li>▸ Używaj <strong style="color:var(--text)">W / S / A / D</strong> lub <strong
-                                    style="color:var(--text)">Strzałek</strong></li>
-                            <li>▸ Możesz także klikać w przyciski</li>
-                            <li>▸ Podświetlona <span style="color:var(--pink)">różowa strzałka</span> to Twój cel</li>
-                            <li>▸ <strong style="color:var(--danger)">Błędny kierunek</strong> resetuje sekwencję do 0!
-                            </li>
-                            <li>▸ Ukończ cały etap przed upływem czasu</li>
-                        </ul>
-                    </div>
-                    <div class="btn-row">
-                        <button id="arrows-btn-start" class="action-btn btn-primary btn-start-main">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="arrows-btn-restart" class="action-btn btn-primary hidden">↺ Restart</button>
-                        <button id="arrows-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="arrows-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
                 </div>
             </div>
+
+        </div><!-- /tool-view -->
+
+        <!-- Global countdown overlay (appended to body) -->
+        <div class="countdown-overlay" id="countdown-overlay">
+            <div class="countdown-num" id="countdown-num">3</div>
         </div>
 
-        <!-- ═══ PROTOKÓŁ WŁAMANIA ═══════════════════════════════════════ -->
-        <div id="hack-breach" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#10b981;text-shadow:0 0 30px rgba(16,185,129,.4)">//
-                    PROTOKÓŁ_WŁAMANIA</div>
-                <div class="hack-subtitle">Wybieraj bajty naprzemiennie w wierszach i kolumnach</div>
-            </div>
-            <div class="hack-layout">
-                <!-- Main matrix game area -->
-                <div class="panel" style="display:flex;flex-direction:column;gap:12px;">
-                    <div class="stat-row">
-                        <span>ETAP 1/1</span>
-                        <span id="breach-size-badge" class="stat-val" style="color:#10b981">7X7</span>
-                    </div>
+        <!-- JS — load order matters: main first, then hacks -->
+        <script src="js/main.js"></script>
+        <script src="js/hack-atmhold.js"></script>
+        <script src="js/hack-cables.js"></script>
+        <script src="js/hack-puzzle.js"></script>
+        <script src="js/hack-lightsout.js"></script>
+        <script src="js/hack-slider.js"></script>
+        <script src="js/hack-dotsequence.js"></script>
+        <script src="js/hack-brickbreaker.js"></script>
+        <script src="js/hack-flappybird.js"></script>
+        <script src="js/hack-arrows.js"></script>
+        <script src="js/hack-breach.js"></script>
+        <script src="js/hack-icytower.js"></script>
+        <script src="js/hack-switches.js"></script>
 
-                    <!-- Timer bar -->
-                    <div>
-                        <div class="stat-row" style="margin-bottom:4px;">
-                            <span>⏱ Czas:</span>
-                            <span id="breach-timer-text" class="stat-val" style="color:#10b981">—</span>
-                        </div>
-                        <div class="timer-bar-wrap">
-                            <div id="breach-timer-bar" class="timer-bar-fill"
-                                style="width:100%;background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.4)"></div>
-                        </div>
-                    </div>
-
-                    <div class="breach-layout">
-                        <!-- Left: Grid matrix -->
-                        <div class="breach-grid-wrap">
-                            <div id="breach-grid"></div>
-                        </div>
-
-                        <!-- Right: Target Sequence list -->
-                        <div class="breach-seq-wrap">
-                            <div class="breach-seq-title">SEKWENCJA</div>
-                            <div id="breach-seq-list"></div>
-                        </div>
-                    </div>
-
-                    <!-- Bottom status & ESC bar -->
-                    <div class="breach-bottom-bar">
-                        <div class="breach-stat-box">
-                            <span class="breach-stat-lbl">OŚ</span>
-                            <span id="breach-axis-val" class="breach-stat-val" style="color:#10b981">DOWOLNE</span>
-                        </div>
-                        <div class="breach-stat-box">
-                            <span class="breach-stat-lbl">BŁĘDY</span>
-                            <span id="breach-errors-val" class="breach-stat-val" style="color:#ef4444">0</span>
-                        </div>
-                        <button class="breach-esc-btn" id="breach-btn-esc">ESC</button>
-                    </div>
-
-                    <div id="breach-message" class="breach-message"></div>
-                </div>
-
-                <!-- Config panel -->
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="breach-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy (5×5)</button>
-                            <button class="preset-btn" data-preset="normal">Normal (6×6)</button>
-                            <button class="preset-btn preset-active" data-preset="hard">Hard (7×7)</button>
-                        </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Rozmiar matrycy (4–8)</span></div>
-                            <input type="number" id="breach-in-size" class="config-input" min="4" max="8" value="7">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Długość sekwencji (3–8)</span></div>
-                            <input type="number" id="breach-in-seq" class="config-input" min="3" max="8" value="6">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Dozwolone błędy (0–5)</span></div>
-                            <input type="number" id="breach-in-errors" class="config-input" min="0" max="5" value="1">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Czas (s)</span></div>
-                            <input type="number" id="breach-in-time" class="config-input" min="10" max="120" value="30">
-                        </div>
-                    </div>
-                    <div class="panel" style="flex:1;">
-                        <div class="panel-title"><span>📋</span> Zasady</div>
-                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
-                            <li>▸ Pierwszy wybór jest <strong style="color:var(--text)">dowolny</strong></li>
-                            <li>▸ Kolejny wybór w <strong style="color:var(--text)">kolumnie</strong> wybranego kafelka
-                            </li>
-                            <li>▸ Następny w <strong style="color:var(--text)">wierszu</strong>, i tak na zmianę!</li>
-                            <li>▸ Dobieraj bajty zgodnie z <span style="color:var(--pink)">SEKWENCJĄ</span></li>
-                            <li>▸ Każdy kafelek można użyć tylko raz</li>
-                        </ul>
-                    </div>
-                    <div class="btn-row">
-                        <button id="breach-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:#10b981;color:#111;box-shadow:0 4px 18px rgba(16,185,129,.4)">▶ ROZPOCZNIJ
-                            GRĘ</button>
-                        <button id="breach-btn-restart" class="action-btn btn-primary hidden"
-                            style="background:#10b981;box-shadow:0 4px 18px rgba(16,185,129,.35)">↺ Restart</button>
-                        <button id="breach-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="breach-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ ICY TOWER ════════════════════════════════════════════ -->
-        <div id="hack-icytower" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#38bdf8;text-shadow:0 0 30px rgba(56,189,248,.4)">// ICY_TOWER</div>
-                <div class="hack-subtitle">Wspinaj się coraz wyżej · A/D / Strzałki: ruch · W/Spacja/Góra: skok · Ściany odbijają!</div>
-            </div>
-            <div class="hack-layout">
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="stat-row">
-                        <span>Piętro: <span id="icy-floor" class="stat-val" style="color:#38bdf8">0</span> / <span id="icy-target-floor" class="stat-val" style="color:#38bdf8">50</span></span>
-                        <span>Rekord: <span id="icy-best-floor" class="stat-val" style="color:#a855f7">0</span></span>
-                        <span>Combo: <span id="icy-combo" class="stat-val" style="color:#f59e0b">—</span></span>
-                        <span>⏱ Czas: <span id="icy-timer-text" class="stat-val" style="color:#38bdf8">—</span></span>
-                    </div>
-                    <div class="timer-bar-wrap">
-                        <div id="icy-timer-bar" class="timer-bar-fill" style="width:100%;background:#38bdf8;box-shadow:0 0 8px rgba(56,189,248,.35)"></div>
-                    </div>
-                    <div style="position:relative;display:flex;justify-content:center;">
-                        <canvas id="icy-canvas" width="420" height="520" style="background:#070b14;border:1px solid var(--border);border-radius:10px;display:block;max-width:100%;box-shadow:0 4px 20px rgba(0,0,0,.6);"></canvas>
-                    </div>
-                    <div id="icy-message" class="icy-message"></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>⚙</span> Preset</div>
-                        <div id="icy-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy (25)</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal (50)</button>
-                            <button class="preset-btn" data-preset="hard">Hard (100)</button>
-                            <button class="preset-btn" data-preset="endless">Endless</button>
-                        </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Docelowe piętro (10–200, 0=Endless)</span></div>
-                            <input type="number" id="icy-in-floors" class="config-input" min="0" max="500" value="50">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Szerokość platform (50–160 px)</span></div>
-                            <input type="number" id="icy-in-platw" class="config-input" min="50" max="160" value="100">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Prędkość scrolla / otchłani (0–8)</span></div>
-                            <input type="number" id="icy-in-scroll" class="config-input" min="0" max="8" step="0.5" value="1.2">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Grawitacja (0.08–0.40, mniejsza = wolniejsza)</span></div>
-                            <input type="number" id="icy-in-gravity" class="config-input" min="0.08" max="0.40" step="0.02" value="0.20">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Limit czasu (s, 0=brak)</span></div>
-                            <input type="number" id="icy-in-time" class="config-input" min="0" max="300" value="0">
-                        </div>
-                    </div>
-                    <div class="panel" style="flex:1;">
-                        <div class="panel-title"><span>📋</span> Zasady Icy Tower</div>
-                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
-                            <li>▸ <strong style="color:var(--text)">A / D</strong> lub <strong style="color:var(--text)">Strzałki</strong>: bieg w lewo / prawo</li>
-                            <li>▸ <strong style="color:var(--text)">W</strong>, <strong style="color:var(--text)">Góra</strong> lub <strong style="color:var(--text)">[SPACJA]</strong>: skok</li>
-                            <li>▸ <span style="color:#38bdf8">Pęd = wyższy skok</span>: rozpędź się przed skokiem!</li>
-                            <li>▸ <span style="color:#a855f7">Odbicia od ścian</span> dają dodatkowy impet</li>
-                            <li>▸ Przeskocz 2+ piętra na raz, aby zdobyć <span style="color:#f59e0b">COMBO</span></li>
-                            <li>▸ Nie spadnij poniżej dolnej krawędzi ekranu!</li>
-                        </ul>
-                    </div>
-                    <div class="btn-row" style="flex-direction:column;">
-                        <button id="icy-btn-start" class="action-btn btn-primary btn-start-main" style="background:#38bdf8;color:#09090b;box-shadow:0 4px 18px rgba(56,189,248,.4)">▶ ROZPOCZNIJ GRĘ</button>
-                        <button id="icy-btn-restart" class="action-btn btn-primary hidden" style="background:#38bdf8;color:#09090b;box-shadow:0 4px 18px rgba(56,189,248,.35)">↺ Restart</button>
-                        <button id="icy-btn-config" class="action-btn btn-secondary hidden">⚙ Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="icy-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ═══ SKRZYNKA ELEKTRYCZNA ═══════════════════════════════════ -->
-        <div id="hack-switches" class="hack-section">
-            <div class="hack-header">
-                <div class="hack-title" style="color:#facc15;text-shadow:0 0 30px rgba(250,204,21,.4)">//
-                    SKRZYNKA_ELEKTRYCZNA</div>
-                <div class="hack-subtitle">Cel matematyczny: przełącz przełączniki do sumy &bull; Sekwencja: kliknij
-                    w odpowiedniej kolejności</div>
-            </div>
-            <div class="hack-layout">
-                <!-- Main game panel -->
-                <div class="panel" style="display:flex;flex-direction:column;gap:10px;">
-                    <!-- Stats row -->
-                    <div class="sw-stats-row">
-                        <span>ETAP <span id="sw-step" class="stat-val" style="color:#facc15">1/5</span></span>
-                        <span>TRYB <span id="sw-mode-label" class="stat-val" style="color:var(--pink)">CEL MATEM.</span></span>
-                        <span>USTERKI <span id="sw-faults" class="stat-val" style="color:var(--danger)">0</span></span>
-                    </div>
-                    <!-- Timer -->
-                    <div class="timer-bar-wrap">
-                        <div id="sw-timer-bar" class="timer-bar-fill"
-                            style="width:100%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.35)"></div>
-                    </div>
-                    <!-- Switch grid -->
-                    <div id="sw-grid" class="sw-grid"></div>
-                    <!-- Target / Result rows -->
-                    <div id="sw-target-row" class="sw-info-row">
-                        <span class="sw-info-label">CEL</span>
-                        <span id="sw-target" class="sw-info-val">—</span>
-                    </div>
-                    <div id="sw-result-row" class="sw-info-row">
-                        <span class="sw-info-label">WYNIK</span>
-                        <span id="sw-result" class="sw-info-val">0</span>
-                    </div>
-                    <!-- Set Switches button (math mode) -->
-                    <button id="sw-set-btn"
-                        class="action-btn sw-set-btn"
-                        style="background:transparent;border:2px solid #facc15;color:#facc15;font-family:var(--mono);letter-spacing:1px;">SET SWITCHES</button>
-                    <div id="sw-message" class="sw-message"></div>
-                    <div class="stat-row" style="margin-top:2px;">
-                        <span>⏱ Czas:</span>
-                        <span id="sw-timer-text" class="stat-val" style="color:#facc15">—</span>
-                    </div>
-                </div>
-                <!-- Options panel -->
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div class="panel">
-                        <div class="panel-title"><span>🎲</span> Tryb gry</div>
-                        <div style="font-size:.72rem;color:var(--muted);line-height:1.6;padding:4px 0 8px;">
-                            Tryb jest <strong style="color:#facc15">losowany automatycznie</strong> dla każdego etapu
-                            — możesz dostać <span style="color:var(--pink)">Cel Matematyczny</span>
-                            lub <span style="color:#22d3ee">Sekwencję</span>!
-                        </div>
-                        <div class="panel-title" style="margin-top:4px;"><span>⚙</span> Preset</div>
-                        <div id="sw-preset-btns" class="preset-row">
-                            <button class="preset-btn" data-preset="easy">Easy</button>
-                            <button class="preset-btn preset-active" data-preset="normal">Normal</button>
-                            <button class="preset-btn" data-preset="hard">Hard</button>
-                        </div>
-                        <hr>
-                        <div class="config-group">
-                            <div class="config-label"><span>Liczba przełączników (2–8)</span></div>
-                            <input type="number" id="sw-in-count" class="config-input" min="2" max="8" value="6">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Wartość min / max</span></div>
-                            <div class="config-2col">
-                                <input type="number" id="sw-in-valmin" class="config-input" min="1" max="20" value="1">
-                                <input type="number" id="sw-in-valmax" class="config-input" min="2" max="30" value="10">
-                            </div>
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Liczba etapów (1–10)</span></div>
-                            <input type="number" id="sw-in-steps" class="config-input" min="1" max="10" value="5">
-                        </div>
-                        <div class="config-group">
-                            <div class="config-label"><span>Limit czasu (s, 0=brak)</span></div>
-                            <input type="number" id="sw-in-time" class="config-input" min="0" max="300" value="90">
-                        </div>
-                    </div>
-                    <div class="panel" style="flex:1;">
-                        <div class="panel-title"><span>📋</span> Zasady</div>
-                        <ul style="font-size:.72rem;color:var(--muted);line-height:1.9;list-style:none;padding:0;">
-                            <li>▸ <strong style="color:#facc15">Cel Matematyczny</strong>: włącz przełączniki tak, by ich suma równała się celowi</li>
-                            <li>▸ Kliknij <strong style="color:#facc15">SET SWITCHES</strong> gdy suma jest poprawna</li>
-                            <li>▸ <strong style="color:var(--cyan)">Sekwencja</strong>: przełączaj przełączniki we właściwej kolejności</li>
-                            <li>▸ Wartości są <span style="color:#facc15">losowane</span> na każdym etapie</li>
-                            <li>▸ Uważaj na <span style="color:var(--danger)">usterki</span> — każdy błąd się liczy!</li>
-                        </ul>
-                    </div>
-                    <div class="btn-row" style="flex-direction:column;">
-                        <button id="sw-btn-start" class="action-btn btn-primary btn-start-main"
-                            style="background:#facc15;color:#09090b;box-shadow:0 4px 18px rgba(250,204,21,.4)">&#9654; ROZPOCZNIJ GRĘ</button>
-                        <button id="sw-btn-restart" class="action-btn btn-primary hidden"
-                            style="background:#facc15;color:#09090b;box-shadow:0 4px 18px rgba(250,204,21,.35)">&#8635; Restart</button>
-                        <button id="sw-btn-config" class="action-btn btn-secondary hidden">&#9881; Konfiguruj</button>
-                    </div>
-                    <div class="ready-hint" id="sw-ready-hint">Wciśnij [ENTER] aby rozpocząć</div>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /tool-view -->
-
-    <!-- Global countdown overlay (appended to body) -->
-    <div class="countdown-overlay" id="countdown-overlay">
-        <div class="countdown-num" id="countdown-num">3</div>
-    </div>
-
-    <!-- JS — load order matters: main first, then hacks -->
-    <script src="js/main.js"></script>
-    <script src="js/hack-atmhold.js"></script>
-    <script src="js/hack-cables.js"></script>
-    <script src="js/hack-puzzle.js"></script>
-    <script src="js/hack-lightsout.js"></script>
-    <script src="js/hack-slider.js"></script>
-    <script src="js/hack-dotsequence.js"></script>
-    <script src="js/hack-brickbreaker.js"></script>
-    <script src="js/hack-flappybird.js"></script>
-    <script src="js/hack-arrows.js"></script>
-    <script src="js/hack-breach.js"></script>
-    <script src="js/hack-icytower.js"></script>
-    <script src="js/hack-switches.js"></script>
-
-    <script>
-        // ── Bootstrap: wire all events once DOM is ready ──────────────────
-        window.addEventListener('DOMContentLoaded', () => {
-            atmWireEvents();
-            cablesWireEvents();
-            puzzleWireEvents();
-            loWireEvents();
-            sliderWireEvents();
-            dotWireEvents();
-            bbWireEvents();
-            fbWireEvents();
-            arrowsWireEvents();
-            breachWireEvents();
-            icyWireEvents();
-            switchesWireEvents();
-        });
-    </script>
+        <script>
+            // ── Bootstrap: wire all events once DOM is ready ──────────────────
+            window.addEventListener('DOMContentLoaded', () => {
+                atmWireEvents();
+                cablesWireEvents();
+                puzzleWireEvents();
+                loWireEvents();
+                sliderWireEvents();
+                dotWireEvents();
+                bbWireEvents();
+                fbWireEvents();
+                arrowsWireEvents();
+                breachWireEvents();
+                icyWireEvents();
+                switchesWireEvents();
+            });
+        </script>
 
 </body>
 
